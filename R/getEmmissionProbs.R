@@ -50,3 +50,5 @@ getEmmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'stre
   return (eventLoc_rasterCell.matrix)
 
 }
+
+
