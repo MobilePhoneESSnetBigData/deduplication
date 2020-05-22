@@ -17,7 +17,7 @@
 #'
 #' @export
 readGridParams <- function(gridFileName) {
-  gridParam <- fread(gridParFileName, sep = ',', header = TRUE, stringsAsFactors = FALSE)
+  gridParam <- fread(gridFileName, sep = ',', header = TRUE, stringsAsFactors = FALSE)
   ncol_grid  <- gridParam[['No Tiles Y']]
   nrow_grid  <- gridParam[['No Tiles X']]
   tile_sizeX <- gridParam[['X Tile Dim']]
