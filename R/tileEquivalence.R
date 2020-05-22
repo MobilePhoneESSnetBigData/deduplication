@@ -10,18 +10,19 @@
 #' @param ncol Number of columns in the grid overpalling the area of interest
 #' 
 #' @return Returns a data.frame object with two columns: on the first column are the tile indices according to the raster package 
-#'  numbering and on the second column are equivalent tile indices accordin to the simulation oftware numbering
+#'  numbering and on the second column are equivalent tile indices according to the simulation software numbering
 #' 
 #'
 #' @export
-tileEquivalence <- function(nrow, ncol){
+tileEquivalence <- function(nrows, ncols){
   
-  nCells <- nrow * ncol
+  nCells <- nrows * ncols
   
-  tileID_raster <- as.vector(matrix(1:nCells, ncol = ncol, byrow = TRUE))
-  tileID_simulator <- as.vector(matrix(0:(nCells - 1), ncol = ncol, byrow = TRUE)[nrow:1, ])
+  tileID_raster <- as.vector(matrix(1:nCells, ncol = ncols, byrow = TRUE))
+  tileID_simulator <- as.vector(matrix(0:(nCells - 1), ncol = ncols, byrow = TRUE)[nrows:1, ])
 
   tileCorresp <- cbind(rasterCellID = tileID_raster, tileID = tileID_simulator)
   tileCorresp <- tileCorresp[order(tileCorresp[, 'rasterCellID']), ]
+  colnames(tileCorresp)<-c('rasterCell', 'tile')
   return(tileCorresp)
 }
