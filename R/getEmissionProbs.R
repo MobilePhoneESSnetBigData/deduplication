@@ -1,7 +1,7 @@
 #' @title Builds the emission probabilities for the HMM used to estimate the prosterior location probabilitities.
 #' 
 #' 
-#' @description Builds the emissions probabilities needed for the HMM used to estimate the posterior location probabilitities. 
+#' @description Builds the emission probabilities needed for the HMM used to estimate the posterior location probabilitities. 
 #' In case of using simulated data, these probabilities are build using the signal strength or signal quality outputed
 #' by the simulation software for each tile in the grid.
 #' 
@@ -14,7 +14,7 @@
 #' @include tileEquivalence.R
 #' 
 #' @export
-getEmmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'strength') {
+getEmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'strength') {
   
   if(!file.exists(signalFileName))
     stop("The file with signal values doesn't exist")
@@ -46,10 +46,11 @@ getEmmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'stre
 
   RSS.dt <- dcast(RSS.dt, rasterCell ~ antennaID, value.var = 'eventLoc')[, rasterCell := NULL]
 
-  emmissionProbs.matrix <- as.matrix(RSS.dt)
-  dimnames(emmissionProbs.matrix)[[1]] <- as.character(1:dim(emmissionProbs.matrix)[1])
+  emissionProbs.matrix <- as.matrix(RSS.dt)
+  remove(RSS.dt)
+  dimnames(emissionProbs.matrix)[[1]] <- as.character(1:dim(emissionProbs.matrix)[1])
   
-  return (emmissionProbs.matrix)
+  return (emissionProbs.matrix)
 
 }
 
