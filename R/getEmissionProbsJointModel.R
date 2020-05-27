@@ -13,18 +13,17 @@
 #' @include tileEquivalence.R
 #' 
 #' @export
-getEmissionProbsJointModel <- function(emisionProbs) {
+getEmissionProbsJointModel <- function(emissionProbs) {
   
-  emisionProbs <- cbind(emisionProbs, '00' = rep(1, nrow(emisionProbs)))
-  jointEmisionProbs <- NULL
-  for(j in 1:ncol(emisionProbs)){
-    cat(paste0(j, ", "))
-    A <- emisionProbs[, j] * emisionProbs
-    colnames(A) <- paste0(colnames(emisionProbs)[j], "-", colnames(emisionProbs))
-    jointEmisionProbs <- cbind(jointEmisionProbs, A)
+  emissionProbs <- cbind(emissionProbs, '00' = rep(1, nrow(emissionProbs)))
+  jointEmissionProbs <- NULL
+  for(j in 1:ncol(emissionProbs)){
+    A <- emissionProbs[, j] * emissionProbs
+    colnames(A) <- paste0(colnames(emissionProbs)[j], "-", colnames(emissionProbs))
+    jointEmissionProbs <- cbind(jointEmissionProbs, A)
   }
-  colToRem <- which(colnames(jointEmisionProbs) == "00-00")
-  jointEmisionProbs <- jointEmisionProbs[, -colToRem]
+  colToRem <- ncols(jointEmissionProbs)
+  jointEmissionProbs <- jointEmissionProbs[, -colToRem]
   
   return(jointEmisionProbs)
 
