@@ -17,6 +17,7 @@
 #' 
 #' 
 #' @import data.table
+#' @import stringr
 #'
 #' @export
 readEvents <- function(eventsFileName, simulatedData = TRUE) {

@@ -16,12 +16,12 @@
 #' @import data.table
 #' 
 #' @export
-getConnetions <- function(events.dt) {
+getConnections <- function(events.dt) {
   
   times <- unique(events.dt[,1])
-  times <- sorted(times)
-  devices <- unique(events.dt[,4])
-  devices <- sorted(devices)
+  times <- unlist(times[order(times[,1])])
+  devices <- unique(events.dt[,2])
+  devices <- unlist(devices[order(devices[,1])])
   
   n1 <- length(times)
   n2 <- length(devices)

@@ -11,7 +11,7 @@
 #' @import data.table
 #' 
 #' @export
-getDeviceIDS <- function(events) {
+getDeviceIDs <- function(events) {
   
   return (unique(events[,2]))
   
