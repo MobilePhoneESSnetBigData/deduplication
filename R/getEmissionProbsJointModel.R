@@ -22,9 +22,9 @@ getEmissionProbsJointModel <- function(emissionProbs) {
     colnames(A) <- paste0(colnames(emissionProbs)[j], "-", colnames(emissionProbs))
     jointEmissionProbs <- cbind(jointEmissionProbs, A)
   }
-  colToRem <- ncols(jointEmissionProbs)
+  colToRem <- ncol(jointEmissionProbs)
   jointEmissionProbs <- jointEmissionProbs[, -colToRem]
   
-  return(jointEmisionProbs)
+  return(jointEmissionProbs)
 
 }

@@ -16,3 +16,15 @@ devices <- getDeviceIDs(events.dt)
 #4. get connections for each device
 connections <- getConnections(events.dt)
 
+#5. emission probs
+emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, file.path(path_root, 'SignalMeasure_MNO1.csv'))
+
+#6. emmsion joint probs
+jointEmissionProbs <- getEmissionProbsJointModel(emissionProbs)
+
+#6. build generic model
+model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
+
+#7. build joint model
+modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
+

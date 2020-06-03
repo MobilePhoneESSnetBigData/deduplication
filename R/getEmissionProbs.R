@@ -29,7 +29,7 @@ getEmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'stren
     stop("Number of rows and columns provided inconsistent with the signal file")
   }
     
-  setnames(RSS.dt, c('antennaID', 0:(nTiles - 1)))
+  setnames(RSS.dt, c('antennaID', 0:(nTiles1 - 1)))
   RSS.dt <- melt(RSS.dt, id.vars = 'antennaID', variable.name = 'tile', variable.factor = FALSE, value.name = 'RSS')
   RSS.dt <- RSS.dt[, antennaID := str_pad(antennaID, max(nchar(antennaID)), pad="0")]
   

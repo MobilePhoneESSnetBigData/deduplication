@@ -31,5 +31,5 @@ getJointModel <- function(nrows, ncols, jointEmissionProbs, initSteady = TRUE) {
   if (initSteady == TRUE)
     modeljoin <-initsteady(modeljoin)
   
-  return (modlejoin)
+  return (modeljoin)
 }
