@@ -42,8 +42,7 @@ readEvents <- function(eventsFileName, simulatedData = TRUE) {
 
     return (events.dt)
   }
-  else
-  {
+  else {
     cat("read real mobile network events file not implemented yet!")
     return (NULL)
   }

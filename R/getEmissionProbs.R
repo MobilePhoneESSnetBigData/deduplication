@@ -14,8 +14,8 @@
 #' @include tileEquivalence.R
 #' 
 #' @export
-getEmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'strength') {
-  
+getEmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'strength', simulatedData = TRUE) {
+  if(simulatedData) {
   if(!file.exists(signalFileName))
     stop("The file with signal values doesn't exist")
   
@@ -51,7 +51,11 @@ getEmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'stren
   dimnames(emissionProbs.matrix)[[1]] <- as.character(1:dim(emissionProbs.matrix)[1])
   
   return (emissionProbs.matrix)
-
+  }
+  else {
+    cat("Can't read real mobile network signal file yet!")
+    return (NULL)
+  }
 }
 
 
