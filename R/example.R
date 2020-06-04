@@ -34,3 +34,7 @@ modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
 
 #9. Build a matrix of pairs of devices to compute duplicity probability
 pairs4dup<-computePairs(connections, nrow(devices), antennaNeigh, P1, limit = 0.05 )
+
+#10.
+out_duplicity <- compute_duplicity_Bayesian(method = "pairs", deviceIDs,pairs4duplicity = pairs4duplicity, P1 = P1, modeljoin = modeljoin,
+                                            logLik = ll, init = TRUE)
