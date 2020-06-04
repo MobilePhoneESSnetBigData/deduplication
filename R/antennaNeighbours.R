@@ -1,11 +1,18 @@
+
+
+
+
+
+
+
 #' @import data.table
 #' @import rgeos
 antennaNeighbours <- function(coverarea) {
-  antennas <- coverArea[['antennaID']]
+  antennas <- coverarea[['antennaID']]
   y <-data.table(t(combn(antennas,2)))
-  y1<-merge(y, coverArea, by.x='V1', by.y='antennaID', all.x = TRUE, sort = TRUE)
+  y1<-merge(y, coverarea, by.x='V1', by.y='antennaID', all.x = TRUE, sort = TRUE)
   rm(y)
-  y2<-merge(y1, coverArea, by.x='V2', by.y='antennaID', all.x = TRUE, sort = TRUE)
+  y2<-merge(y1, coverarea, by.x='V2', by.y='antennaID', all.x = TRUE, sort = TRUE)
   rm(y1)
   colnames(y2)<-c('antennaID2', 'antennaID1', 'WKT1', 'WKT2')
   res<-vector(length = nrow(y2))
@@ -15,5 +22,9 @@ antennaNeighbours <- function(coverarea) {
     res[i]<-gIntersects(p1,p2)
   }
   y2[,'neighbour']<-res
-  return (y2[,.(antennaID1, antennaID2, neighbour)])
+  
+  y3<-y2[neighbour==TRUE, .(antennaID1, antennaID2)]
+  rm(y2)
+  y3[ , nei := do.call(paste, c(.SD, sep = "-"))]
+  return(y3[,.(nei)])
 }

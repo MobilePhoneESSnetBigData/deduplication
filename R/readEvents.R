@@ -28,7 +28,7 @@ readEvents <- function(eventsFileName, simulatedData = TRUE) {
                       colClasses = c('integer', 'character', 'character', 'character', 'numeric', 'numeric', 'character'))
     events.dt <- events.dt[!duplicated(events.dt)]
     setnames(events.dt , c('time', 'antennaID', 'eventCode', 'deviceID', 'x', 'y', 'tile'))
-    events.dt <- events.dt[, antennaID := str_pad(antennaID, max(nchar(antennaID)), pad="0")]
+    #events.dt <- events.dt[, antennaID := str_pad(antennaID, max(nchar(antennaID)), pad="0")]
   
     events.dt[, obsVar := do.call(paste, c(.SD, sep = "-")), .SDcols = c('antennaID', 'eventCode')]
 

@@ -8,17 +8,17 @@ path_root      <- '/home/bogdan/r-projects/deduplication-dev/csv_outputSimulator
 gridParams <-readGridParams(file.path(path_root, 'grid.csv'))
 
 #2.Read network events
-events.dt <- readEvents(file.path(path_root, 'AntennaInfo_MNO_MNO1.csv'))
+events <- readEvents(file.path(path_root, 'AntennaInfo_MNO_MNO1.csv'))
 
 #3. Get a list of detected devices 
 devices <- getDeviceIDs(events.dt)
 
 #4. Read antennas file and build a matrix of neighboring antennas
-coverarea <- readCells(file.path(path_root, 'antennas.csv'))
-antennasNeigh <- antennasNeighbours(coverarea)
+coverarea <- readCells(file.path(path_root, 'AntennaCells_MNO1.csv'))
+antennaNeigh <- antennaNeighbours(coverarea)
 
 #5. Get connections for each device
-connections <- getConnections(events.dt)
+connections <- getConnections(events)
 
 #6. Emission probabilities are computed from the signal strength/quality file
 emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, file.path(path_root, 'SignalMeasure_MNO1.csv'))
@@ -32,3 +32,5 @@ model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
 #8. Build the joint model
 modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
 
+#9. Build a matrix of pairs of devices to compute duplicity probability
+pairs4dup<-computePairs(connections, nrow(devices), antennaNeigh, P1, limit = 0.05 )
