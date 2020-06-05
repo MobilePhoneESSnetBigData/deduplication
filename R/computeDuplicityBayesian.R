@@ -1,22 +1,20 @@
 
 #' @import data.table
+#' @import destim
+#' 
 computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pairs4duplicity,
                                        P1 = NULL, Pii = NULL, modeljoin, logLik, init = TRUE){
   
-  nDevices <- length(deviceIDs)
+  ndevices <- length(deviceIDs)
   new_eLoc_rCell.mt <- emissions(modeljoin)
   checkE <- apply(new_eLoc_rCell.mt, 2, sum)
   pairs4dup <- copy(pairs4duplicity)
   ll <- logLik
   
   if(method == "pairs"){
-    ####  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ####
-    #####               COMPUTE LOGLIK BAYESIAN APPROACH (PAIRS)               #####
-    # The computation is carried out by brute force with a double nested loop.
-    # Refactoring using sparsity and parallelization techniques is needed
     dupProb.mt <- matrix(0L, ncol = ndevices, nrow = ndevices)
     
-    #P1 <- choose(nDevices, 2)*2*P1/nrow(pairs4duplicity)
+    
     P2 <- 1 - P1                                # priori prob. of 1:1
     alpha <- P2 / P1
     

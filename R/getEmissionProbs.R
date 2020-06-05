@@ -14,43 +14,43 @@
 #' @include tileEquivalence.R
 #' 
 #' @export
-getEmissionProbs <- function(nrows, ncols, signalFileName, handoverType = 'strength', simulatedData = TRUE) {
+getEmissionProbs <- function(nrows, ncols, signalFileName, sigMin, handoverType = 'strength', simulatedData = TRUE) {
   if(simulatedData) {
-  if(!file.exists(signalFileName))
-    stop("The file with signal values doesn't exist")
-  
-  tileEquiv.dt <- data.table(tileEquivalence(nrows, ncols))
-
-
-  RSS.dt <- fread(signalFileName, sep = ",", header = TRUE, stringsAsFactors = FALSE)
-  nTiles1 <- dim(RSS.dt)[2] - 1
-  nTiles2 <- nrows * ncols
-  if (nTiles1 != nTiles2) {
-    stop("Number of rows and columns provided inconsistent with the signal file")
-  }
+    if(!file.exists(signalFileName))
+      stop("The file with signal values doesn't exist")
     
-  setnames(RSS.dt, c('antennaID', 0:(nTiles1 - 1)))
-  RSS.dt <- melt(RSS.dt, id.vars = 'antennaID', variable.name = 'tile', variable.factor = FALSE, value.name = 'RSS')
-  RSS.dt <- RSS.dt[, antennaID := str_pad(antennaID, max(nchar(antennaID)), pad="0")]
-  
-  if (handoverType == 'strength') {
-    # The radio wave model is expressed in log10. It seems natural to recover the original scale
-    RSS.dt <- RSS.dt[, eventLoc := 10**RSS / sum(10**RSS, na.rm = TRUE), by = 'tile']
+    tileEquiv.dt <- data.table(tileEquivalence(nrows, ncols))
     
-  }  
-  # Make eventLoc=0 if the tile is out the coverage area
-  RSS.dt <- RSS.dt[is.na(eventLoc), eventLoc := 0]
-  RSS.dt[ , tile := as.numeric(tile)]
-  
-  RSS.dt <- RSS.dt[tileEquiv.dt, on = 'tile'][  , tile := NULL]
-
-  RSS.dt <- dcast(RSS.dt, rasterCell ~ antennaID, value.var = 'eventLoc')[, rasterCell := NULL]
-
-  emissionProbs.matrix <- as.matrix(RSS.dt)
-  remove(RSS.dt)
-  dimnames(emissionProbs.matrix)[[1]] <- as.character(1:dim(emissionProbs.matrix)[1])
-  
-  return (emissionProbs.matrix)
+    
+    RSS <- fread(signalFileName, sep = ",", header = TRUE, stringsAsFactors = FALSE)
+    nTiles1 <- dim(RSS)[2] - 1
+    nTiles2 <- nrows * ncols
+    if (nTiles1 != nTiles2) {
+      stop("Number of rows and columns provided inconsistent with the signal file")
+    }
+    
+    setnames(RSS, c('antennaID', 0:(nTiles1 - 1)))
+    RSS <- melt(RSS, id.vars = 'antennaID', variable.name = 'tile', variable.factor = FALSE, value.name = 'RSS')
+    RSS <- RSS[, antennaID := str_pad(antennaID, max(nchar(antennaID)), pad="0")]
+    RSS[ , RSS := ifelse(RSS < sigMin, NA, RSS)]
+    if (handoverType == 'strength') {
+      # The radio wave model is expressed in log10. It seems natural to recover the original scale
+      RSS <- RSS[, eventLoc := 10**RSS / sum(10**RSS, na.rm = TRUE), by = 'tile']
+      
+    }  
+    # Make eventLoc=0 if the tile is out the coverage area
+    RSS <- RSS[is.na(eventLoc), eventLoc := 0]
+    RSS[ , tile := as.numeric(tile)]
+    
+    RSS <- RSS[tileEquiv.dt, on = 'tile'][  , tile := NULL]
+    
+    RSS <- dcast(RSS, rasterCell ~ antennaID, value.var = 'eventLoc')[, rasterCell := NULL]
+    
+    emissionProbs.matrix <- as.matrix(RSS)
+    remove(RSS)
+    dimnames(emissionProbs.matrix)[[1]] <- as.character(1:dim(emissionProbs.matrix)[1])
+    
+    return (emissionProbs.matrix)
   }
   else {
     cat("Can't read real mobile network signal file yet!")
