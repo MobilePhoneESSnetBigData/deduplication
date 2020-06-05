@@ -13,6 +13,6 @@
 #' @export
 getDeviceIDs <- function(events) {
   
-  return (unique(events[,2]))
+  return (unique(events[,2])[[1]])
   
 }

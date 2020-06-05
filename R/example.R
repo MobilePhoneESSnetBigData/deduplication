@@ -3,6 +3,11 @@ library(stringr)
 library(rgeos)
 
 path_root      <- '/home/bogdan/r-projects/deduplication-dev/csv_outputSimulator'
+path_root2     <- '/home/bogdan/r-projects/deduplication-dev/xml_inputSimulator'
+
+
+#0. Read simulation params
+simParams <-readSimulationParams(file.path(path_root2, 'simulation.xml'))
 
 #1. Read grid parameters
 gridParams <-readGridParams(file.path(path_root, 'grid.csv'))
@@ -11,7 +16,7 @@ gridParams <-readGridParams(file.path(path_root, 'grid.csv'))
 events <- readEvents(file.path(path_root, 'AntennaInfo_MNO_MNO1.csv'))
 
 #3. Get a list of detected devices 
-devices <- getDeviceIDs(events.dt)
+devices <- getDeviceIDs(events)
 
 #4. Read antennas file and build a matrix of neighboring antennas
 coverarea <- readCells(file.path(path_root, 'AntennaCells_MNO1.csv'))
@@ -33,8 +38,13 @@ model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
 modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
 
 #9. Build a matrix of pairs of devices to compute duplicity probability
-pairs4dup<-computePairs(connections, nrow(devices), antennaNeigh, P1, limit = 0.05 )
+pairs4dup<-computePairs(connections, length(devices), antennaNeigh, P1, limit = 0.05 )
 
-#10.
-out_duplicity <- compute_duplicity_Bayesian(method = "pairs", deviceIDs,pairs4duplicity = pairs4duplicity, P1 = P1, modeljoin = modeljoin,
+#10.Fit models
+system.time(ll <- fitModels(length(devices), model,connections))
+
+
+#11. Compute duplicity probabilities
+P1 <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
+out_duplicity <- compute_duplicity_Bayesian(method = "pairs", deviceIDs,pairs4duplicity = pairs4duplicity, P1 = P1, modeljoin = modelJ,
                                             logLik = ll, init = TRUE)
