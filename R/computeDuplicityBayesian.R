@@ -14,13 +14,13 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
     #####               COMPUTE LOGLIK BAYESIAN APPROACH (PAIRS)               #####
     # The computation is carried out by brute force with a double nested loop.
     # Refactoring using sparsity and parallelization techniques is needed
-    dupProb.mt <- matrix(0L, ncol = nDevices, nrow = nDevices)
+    dupProb.mt <- matrix(0L, ncol = ndevices, nrow = ndevices)
     
     #P1 <- choose(nDevices, 2)*2*P1/nrow(pairs4duplicity)
     P2 <- 1 - P1                                # priori prob. of 1:1
     alpha <- P2 / P1
     
-    incomp.mt <- matrix(0L, ncol = nDevices, nrow = nDevices) # pairs with no compatibility
+    incomp.mt <- matrix(0L, ncol = ndevices, nrow = ndevices) # pairs with no compatibility
     
     keepCols <- names(pairs4dup)[-which(names(pairs4dup) %in% c("index.x", "index.y"))]
     

@@ -1,6 +1,10 @@
 library(data.table)
 library(stringr)
 library(rgeos)
+library(parallel)
+library(doParallel)
+library(xml2)
+
 
 path_root      <- '/home/bogdan/r-projects/deduplication-dev/csv_outputSimulator'
 path_root2     <- '/home/bogdan/r-projects/deduplication-dev/xml_inputSimulator'
@@ -38,13 +42,12 @@ model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
 modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
 
 #9. Build a matrix of pairs of devices to compute duplicity probability
+P1 <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
 pairs4dup<-computePairs(connections, length(devices), antennaNeigh, P1, limit = 0.05 )
 
 #10.Fit models
 system.time(ll <- fitModels(length(devices), model,connections))
 
-
 #11. Compute duplicity probabilities
-P1 <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-out_duplicity <- compute_duplicity_Bayesian(method = "pairs", deviceIDs,pairs4duplicity = pairs4duplicity, P1 = P1, modeljoin = modelJ,
+out_duplicity <- computeDuplicityBayesian(method = "pairs", devices,pairs4duplicity = pairs4dup, P1 = P1, modeljoin = modelJ,
                                             logLik = ll, init = TRUE)
