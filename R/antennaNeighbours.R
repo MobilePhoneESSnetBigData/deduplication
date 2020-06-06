@@ -9,10 +9,11 @@
 #' @import rgeos
 antennaNeighbours <- function(coverarea) {
   antennas <- coverarea[['antennaID']]
-  y <-data.table(t(combn(antennas,2)))
-  y1<-merge(y, coverarea, by.x='V1', by.y='antennaID', all.x = TRUE, sort = TRUE)
+  #y <-data.table(t(combn(antennas,2)))
+  y <-data.table(expand.grid(antennas,antennas))
+  y1<-merge(y, coverarea, by.x='Var1', by.y='antennaID', all.x = TRUE, sort = TRUE)
   rm(y)
-  y2<-merge(y1, coverarea, by.x='V2', by.y='antennaID', all.x = TRUE, sort = TRUE)
+  y2<-merge(y1, coverarea, by.x='Var2', by.y='antennaID', all.x = TRUE, sort = TRUE)
   rm(y1)
   colnames(y2)<-c('antennaID2', 'antennaID1', 'WKT1', 'WKT2')
   res<-vector(length = nrow(y2))
