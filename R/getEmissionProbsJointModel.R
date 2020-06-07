@@ -15,7 +15,7 @@
 #' @export
 getEmissionProbsJointModel <- function(emissionProbs) {
   
-  emissionProbs <- cbind(emissionProbs, '00' = rep(1, nrow(emissionProbs)))
+  emissionProbs <- cbind(emissionProbs, 'NA' = rep(1, nrow(emissionProbs)))
   jointEmissionProbs <- NULL
   for(j in 1:ncol(emissionProbs)){
     A <- emissionProbs[, j] * emissionProbs
