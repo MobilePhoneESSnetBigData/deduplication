@@ -26,7 +26,6 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
     for (i in 1:nrow(pairs4dup)){
       
       cat(paste0(i, ', '))
-      
       index.x0 <- pairs4dup[i, index.x]
       index.y0 <- pairs4dup[i, index.y]
       

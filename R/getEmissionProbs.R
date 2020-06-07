@@ -31,7 +31,6 @@ getEmissionProbs <- function(nrows, ncols, signalFileName, sigMin, handoverType 
     
     setnames(RSS, c('antennaID', 0:(nTiles1 - 1)))
     RSS <- melt(RSS, id.vars = 'antennaID', variable.name = 'tile', variable.factor = FALSE, value.name = 'RSS')
-    #RSS <- RSS[, antennaID := str_pad(antennaID, max(nchar(antennaID)), pad="0")]
     RSS[ , RSS := ifelse(RSS < sigMin, NA, RSS)]
     if (handoverType == 'strength') {
       # The radio wave model is expressed in log10. It seems natural to recover the original scale
@@ -46,11 +45,11 @@ getEmissionProbs <- function(nrows, ncols, signalFileName, sigMin, handoverType 
     
     RSS <- dcast(RSS, rasterCell ~ antennaID, value.var = 'eventLoc')[, rasterCell := NULL]
     
-    emissionProbs.matrix <- as.matrix(RSS)
+    emissionProbs <- Matrix(data=as.matrix(RSS))
     remove(RSS)
-    dimnames(emissionProbs.matrix)[[1]] <- as.character(1:dim(emissionProbs.matrix)[1])
+    dimnames(emissionProbs)[[1]] <- as.character(1:dim(emissionProbs)[1])
     
-    return (emissionProbs.matrix)
+    return (emissionProbs)
   }
   else {
     cat("Can't read real mobile network signal file yet!")
