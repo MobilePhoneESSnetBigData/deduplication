@@ -26,7 +26,7 @@ getJointModel <- function(nrows, ncols, jointEmissionProbs, initSteady = TRUE) {
   modeljoin <- initparams(modeljoin)        
   modeljoin <- minparams(modeljoin)         
   
-  checkE <- apply(jointEmissionProbs, 2, sum)
+  #checkE <- apply(jointEmissionProbs, 2, sum)
   
   if (initSteady == TRUE)
     modeljoin <-initsteady(modeljoin)
