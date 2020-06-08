@@ -8,9 +8,8 @@ fitModels <-function(ndevices, model, connections, parallel = TRUE) {
     #serial computations
     ll <- vector(length = ndevices)
     for( i in 1:ndevices) {
-     #cat(paste0(i, ", "))
-     modeli <- fit(model, init = TRUE, connections[i,]  )
-     ll[i] <- logLik(modeli, connections[i,])
+      modeli <- fit(model, init = TRUE, connections[i,]  )
+      ll[i] <- logLik(modeli, connections[i,])
     }
     return (ll)
   }

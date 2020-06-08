@@ -2,47 +2,41 @@
 #' @import data.table
 #' @import destim
 #' 
-computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pairs4duplicity,
+computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pairs4dup,
                                        P1 = NULL, Pii = NULL, modeljoin, logLik, init = TRUE){
   
   ndevices <- length(deviceIDs)
-  new_eLoc_rCell.mt <- emissions(modeljoin)
-  checkE <- apply(new_eLoc_rCell.mt, 2, sum)
-  pairs4dup <- copy(pairs4duplicity)
-  ll <- logLik
-  
+  jointEmissions <- emissions(modeljoin)
+  noEvents <- apply(jointEmissions, 2, sum)
+
   if(method == "pairs"){
     dupProb.mt <- matrix(0L, ncol = ndevices, nrow = ndevices)
-    
-    
+    incomp.mt <- matrix(0L, ncol = ndevices, nrow = ndevices) # pairs with no compatibility
+
     P2 <- 1 - P1                                # priori prob. of 1:1
     alpha <- P2 / P1
-    
-    incomp.mt <- matrix(0L, ncol = ndevices, nrow = ndevices) # pairs with no compatibility
-    
+
     keepCols <- names(pairs4dup)[-which(names(pairs4dup) %in% c("index.x", "index.y"))]
-    
-    
+
     for (i in 1:nrow(pairs4dup)){
       
       cat(paste0(i, ', '))
       index.x0 <- pairs4dup[i, index.x]
       index.y0 <- pairs4dup[i, index.y]
       
-      newevents <- sapply(pairs4dup[i, ..keepCols], function(x) ifelse(!is.na(x), which (x == colnames(new_eLoc_rCell.mt)), NA))
+      newevents <- sapply(pairs4dup[i, ..keepCols], function(x) ifelse(!is.na(x), which (x == colnames(jointEmissions)), NA))
       
-      if(all(is.na(newevents)) | any(checkE[newevents[!is.na(newevents)]]==0)){
+      if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
         llij <- Inf
       }
-      if(!all(is.na(newevents)) & all(checkE[newevents[!is.na(newevents)]]!=0)){
-        
+      #if(!all(is.na(newevents)) & all(checkE[newevents[!is.na(newevents)]]!=0)){
+      else {
         fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
         if(inherits(fitTry, "try-error")){
-          
           incomp.mt[index.x0, index.y0] <- 1
           llij <- Inf
-          
-        }else{
+        }
+        else {
           llij <- logLik(modeljoin_ij, newevents)
         }
       }
@@ -50,7 +44,7 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
       dupP0 <- 1 / (1 + (alpha * exp(llij - ll[index.x0] - ll[index.y0])))
       pairs4dup[index.x == index.x0 & index.y == index.y0, dupP := dupP0]
       
-    } # end for i
+    }
     cat(' ok.\n')
     
     
@@ -64,7 +58,7 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
     
   }
   
-  if(method == "1to1"){
+  else if(method == "1to1"){
     ####  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ####
     #####               COMPUTE LOGLIK BAYESIAN APPROACH  (1 to 1)             #####
     
@@ -82,15 +76,13 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
     keepCols <- names(pairs4dup)[-which(names(pairs4dup) %in% c("index.x", "index.y"))]
     
     for (i in 1:nDevices){
-      
       cat(paste0(i, ': '))
-      
       for (j in 1:nDevices){
         if(i < j){
           cat(paste0(j, ', '))
           
           newevents <- sapply(pairs4dup[index.x == i & index.y == j, ..keepCols],
-                              function(x) ifelse(!is.na(x), which (x == colnames(new_eLoc_rCell.mt)), NA))
+                              function(x) ifelse(!is.na(x), which (x == colnames(jointEmissions)), NA))
           
           if(all(is.na(newevents)) | any(checkE[newevents[!is.na(newevents)]]==0)){
             llij <- Inf
@@ -117,16 +109,15 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
                  oneP := oneP0]
       
       cat(".\n")
-      
     } # end for i
     cat(' ok.\n')
-    
     dupProb.dt <- dupProb.dt[, dupP := 1 - oneP]
-    
     output <- list(dupProb.dt = dupProb.dt, incomp.mt = incomp.mt)
-    
+  }
+  else {
+    stop("Method unknown!")
   }
   
   return(output)
-  
 }
+
