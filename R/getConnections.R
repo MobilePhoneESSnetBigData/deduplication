@@ -4,7 +4,7 @@
 #' The number of rows equals the number of devices and the number of columns equals the number of time instants 
 #' when the network events were recorded. 
 #' An element \code{[i,j]} in the returned matrix equals the ID of the antenna where the mobile device with index \code{i} 
-#' in the input vector \param{devices} is conntected at the time instant with index \code{j} in the input vector \param{times}.
+#' in the input vector \code{devices} is conntected at the time instant with index \code{j} in the input vector \code{times}.
 #' 
 #' @param devices A vector with the devices IDs
 #' 
