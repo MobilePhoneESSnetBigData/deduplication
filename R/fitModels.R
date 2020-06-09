@@ -1,5 +1,6 @@
 #' @import parallel
 #' @import doParallel
+#' @import destim
 #' @export
 fitModels <-function(ndevices, model, connections, parallel = TRUE) {
   
