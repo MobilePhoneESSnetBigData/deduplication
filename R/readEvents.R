@@ -3,10 +3,9 @@
 #' @description Reads the network events file. This file can come from the network simulator or it ca be a file with real mobile
 #' network events provided by an MNO.
 #' 
-#' @param eventsFileName The file name with the network events to be used. Depending on the parameter \param{simulatedData} 
+#' @param eventsFileName The file name with the network events to be used. Depending on the parameter \code{simulatedData} 
 #' it could be a csv file coming from the simulation software or from a real MNO. In case the file comes from the simulation software it
-#' should contain following columns:
-#' \code {time, antennaID, eventCode, deviceID, x, y, tile}
+#' should contain following columns: \code{time, antennaID, eventCode, deviceID, x, y, tile}
 #' Only the first 4 columns are used, the rest are ignored
 #' 
 #' @param simulatedData If TRUE it means that the input data are simulated data, otherwise the data come from a real MNO

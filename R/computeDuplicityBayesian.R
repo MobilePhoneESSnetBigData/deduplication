@@ -23,7 +23,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     res<-clusterApplyLB(cl, ichunks, doPair, pairs4dupl, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
     stopCluster(cl)
 
-    dup<-NULL
+    dup <- NULL
     for(i in 1:length(res))
       dup<-rbind(dup, res[[i]])
     rm(res)
@@ -37,9 +37,6 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
   
   else if(method == "1to1"){
     #####               COMPUTE LOGLIK BAYESIAN APPROACH  (1 to 1)             #####
-    
-    # TECHDEBT: The computation is carried out by brute force with a double nested loop.
-    #           Refactoring using sparsity and parallelization techniques is needed
     
     dupProb.dt <- data.table(deviceID = deviceIDs, oneP = rep(0, nDevices))
     ll.matrix <- matrix(0L, nrow = nDevices, ncol = nDevices)
@@ -82,26 +79,22 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       
       ll.aux <- ll.matrix[i, -i]
       oneP0 <- 1 / (1 + (alpha * sum(exp(ll.aux))))
-      dupProb.dt[deviceID == deviceIDs[i],
-                 oneP := oneP0]
+      dupProb.dt[deviceID == deviceIDs[i], oneP := oneP0]
       
       cat(".\n")
     } # end for i
     cat(' ok.\n')
     dupProb.dt <- dupProb.dt[, dupP := 1 - oneP]
-    output <- list(dupProb.dt = dupProb.dt, incomp.mt = incomp.mt)
   }
   else {
     stop("Method unknown!")
   }
   
-  allPairs<-data.table(t(combn(c(1:ndevices), 2)))
-  setnames(allPairs, c("index.x", "index.y"))
-  allPairs1 <- copy(allPairs)
-  setnames(allPairs, c("index.x", "index.y"), c("index.y", "index.x"))
-  setcolorder(allPairs, names(allPairs1))
-  allPairs.dt <- rbindlist(list(allPairs1, allPairs))[, deviceID1 := deviceIDs[index.x]][, deviceID2 := deviceIDs[index.y]]
-  allDupProb.dt <- merge(allPairs.dt[, .(deviceID1, deviceID2)], dupProb.dt, all.x = TRUE
+  allPairs<-expand.grid(devices, devices)
+  row_to_keep<-allPairs[,1]!=allPairs[,2]
+  allPairs<-as.data.table(allPairs[row_to_keep,])
+  setnames(allPairs, c(c("deviceID1", "deviceID2")))
+  allDupProb.dt <- merge(allPairs[, .(deviceID1, deviceID2)], dupProb.dt, all.x = TRUE
                          , by = c("deviceID1", "deviceID2"))
   allDupProb.dt[is.na(dupP), dupP := 0]
   
