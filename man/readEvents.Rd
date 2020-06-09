@@ -7,7 +7,7 @@
 readEvents(eventsFileName, simulatedData = TRUE)
 }
 \arguments{
-\item{eventsFileName}{The file name with the network events to be used. Depending on the parameter \param{simulatedData} 
+\item{eventsFileName}{The file name with the network events to be used. Depending on the parameter \code{simulatedData} 
 it could be a csv file coming from the simulation software or from a real MNO. In case the file comes from the simulation software it
 should contain following columns:
 \code {time, antennaID, eventCode, deviceID, x, y, tile}
