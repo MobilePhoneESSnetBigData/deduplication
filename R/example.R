@@ -4,10 +4,8 @@ library(rgeos)
 library(parallel)
 library(doParallel)
 library(xml2)
-
-
-path_root      <- '/home/bogdan/r-projects/deduplication-dev/csv_outputSimulator'
-path_root2     <- '/home/bogdan/r-projects/deduplication-dev/xml_inputSimulator'
+library(Matrix)
+library(destim)
 
 
 path_root3      <- '/home/bogdan/r-projects/deduplication-dev/outputsimulator'
@@ -52,5 +50,4 @@ pairs4dup<-computePairs(connections, length(devices), antennaNeigh, P1, limit = 
 ll <- fitModels(length(devices), model,connections)
 
 #11. Compute duplicity probabilities
-out_duplicity <- computeDuplicityBayesian(method = "pairs", devices, pairs4duplicity = pairs4dup, P1 = P1, modeljoin = modelJ,
-                                            logLik = ll, init = TRUE)
+out_duplicity <- computeDuplicityBayesian("pairs", devices, pairs4dup, modelJ, ll, P1)

@@ -11,6 +11,7 @@
 #' 
 #' @import data.table
 #' @import stringr
+#' @import Matrix
 #' @include tileEquivalence.R
 #' 
 #' @export

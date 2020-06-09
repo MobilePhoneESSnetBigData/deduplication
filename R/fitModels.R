@@ -1,6 +1,5 @@
 #' @import parallel
 #' @import doParallel
-#' @import foreach
 
 fitModels <-function(ndevices, model, connections, parallel = TRUE) {
   

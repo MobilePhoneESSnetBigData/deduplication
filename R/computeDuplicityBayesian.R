@@ -1,65 +1,40 @@
 
 #' @import data.table
 #' @import destim
-#' 
-computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pairs4dup,
-                                       P1 = NULL, Pii = NULL, modeljoin, logLik, init = TRUE){
+#' @import parallel
+#' @import doParallel
+computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, llik, P1 = NULL, Pii = NULL, init = TRUE){
   
   ndevices <- length(deviceIDs)
   jointEmissions <- emissions(modeljoin)
   noEvents <- apply(jointEmissions, 2, sum)
-
+  colNamesEmissions <- colnames(jointEmissions)
+  keepCols <- names(pairs4dupl)[-which(names(pairs4dupl) %in% c("index.x", "index.y"))]
   if(method == "pairs"){
-    dupProb.mt <- matrix(0L, ncol = ndevices, nrow = ndevices)
-    incomp.mt <- matrix(0L, ncol = ndevices, nrow = ndevices) # pairs with no compatibility
-
-    P2 <- 1 - P1                                # priori prob. of 1:1
+    P2 <- 1 - P1                  
     alpha <- P2 / P1
+    cl <- makeCluster(detectCores())
+    registerDoParallel()
+    ichunks<-clusterSplit(cl,1:nrow(pairs4dupl))
+    clusterEvalQ(cl, library("destim"))
+    clusterEvalQ(cl, library("data.table"))
+    clusterExport(cl, c('pairs4dupl', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
+    res<-clusterApplyLB(cl, ichunks, doPair, pairs4dupl, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
+    stopCluster(cl)
 
-    keepCols <- names(pairs4dup)[-which(names(pairs4dup) %in% c("index.x", "index.y"))]
-
-    for (i in 1:nrow(pairs4dup)){
-      
-      cat(paste0(i, ', '))
-      index.x0 <- pairs4dup[i, index.x]
-      index.y0 <- pairs4dup[i, index.y]
-      
-      newevents <- sapply(pairs4dup[i, ..keepCols], function(x) ifelse(!is.na(x), which (x == colnames(jointEmissions)), NA))
-      
-      if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
-        llij <- Inf
-      }
-      #if(!all(is.na(newevents)) & all(checkE[newevents[!is.na(newevents)]]!=0)){
-      else {
-        fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
-        if(inherits(fitTry, "try-error")){
-          incomp.mt[index.x0, index.y0] <- 1
-          llij <- Inf
-        }
-        else {
-          llij <- logLik(modeljoin_ij, newevents)
-        }
-      }
-      
-      dupP0 <- 1 / (1 + (alpha * exp(llij - ll[index.x0] - ll[index.y0])))
-      pairs4dup[index.x == index.x0 & index.y == index.y0, dupP := dupP0]
-      
-    }
-    cat(' ok.\n')
+    dup<-NULL
+    for(i in 1:length(res))
+      dup<-rbind(dup, res[[i]])
+    rm(res)
     
-    
-    pairs4dup[, deviceID1 := deviceIDs[index.x]][, deviceID2 := deviceIDs[index.y]]
-    dupProb.dt1 <- copy(pairs4dup[, .(deviceID1, deviceID2, dupP)])
-    setnames(pairs4dup, c("deviceID1", "deviceID2"), c("deviceID2", "deviceID1"))
-    dupProb.dt2 <- copy(pairs4dup[, .(deviceID1, deviceID2, dupP)])
+    dup[, deviceID1 := deviceIDs[index.x]][, deviceID2 := deviceIDs[index.y]]
+    dupProb.dt1 <- copy(dup[, .(deviceID1, deviceID2, dupP)])
+    setnames(dup, c("deviceID1", "deviceID2"), c("deviceID2", "deviceID1"))
+    dupProb.dt2 <- copy(dup[, .(deviceID1, deviceID2, dupP)])
     dupProb.dt <- rbindlist(list(dupProb.dt1, dupProb.dt2))
-    
-    output <- list(dupProb.dt = dupProb.dt, incomp.mt = incomp.mt)
-    
   }
   
   else if(method == "1to1"){
-    ####  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ####
     #####               COMPUTE LOGLIK BAYESIAN APPROACH  (1 to 1)             #####
     
     # TECHDEBT: The computation is carried out by brute force with a double nested loop.
@@ -84,10 +59,11 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
           newevents <- sapply(pairs4dup[index.x == i & index.y == j, ..keepCols],
                               function(x) ifelse(!is.na(x), which (x == colnames(jointEmissions)), NA))
           
-          if(all(is.na(newevents)) | any(checkE[newevents[!is.na(newevents)]]==0)){
+          if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
             llij <- Inf
           }
-          if(!all(is.na(newevents)) & all(checkE[newevents[!is.na(newevents)]]!=0)){
+          #else {
+          if(!all(is.na(newevents)) & all(noEvents[newevents[!is.na(newevents)]]!=0)){
             
             fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
             if(inherits(fitTry, "try-error")){
@@ -118,6 +94,43 @@ computeDuplicityBayesian <- function(method = c("pairs", "1to1"), deviceIDs, pai
     stop("Method unknown!")
   }
   
-  return(output)
+  allPairs<-data.table(t(combn(c(1:ndevices), 2)))
+  setnames(allPairs, c("index.x", "index.y"))
+  allPairs1 <- copy(allPairs)
+  setnames(allPairs, c("index.x", "index.y"), c("index.y", "index.x"))
+  setcolorder(allPairs, names(allPairs1))
+  allPairs.dt <- rbindlist(list(allPairs1, allPairs))[, deviceID1 := deviceIDs[index.x]][, deviceID2 := deviceIDs[index.y]]
+  allDupProb.dt <- merge(allPairs.dt[, .(deviceID1, deviceID2)], dupProb.dt, all.x = TRUE
+                         , by = c("deviceID1", "deviceID2"))
+  allDupProb.dt[is.na(dupP), dupP := 0]
+  
+  
+  dupP.dt <- copy(allDupProb.dt)[, max(dupP), by = "deviceID1"]
+  setnames(dupP.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))
+  
+  return(dupP.dt)
 }
 
+
+doPair<-function(ichunks, pairs, keepcols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) {
+  
+  localdup <- copy(pairs[ichunks, 1:2])
+  for (i in 1:length(ichunks)){
+    index.x0 <- localdup[i, index.x]
+    index.y0 <- localdup[i, index.y]
+    newevents <- sapply(pairs[ichunks[[i]], ..keepcols], function(x) ifelse(!is.na(x), which (x == colNamesEmissions), NA))
+    if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
+      llij <- Inf
+    } else {
+      fitTry <- try( modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
+      if(inherits(fitTry, "try-error")) {
+        llij <- Inf
+      } else {
+        llij <- logLik(modeljoin_ij, newevents)
+      }
+    }
+    dupP0 <- 1 / (1 + (alpha * exp(llij - llik[index.x0] - llik[index.y0])))
+    localdup[index.x == index.x0 & index.y == index.y0, dupP := dupP0]
+  }
+  return(localdup)
+}
