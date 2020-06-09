@@ -4,7 +4,7 @@
 \alias{getEmissionProbsJointModel}
 \title{Builds the emission probabilities for the joint HMM.}
 \usage{
-getEmissionProbsJointModel(emisionProbs)
+getEmissionProbsJointModel(emissionProbs)
 }
 \value{
 Returns a matrix with the joint emission probabilities for the HMM. The number of rows equals the number of

@@ -1,6 +1,6 @@
 #' @import parallel
 #' @import doParallel
-
+#' @export
 fitModels <-function(ndevices, model, connections, parallel = TRUE) {
   
   if(parallel == FALSE) {

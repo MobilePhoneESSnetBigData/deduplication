@@ -4,7 +4,14 @@
 \alias{getEmissionProbs}
 \title{Builds the emission probabilities for the HMM used to estimate the prosterior location probabilitities.}
 \usage{
-getEmissionProbs(nrows, ncols, signalFileName, handoverType = "strength")
+getEmissionProbs(
+  nrows,
+  ncols,
+  signalFileName,
+  sigMin,
+  handoverType = "strength",
+  simulatedData = TRUE
+)
 }
 \value{
 Returns a matrix with the emmission probabilitiews for the HMM. The number of rows equals the numberof

@@ -1,4 +1,4 @@
-
+#' @export
 aprioriDuplicityProb <- function(prob2Devices, ndevices) {
   
   n_ext <- round((1 - prob2Devices) * ndevices)

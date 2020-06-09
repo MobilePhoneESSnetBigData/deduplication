@@ -1,25 +1,7 @@
 
 #' @import data.table
 #' @import rgeos
-#' 
-# readCells <- function (cellsFileName) {
-#   con = file(cellsFileName, "r")
-#   while ( TRUE ) {
-#     line = readLines(con, n = 1)
-#     if ( length(line) == 0 ) {
-#       break
-#     }
-#     str = str_split_fixed(line, pattern = ',', n = 2)
-#     antennaId = str[1,1]
-#     cell <- str[1,2]
-#     print(antennaId)
-#   }
-#   close(con)
-# }
-#file<-'/home/bogdan/r-projects/vis-david/dataset5/AntennaCells_Vodafone.csv'
-#file<-'/home/bogdan/r-projects/vis-david2/dataset1b/AntennaCells_Vodafone.csv'
-
-
+#' @export
 readCells <- function (cellsFileName, simulatedData = TRUE) {
   if( simulatedData) {
     coverArea <- fread(cellsFileName, sep ='\n', header = TRUE, stringsAsFactors = FALSE)

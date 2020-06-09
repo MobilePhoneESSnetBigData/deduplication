@@ -1,6 +1,6 @@
 
 
-
+#' @export
 computePairs <- function(connections, ndevices, antennaNeighbors, P1, limit) {
 
   connections[is.na(connections)] <- "NA"

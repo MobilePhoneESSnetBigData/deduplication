@@ -3,6 +3,7 @@
 #' @import destim
 #' @import parallel
 #' @import doParallel
+#' @export
 computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, llik, P1 = NULL, Pii = NULL, init = TRUE){
   
   ndevices <- length(deviceIDs)

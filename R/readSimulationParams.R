@@ -1,8 +1,6 @@
 
 #' @import xml2
-#' 
-#' 
-#' 
+#' @export
 readSimulationParams <- function(simFileName) {
   
   simulation.xml  <- as_list(read_xml(simFileName))

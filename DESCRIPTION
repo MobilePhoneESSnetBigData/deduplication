@@ -14,3 +14,21 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Collate: 
+    'antennaNeighbours.R'
+    'aprioriDuplicityProb.R'
+    'computeDuplicityBayesian.R'
+    'computePairs.R'
+    'example.R'
+    'fitModels.R'
+    'getConnections.R'
+    'getDeviceIDs.R'
+    'tileEquivalence.R'
+    'getEmissionProbs.R'
+    'getEmissionProbsJointModel.R'
+    'getGenericModel.R'
+    'getJointModel.R'
+    'readCells.R'
+    'readEvents.R'
+    'readGridParams.R'
+    'readSimulationParams.R'

@@ -20,7 +20,7 @@ gridParams <-readGridParams(file.path(path_root3, 'grid.csv'))
 #2.Read network events
 events <- readEvents(file.path(path_root3, 'AntennaInfo_MNO_MNO1.csv'))
 
-#3. Get a list of detected devices 
+#3. Get a list of detected devices
 devices <- getDeviceIDs(events)
 
 #4. Read antennas file and build a matrix of neighboring antennas

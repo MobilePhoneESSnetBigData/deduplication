@@ -1,15 +1,8 @@
-
-
-
-
-
-
-
 #' @import data.table
 #' @import rgeos
+#' @export
 antennaNeighbours <- function(coverarea) {
   antennas <- coverarea[['antennaID']]
-  #y <-data.table(t(combn(antennas,2)))
   y <-data.table(expand.grid(antennas,antennas))
   y1<-merge(y, coverarea, by.x='Var1', by.y='antennaID', all.x = TRUE, sort = TRUE)
   rm(y)
@@ -23,7 +16,6 @@ antennaNeighbours <- function(coverarea) {
     res[i]<-gIntersects(p1,p2)
   }
   y2[,'neighbour']<-res
-  
   y3<-y2[neighbour==TRUE, .(antennaID1, antennaID2)]
   rm(y2)
   y3[ , nei := do.call(paste, c(.SD, sep = "-"))]
