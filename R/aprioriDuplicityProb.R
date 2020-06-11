@@ -5,3 +5,5 @@ aprioriDuplicityProb <- function(prob2Devices, ndevices) {
   P1 <- (2*(ndevices-n_ext))/(ndevices*(ndevices - 1))
   return (P1)
 }
+
+

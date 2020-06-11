@@ -40,15 +40,12 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
   }
   
   else if(method == "1to1"){
-    #####               COMPUTE LOGLIK BAYESIAN APPROACH  (1 to 1)             #####
-    
+
     dupProb.dt <- data.table(deviceID = deviceIDs, oneP = rep(0, nDevices))
     ll.matrix <- matrix(0L, nrow = nDevices, ncol = nDevices)
     
     Pij <- (1 - Pii) / (nDevices - 1)    # priori prob. of duplicity 2:1
     alpha <- Pij / Pii
-    
-    incomp.mt <- matrix(0L, ncol = nDevices, nrow = nDevices) # pairs with no compatibility
     
     keepCols <- names(pairs4dup)[-which(names(pairs4dup) %in% c("index.x", "index.y"))]
     
@@ -57,7 +54,6 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       for (j in 1:nDevices){
         if(i < j){
           cat(paste0(j, ', '))
-          
           newevents <- sapply(pairs4dup[index.x == i & index.y == j, ..keepCols],
                               function(x) ifelse(!is.na(x), which (x == colnames(jointEmissions)), NA))
           
@@ -69,7 +65,6 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
             
             fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
             if(inherits(fitTry, "try-error")){
-              incomp.mt[i, j] <- 1
               llij <- Inf
             }else{
               llij <- logLik(modeljoin_ij, newevents)
@@ -84,10 +79,8 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       ll.aux <- ll.matrix[i, -i]
       oneP0 <- 1 / (1 + (alpha * sum(exp(ll.aux))))
       dupProb.dt[deviceID == deviceIDs[i], oneP := oneP0]
-      
       cat(".\n")
     } # end for i
-    cat(' ok.\n')
     dupProb.dt <- dupProb.dt[, dupP := 1 - oneP]
   }
   else {
