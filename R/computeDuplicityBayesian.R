@@ -14,12 +14,15 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
   if(method == "pairs"){
     P2 <- 1 - P1                  
     alpha <- P2 / P1
-    cl <- makeCluster(detectCores())
-    registerDoParallel()
+    if ( Sys.info()[['sysname']] == 'Linux' | Sys.info()[['sysname']] == 'Darwin') {
+      cl <- makeCluster(detectCores(), type = "FORK")
+    } else {
+      cl <- makeCluster(detectCores())
+      clusterEvalQ(cl, library("destim"))
+      clusterEvalQ(cl, library("data.table"))
+      clusterExport(cl, c('pairs4dupl', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
+    }
     ichunks<-clusterSplit(cl,1:nrow(pairs4dupl))
-    clusterEvalQ(cl, library("destim"))
-    clusterEvalQ(cl, library("data.table"))
-    clusterExport(cl, c('pairs4dupl', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
     res<-clusterApplyLB(cl, ichunks, doPair, pairs4dupl, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
     stopCluster(cl)
 
@@ -29,10 +32,11 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     rm(res)
     
     dup[, deviceID1 := deviceIDs[index.x]][, deviceID2 := deviceIDs[index.y]]
-    dupProb.dt1 <- copy(dup[, .(deviceID1, deviceID2, dupP)])
-    setnames(dup, c("deviceID1", "deviceID2"), c("deviceID2", "deviceID1"))
-    dupProb.dt2 <- copy(dup[, .(deviceID1, deviceID2, dupP)])
-    dupProb.dt <- rbindlist(list(dupProb.dt1, dupProb.dt2))
+    dup2<-copy(dup)
+    dup2[, deviceID1 := deviceIDs[index.y]][, deviceID2 := deviceIDs[index.x]]
+    dup<-dup[,.(deviceID1, deviceID2, dupP)]        
+    dup2<-dup2[,.(deviceID1, deviceID2, dupP)]        
+    dupProb.dt <- rbindlist(list(dup, dup2))
   }
   
   else if(method == "1to1"){
@@ -91,13 +95,12 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
   }
   
   allPairs<-expand.grid(devices, devices)
-  row_to_keep<-allPairs[,1]!=allPairs[,2]
-  allPairs<-as.data.table(allPairs[row_to_keep,])
+  rows_to_keep<-allPairs[,1]!=allPairs[,2]
+  allPairs<-as.data.table(allPairs[rows_to_keep,])
   setnames(allPairs, c(c("deviceID1", "deviceID2")))
   allDupProb.dt <- merge(allPairs[, .(deviceID1, deviceID2)], dupProb.dt, all.x = TRUE
                          , by = c("deviceID1", "deviceID2"))
   allDupProb.dt[is.na(dupP), dupP := 0]
-  
   
   dupP.dt <- copy(allDupProb.dt)[, max(dupP), by = "deviceID1"]
   setnames(dupP.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))

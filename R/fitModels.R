@@ -14,11 +14,14 @@ fitModels <-function(ndevices, model, connections, parallel = TRUE) {
     return (ll)
   }
   else if( parallel == TRUE) {
-    cl <- makeCluster(detectCores())
-    registerDoParallel()
-    ichunks<-clusterSplit(cl,1:ndevices)
+    if ( Sys.info()[['sysname']] == 'Linux' | Sys.info()[['sysname']] == 'Darwin') {
+      cl <- makeCluster(detectCores(), type = "FORK")
+    } else {
+      cl <- makeCluster(detectCores())
+    }
     clusterEvalQ(cl, library("destim"))
     clusterExport(cl, c('connections', 'model'))
+    ichunks<-clusterSplit(cl,1:ndevices)
     res<-clusterApplyLB(cl, ichunks, doFit, model, connections) 
     stopCluster(cl)
     return (unlist(res))
@@ -36,4 +39,3 @@ doFit <-function(index, model, connections) {
   }
   return (local_ll)
 }
-
