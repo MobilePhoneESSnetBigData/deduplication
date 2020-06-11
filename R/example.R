@@ -1,13 +1,13 @@
-# # library(data.table)
-# # library(stringr)
-# # library(rgeos)
-# # library(parallel)
-# # library(doParallel)
-# # library(xml2)
-# # library(Matrix)
-# # library(destim)
-# # 
-# # 
+# library(data.table)
+# library(stringr)
+# library(rgeos)
+# library(parallel)
+# library(doParallel)
+# library(xml2)
+# library(Matrix)
+# library(destim)
+# 
+# 
 # path_root3      <- '/home/bogdan/r-projects/deduplication-dev/outputsimulator'
 # path_root4     <- '/home/bogdan/r-projects/deduplication-dev/inputSimulator'
 # 
@@ -44,10 +44,13 @@
 # 
 # #9. Build a matrix of pairs of devices to compute duplicity probability
 # P1 <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-# pairs4dup<-computePairs(connections, length(devices), antennaNeigh, P1, limit = 0.05 )
+# Pii <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
+# pairs4dup<-computePairs(connections, length(devices), antennaNeigh, P1, limit = 0.05, one = TRUE )
 # 
 # #10.Fit models
 # ll <- fitModels(length(devices), model,connections)
 # 
 # #11. Compute duplicity probabilities
 # out_duplicity <- computeDuplicityBayesian("pairs", devices, pairs4dup, modelJ, ll, P1)
+# out_duplicity2 <- computeDuplicityBayesian("1to1", devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Pii)
+# 

@@ -37,67 +37,60 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     dup<-dup[,.(deviceID1, deviceID2, dupP)]        
     dup2<-dup2[,.(deviceID1, deviceID2, dupP)]        
     dupProb.dt <- rbindlist(list(dup, dup2))
+
+    allPairs<-expand.grid(devices, devices)
+    rows_to_keep<-allPairs[,1]!=allPairs[,2]
+    allPairs<-as.data.table(allPairs[rows_to_keep,])
+    setnames(allPairs, c(c("deviceID1", "deviceID2")))
+    allDupProb.dt <- merge(allPairs[, .(deviceID1, deviceID2)], dupProb.dt, all.x = TRUE
+                           , by = c("deviceID1", "deviceID2"))
+    allDupProb.dt[is.na(dupP), dupP := 0]
+    
+    dupP.dt <- copy(allDupProb.dt)[, max(dupP), by = "deviceID1"]
+    setnames(dupP.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))
   }
   
   else if(method == "1to1"){
-
-    dupProb.dt <- data.table(deviceID = deviceIDs, oneP = rep(0, nDevices))
-    ll.matrix <- matrix(0L, nrow = nDevices, ncol = nDevices)
+    dupProb.dt <- data.table(deviceID = deviceIDs, oneP = rep(0, ndevices))
+    ll.matrix <- matrix(0L, nrow = ndevices, ncol = ndevices)
     
-    Pij <- (1 - Pii) / (nDevices - 1)    # priori prob. of duplicity 2:1
+    Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
     alpha <- Pij / Pii
     
-    keepCols <- names(pairs4dup)[-which(names(pairs4dup) %in% c("index.x", "index.y"))]
-    
-    for (i in 1:nDevices){
+    for (i in 1:ndevices){
       cat(paste0(i, ': '))
-      for (j in 1:nDevices){
+      for (j in 1:ndevices){
         if(i < j){
           cat(paste0(j, ', '))
-          newevents <- sapply(pairs4dup[index.x == i & index.y == j, ..keepCols],
-                              function(x) ifelse(!is.na(x), which (x == colnames(jointEmissions)), NA))
+          newevents <- sapply(pairs4dupl[index.x == i & index.y == j, ..keepCols],
+                              function(x) ifelse(!is.na(x), which (x == colNamesEmissions), NA))
           
           if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
             llij <- Inf
-          }
-          #else {
-          if(!all(is.na(newevents)) & all(noEvents[newevents[!is.na(newevents)]]!=0)){
-            
-            fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
-            if(inherits(fitTry, "try-error")){
-              llij <- Inf
-            }else{
-              llij <- logLik(modeljoin_ij, newevents)
-            }
+          } else {
+              if(!all(is.na(newevents)) & all(noEvents[newevents[!is.na(newevents)]]!=0)){
+                fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
+                if(inherits(fitTry, "try-error")){
+                  llij <- Inf
+                } else {
+                  llij <- logLik(modeljoin_ij, newevents)
+                }
+              }
           }
           ll.aux_ij <- (ll[i]+ll[j]) - llij
           ll.matrix[i, j] <- ll.aux_ij
           ll.matrix[j, i] <- ll.aux_ij
         } # end if i<j
       } #end for j
-      
       ll.aux <- ll.matrix[i, -i]
       oneP0 <- 1 / (1 + (alpha * sum(exp(ll.aux))))
       dupProb.dt[deviceID == deviceIDs[i], oneP := oneP0]
       cat(".\n")
     } # end for i
-    dupProb.dt <- dupProb.dt[, dupP := 1 - oneP]
-  }
-  else {
+    dupP.dt <- dupProb.dt[, dupP := 1 - oneP][,.(deviceID, dupP)]
+  } else {
     stop("Method unknown!")
   }
-  
-  allPairs<-expand.grid(devices, devices)
-  rows_to_keep<-allPairs[,1]!=allPairs[,2]
-  allPairs<-as.data.table(allPairs[rows_to_keep,])
-  setnames(allPairs, c(c("deviceID1", "deviceID2")))
-  allDupProb.dt <- merge(allPairs[, .(deviceID1, deviceID2)], dupProb.dt, all.x = TRUE
-                         , by = c("deviceID1", "deviceID2"))
-  allDupProb.dt[is.na(dupP), dupP := 0]
-  
-  dupP.dt <- copy(allDupProb.dt)[, max(dupP), by = "deviceID1"]
-  setnames(dupP.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))
-  
   return(dupP.dt)
 }
 

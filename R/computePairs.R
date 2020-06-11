@@ -1,7 +1,7 @@
 
 
 #' @export
-computePairs <- function(connections, ndevices, antennaNeighbors, P1, limit) {
+computePairs <- function(connections, ndevices, antennaNeighbors, P1, limit, one = FALSE) {
 
   connections[is.na(connections)] <- "NA"
   connections <- data.table(connections)[, index := .I]
@@ -24,20 +24,23 @@ computePairs <- function(connections, ndevices, antennaNeighbors, P1, limit) {
   allPairs_connections_concat.dt <- allPairs_connections.dt[, lapply(.SD, paste0, collapse="-"), by = c("index.x", "index.y")]
   
   allPairs_connections_concat.dt[allPairs_connections_concat.dt == "NA-NA"] <- NA
+  if(!one) {
+    keepCols <- names(allPairs_connections_concat.dt)[-which(names(allPairs_connections_concat.dt) %in% c("index.x", "index.y"))]
+    
+    number <- sapply(allPairs_connections_concat.dt[, ..keepCols],function(x){ x %in% antennaNeighbors[,nei]})
+    
+    allPairs_connections_concat.dt[, number := apply(number, 1, sum)]
+    rm(number)
+    
+    allPairs_connections_concat.dt[, num_NA := Reduce(`+`, lapply(.SD,function(x) is.na(x))), .SDcols = keepCols]
+    allPairs_connections_concat.dt[, final_num := number + num_NA]
+    
+    
+    pairs4duplicity <- copy(allPairs_connections_concat.dt)[final_num >= quantile(c(0:length(keepCols)), probs = 1-P1-limit)][, c( "index.x", "index.y", keepCols), with = FALSE]
+    rm(allPairs_connections_concat.dt)   
+    return (pairs4duplicity)
+  } else {
+    return (allPairs_connections_concat.dt)
+  }
   
-  keepCols <- names(allPairs_connections_concat.dt)[-which(names(allPairs_connections_concat.dt) %in% c("index.x", "index.y"))]
-  
- 
-  number <- sapply(allPairs_connections_concat.dt[, ..keepCols],function(x){ x %in% antennaNeighbors[,nei]})
-  
-  allPairs_connections_concat.dt[, number := apply(number, 1, sum)]
-  rm(number)
-  
-  allPairs_connections_concat.dt[, num_NA := Reduce(`+`, lapply(.SD,function(x) is.na(x))), .SDcols = keepCols]
-  allPairs_connections_concat.dt[, final_num := number + num_NA]
-  
-  
-  pairs4duplicity <- copy(allPairs_connections_concat.dt)[final_num >= quantile(c(0:length(keepCols)), probs = 1-P1-limit)][, c( "index.x", "index.y", keepCols), with = FALSE]
-  rm(allPairs_connections_concat.dt)   
-  return (pairs4duplicity)
 }
