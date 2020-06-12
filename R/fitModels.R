@@ -18,9 +18,9 @@ fitModels <-function(ndevices, model, connections, parallel = TRUE) {
       cl <- makeCluster(detectCores(), type = "FORK")
     } else {
       cl <- makeCluster(detectCores())
+      clusterEvalQ(cl, library("destim"))
+      clusterExport(cl, c('connections', 'model'))
     }
-    clusterEvalQ(cl, library("destim"))
-    clusterExport(cl, c('connections', 'model'))
     ichunks<-clusterSplit(cl,1:ndevices)
     res<-clusterApplyLB(cl, ichunks, doFit, model, connections) 
     stopCluster(cl)

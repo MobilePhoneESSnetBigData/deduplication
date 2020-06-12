@@ -51,49 +51,76 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
   }
   
   else if(method == "1to1"){
-    dupProb.dt <- data.table(deviceID = deviceIDs, oneP = rep(0, ndevices))
-    ll.matrix <- matrix(0L, nrow = ndevices, ncol = ndevices)
-    
+    dupP.dt <- data.table(deviceID = deviceIDs, dupP = rep(0, ndevices))
     Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
     alpha <- Pij / Pii
     
-    for (i in 1:ndevices){
-      cat(paste0(i, ': '))
-      for (j in 1:ndevices){
-        if(i < j){
-          cat(paste0(j, ', '))
-          newevents <- sapply(pairs4dupl[index.x == i & index.y == j, ..keepCols],
-                              function(x) ifelse(!is.na(x), which (x == colNamesEmissions), NA))
-          
-          if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
-            llij <- Inf
-          } else {
-              if(!all(is.na(newevents)) & all(noEvents[newevents[!is.na(newevents)]]!=0)){
-                fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
-                if(inherits(fitTry, "try-error")){
-                  llij <- Inf
-                } else {
-                  llij <- logLik(modeljoin_ij, newevents)
-                }
-              }
-          }
-          ll.aux_ij <- (ll[i]+ll[j]) - llij
-          ll.matrix[i, j] <- ll.aux_ij
-          ll.matrix[j, i] <- ll.aux_ij
-        } # end if i<j
-      } #end for j
-      ll.aux <- ll.matrix[i, -i]
+    if ( Sys.info()[['sysname']] == 'Linux' | Sys.info()[['sysname']] == 'Darwin') {
+      cl <- makeCluster(detectCores(), type = "FORK")
+    } else {
+      cl <- makeCluster(detectCores())
+      clusterEvalQ(cl, library("destim"))
+      clusterEvalQ(cl, library("data.table"))
+      clusterExport(cl, c('pairs4dupl', 'devices', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
+    }
+     ichunks<-clusterSplit(cl,1:ndevices)
+     res<-clusterApplyLB(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
+     stopCluster(cl)
+
+    matsim <- NULL
+     for(i in 1:length(res))
+       matsim<-rbind(matsim, res[[i]])
+    rm(res)
+    matsim[lower.tri(matsim)]<-t(matsim)[lower.tri(matsim)]
+    
+    for(i in 1:ndevices) {
+      ll.aux <- matsim[i, -i]
       oneP0 <- 1 / (1 + (alpha * sum(exp(ll.aux))))
-      dupProb.dt[deviceID == deviceIDs[i], oneP := oneP0]
-      cat(".\n")
-    } # end for i
-    dupP.dt <- dupProb.dt[, dupP := 1 - oneP][,.(deviceID, dupP)]
+      dupP.dt[deviceID == devices[i], dupP := 1-oneP0]
+    }
   } else {
     stop("Method unknown!")
   }
   return(dupP.dt)
 }
 
+
+do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) {
+  ndev<-length(devices)  
+  ll.matrix <- matrix(0L, nrow = length(ichunks), ncol = ndev)
+  
+  for(i in 1:(length(ichunks)-1)) {
+    cat(paste0(i, ', '))
+    for (j in (ichunks[[i]]+1):ndev){
+      #cat(paste0(j, ', '))
+      newevents <- sapply(pairs[index.x == ichunks[[i]] & index.y == j, ..keepCols],
+                          function(x) ifelse(!is.na(x), which (x == colNamesEmissions), NA))
+
+      if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
+        llij <- Inf
+      } else {
+        if(!all(is.na(newevents)) & all(noEvents[newevents[!is.na(newevents)]]!=0)){
+          fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
+          if(inherits(fitTry, "try-error")){
+            llij <- Inf
+          } else {
+            llij <- logLik(modeljoin_ij, newevents)
+          }
+        }
+      }
+        
+      ll.aux_ij <- (llik[ichunks[[i]]]+llik[j]) - llij
+      ll.matrix[i, j] <- ll.aux_ij
+      #ll.matrix[j, i] <- ll.aux_ij
+    } #end for j
+    #ll.aux <- ll.matrix[i, -i]
+    #oneP0 <- 1 / (1 + (alpha * sum(exp(ll.aux))))
+    #localdup[deviceID == devices[ichunks[i]], dupP := 1-oneP0]
+    cat(".\n")
+  }
+  #return(localdup)
+  return(ll.matrix)
+}
 
 doPair<-function(ichunks, pairs, keepcols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) {
   
