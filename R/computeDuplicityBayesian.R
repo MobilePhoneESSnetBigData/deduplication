@@ -3,6 +3,7 @@
 #' @import destim
 #' @import parallel
 #' @import doParallel
+#' @include splitReverse.R
 #' @export
 computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, llik, P1 = NULL, Pii = NULL, init = TRUE){
   
@@ -25,7 +26,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     ichunks<-clusterSplit(cl,1:nrow(pairs4dupl))
     res<-clusterApplyLB(cl, ichunks, doPair, pairs4dupl, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
     stopCluster(cl)
-
+    
     dup <- NULL
     for(i in 1:length(res))
       dup<-rbind(dup, res[[i]])
@@ -37,7 +38,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     dup<-dup[,.(deviceID1, deviceID2, dupP)]        
     dup2<-dup2[,.(deviceID1, deviceID2, dupP)]        
     dupProb.dt <- rbindlist(list(dup, dup2))
-
+    
     allPairs<-expand.grid(devices, devices)
     rows_to_keep<-allPairs[,1]!=allPairs[,2]
     allPairs<-as.data.table(allPairs[rows_to_keep,])
@@ -56,21 +57,28 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     alpha <- Pij / Pii
     
     if ( Sys.info()[['sysname']] == 'Linux' | Sys.info()[['sysname']] == 'Darwin') {
-      cl <- makeCluster(detectCores(), type = "FORK")
+      cl <- makeCluster(detectCores())
     } else {
       cl <- makeCluster(detectCores())
       clusterEvalQ(cl, library("destim"))
       clusterEvalQ(cl, library("data.table"))
       clusterExport(cl, c('pairs4dupl', 'devices', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
     }
-     ichunks<-clusterSplit(cl,1:ndevices)
-     res<-clusterApplyLB(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
-     stopCluster(cl)
-
+    ichunks<-clusterSplit(cl,1:ndevices)
+    #ichunks<-splitReverse(ndevices, detectCores())
+    # res<-list()
+    # for(k in 1:length(ichunks)) {
+    #   res[[k]]<-do1to1(ichunks[[k]], pairs4dupl, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init)
+    # }
+    res<-clusterApplyLB(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
+    stopCluster(cl)
+    
     matsim <- NULL
-     for(i in 1:length(res))
-       matsim<-rbind(matsim, res[[i]])
+    for(i in 1:length(res)){
+      matsim<-rbind(matsim, res[[i]])
+    }
     rm(res)
+    
     matsim[lower.tri(matsim)]<-t(matsim)[lower.tri(matsim)]
     
     for(i in 1:ndevices) {
@@ -89,13 +97,17 @@ do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, colNam
   ndev<-length(devices)  
   ll.matrix <- matrix(0L, nrow = length(ichunks), ncol = ndev)
   
-  for(i in 1:(length(ichunks)-1)) {
-    cat(paste0(i, ', '))
-    for (j in (ichunks[[i]]+1):ndev){
+  for(i in 1:(length(ichunks))) {
+    #cat(paste0(ichunks[[i]], ': '))
+    if((ichunks[[i]]+1)<=ndev)
+      j_list<-(ichunks[[i]]+1):ndev
+    else
+      j_list <-c()
+    for (j in j_list){
       #cat(paste0(j, ', '))
       newevents <- sapply(pairs[index.x == ichunks[[i]] & index.y == j, ..keepCols],
                           function(x) ifelse(!is.na(x), which (x == colNamesEmissions), NA))
-
+      
       if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
         llij <- Inf
       } else {
@@ -108,17 +120,11 @@ do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, colNam
           }
         }
       }
-        
-      ll.aux_ij <- (llik[ichunks[[i]]]+llik[j]) - llij
+      ll.aux_ij <- llik[ichunks[[i]]]+llik[j] - llij
       ll.matrix[i, j] <- ll.aux_ij
-      #ll.matrix[j, i] <- ll.aux_ij
     } #end for j
-    #ll.aux <- ll.matrix[i, -i]
-    #oneP0 <- 1 / (1 + (alpha * sum(exp(ll.aux))))
-    #localdup[deviceID == devices[ichunks[i]], dupP := 1-oneP0]
     cat(".\n")
   }
-  #return(localdup)
   return(ll.matrix)
 }
 

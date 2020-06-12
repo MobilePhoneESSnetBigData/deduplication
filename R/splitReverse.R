@@ -6,9 +6,9 @@ splitReverse <-function(N, M){
   index<-c()
   while(length(index)<N){
     if(k%%2==0)
-      index<-c(index,drept)
+      index<-c(index,forward)
     else
-      index<-c(index,invers)
+      index<-c(index,backward)
     k=k+1
   }
   index<-index[1:N]
