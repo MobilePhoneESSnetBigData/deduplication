@@ -11,6 +11,11 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
   jointEmissions <- emissions(modeljoin)
   noEvents <- apply(jointEmissions, 2, sum)
   colNamesEmissions <- colnames(jointEmissions)
+  eee0 <- 1:length(colNamesEmissions)
+  envEmissions <-new.env(hash = TRUE)
+  for(i in eee0)
+    envEmissions[[colNamesEmissions[i]]] <- i
+  
   keepCols <- names(pairs4dupl)[-which(names(pairs4dupl) %in% c("index.x", "index.y"))]
   if(method == "pairs"){
     P2 <- 1 - P1                  
@@ -21,10 +26,10 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       cl <- makeCluster(detectCores())
       clusterEvalQ(cl, library("destim"))
       clusterEvalQ(cl, library("data.table"))
-      clusterExport(cl, c('pairs4dupl', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
+      clusterExport(cl, c('pairs4dupl', 'keepCols', 'noEvents', 'modeljoin', 'envEmissions', 'alpha', 'llik', 'init'), envir = environment())
     }
     ichunks<-clusterSplit(cl,1:nrow(pairs4dupl))
-    res<-clusterApplyLB(cl, ichunks, doPair, pairs4dupl, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
+    res<-clusterApplyLB(cl, ichunks, doPair, pairs4dupl, keepCols, noEvents, modeljoin, envEmissions, alpha, llik, init) 
     stopCluster(cl)
     
     dup <- NULL
@@ -57,7 +62,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     alpha <- Pij / Pii
     
     if ( Sys.info()[['sysname']] == 'Linux' | Sys.info()[['sysname']] == 'Darwin') {
-      cl <- makeCluster(detectCores())
+      cl <- makeCluster(detectCores(), type = "FORK")
     } else {
       cl <- makeCluster(detectCores())
       clusterEvalQ(cl, library("destim"))
@@ -70,7 +75,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     # for(k in 1:length(ichunks)) {
     #   res[[k]]<-do1to1(ichunks[[k]], pairs4dupl, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init)
     # }
-    res<-clusterApplyLB(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) 
+    res<-clusterApply(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, envEmissions, alpha, llik, init) 
     stopCluster(cl)
     
     matsim <- NULL
@@ -78,13 +83,10 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       matsim<-rbind(matsim, res[[i]])
     }
     rm(res)
-    
     matsim[lower.tri(matsim)]<-t(matsim)[lower.tri(matsim)]
-    
     for(i in 1:ndevices) {
       ll.aux <- matsim[i, -i]
-      oneP0 <- 1 / (1 + (alpha * sum(exp(ll.aux))))
-      dupP.dt[deviceID == devices[i], dupP := 1-oneP0]
+      dupP.dt[deviceID == devices[i], dupP := 1-1 / (1 + (alpha * sum(exp(ll.aux))))]
     }
   } else {
     stop("Method unknown!")
@@ -93,34 +95,33 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
 }
 
 
-do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) {
+do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, envEms, alpha, llik, init) {
   ndev<-length(devices)  
   ll.matrix <- matrix(0L, nrow = length(ichunks), ncol = ndev)
   
   for(i in 1:(length(ichunks))) {
+    ii<-ichunks[[i]]
     #cat(paste0(ichunks[[i]], ': '))
-    if((ichunks[[i]]+1)<=ndev)
-      j_list<-(ichunks[[i]]+1):ndev
+    if((ii + 1) <= ndev)
+      j_list<-(ii+1):ndev
     else
       j_list <-c()
     for (j in j_list){
       #cat(paste0(j, ', '))
-      newevents <- sapply(pairs[index.x == ichunks[[i]] & index.y == j, ..keepCols],
-                          function(x) ifelse(!is.na(x), which (x == colNamesEmissions), NA))
+      newevents <- sapply(pairs[index.x == ii & index.y == j, ..keepCols],
+                          function(x) ifelse(!is.na(x), envEms[[x]], NA))
       
       if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
         llij <- Inf
       } else {
-        if(!all(is.na(newevents)) & all(noEvents[newevents[!is.na(newevents)]]!=0)){
           fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
           if(inherits(fitTry, "try-error")){
             llij <- Inf
           } else {
             llij <- logLik(modeljoin_ij, newevents)
           }
-        }
       }
-      ll.aux_ij <- llik[ichunks[[i]]]+llik[j] - llij
+      ll.aux_ij <- llik[ii]+llik[j] - llij
       ll.matrix[i, j] <- ll.aux_ij
     } #end for j
     cat(".\n")
@@ -128,13 +129,13 @@ do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, colNam
   return(ll.matrix)
 }
 
-doPair<-function(ichunks, pairs, keepcols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init) {
+doPair<-function(ichunks, pairs, keepcols, noEvents, modeljoin, envEms, alpha, llik, init) {
   
   localdup <- copy(pairs[ichunks, 1:2])
   for (i in 1:length(ichunks)){
     index.x0 <- localdup[i, index.x]
     index.y0 <- localdup[i, index.y]
-    newevents <- sapply(pairs[ichunks[[i]], ..keepcols], function(x) ifelse(!is.na(x), which (x == colNamesEmissions), NA))
+    newevents <- sapply(pairs[ichunks[[i]], ..keepcols], function(x) ifelse(!is.na(x), envEms[[x]], NA))
     if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
       llij <- Inf
     } else {

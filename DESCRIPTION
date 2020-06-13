@@ -17,9 +17,10 @@ VignetteBuilder: knitr
 Collate: 
     'antennaNeighbours.R'
     'aprioriDuplicityProb.R'
+    'aprioriOneDevice.R'
+    'splitReverse.R'
     'computeDuplicityBayesian.R'
     'computePairs.R'
-    'example.R'
     'fitModels.R'
     'getConnections.R'
     'getDeviceIDs.R'
