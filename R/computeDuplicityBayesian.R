@@ -17,6 +17,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     envEmissions[[colNamesEmissions[i]]] <- i
   
   keepCols <- names(pairs4dupl)[-which(names(pairs4dupl) %in% c("index.x", "index.y"))]
+  
   if(method == "pairs"){
     P2 <- 1 - P1                  
     alpha <- P2 / P1
@@ -51,8 +52,10 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     allDupProb.dt <- merge(allPairs[, .(deviceID1, deviceID2)], dupProb.dt, all.x = TRUE
                            , by = c("deviceID1", "deviceID2"))
     allDupProb.dt[is.na(dupP), dupP := 0]
-    
+    rm(dup)
+    rm(dup2)
     dupP.dt <- copy(allDupProb.dt)[, max(dupP), by = "deviceID1"]
+    rm(dupProb.dt)
     setnames(dupP.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))
   }
   
@@ -109,7 +112,7 @@ do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, envEms
       if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
         llij <- Inf
       } else {
-          fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
+          fitTry <- try(modeljoin_ij <- fit(modeljoin, newevents, init = init, method = "solnp")) # ML estimation of transition probabilities
           if(inherits(fitTry, "try-error")){
             llij <- Inf
           } else {
@@ -134,7 +137,7 @@ doPair<-function(ichunks, pairs, keepcols, noEvents, modeljoin, envEms, alpha, l
     if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
       llij <- Inf
     } else {
-      fitTry <- try( modeljoin_ij <- fit(modeljoin, newevents, init = init)) # ML estimation of transition probabilities
+      fitTry <- try( modeljoin_ij <- fit(modeljoin, newevents, init = init, method = "solnp")) # ML estimation of transition probabilities
       if(inherits(fitTry, "try-error")) {
         llij <- Inf
       } else {

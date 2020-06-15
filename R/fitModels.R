@@ -8,12 +8,15 @@ fitModels <-function(ndevices, model, connections, parallel = TRUE) {
     #serial computations
     ll <- vector(length = ndevices)
     for( i in 1:ndevices) {
-      modeli <- fit(model, init = TRUE, connections[i,]  )
+      modeli <- fit(model, connections[i,], init = TRUE, method = "solnp" )
       ll[i] <- logLik(modeli, connections[i,])
+      #cat(paste0(i, " - ", ll[i], ";"))
     }
+    #print("")
     return (ll)
   }
   else if( parallel == TRUE) {
+
     if ( Sys.info()[['sysname']] == 'Linux' | Sys.info()[['sysname']] == 'Darwin') {
       cl <- makeCluster(detectCores(), type = "FORK")
     } else {
@@ -33,7 +36,7 @@ doFit <-function(index, model, connections) {
   local_ll <- vector(length = length(index))
   k=1
   for(j in index) {
-    modeli <- fit(model, init = TRUE, connections[j,] )
+    modeli <- fit(model, connections[j,], init = TRUE,  method = "solnp")
     local_ll[k] <- logLik(modeli, connections[j,])
     k <- k + 1
   }
