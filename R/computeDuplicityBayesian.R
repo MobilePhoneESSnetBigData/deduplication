@@ -57,7 +57,6 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
   }
   
   else if(method == "1to1"){
-    dupP.dt <- data.table(deviceID = deviceIDs, dupP = rep(0, ndevices))
     Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
     alpha <- Pij / Pii
     
@@ -70,11 +69,6 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       clusterExport(cl, c('pairs4dupl', 'devices', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
     }
     ichunks<-clusterSplit(cl,1:ndevices)
-    #ichunks<-splitReverse(ndevices, detectCores())
-    # res<-list()
-    # for(k in 1:length(ichunks)) {
-    #   res[[k]]<-do1to1(ichunks[[k]], pairs4dupl, devices, keepCols, noEvents, modeljoin, colNamesEmissions, alpha, llik, init)
-    # }
     res<-clusterApply(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, envEmissions, alpha, llik, init) 
     stopCluster(cl)
     
@@ -84,6 +78,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
     }
     rm(res)
     matsim[lower.tri(matsim)]<-t(matsim)[lower.tri(matsim)]
+    dupP.dt <- data.table(deviceID = deviceIDs, dupP = rep(0, ndevices))
     for(i in 1:ndevices) {
       ll.aux <- matsim[i, -i]
       dupP.dt[deviceID == devices[i], dupP := 1-1 / (1 + (alpha * sum(exp(ll.aux))))]
