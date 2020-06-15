@@ -72,7 +72,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       clusterExport(cl, c('pairs4dupl', 'devices', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
     }
     ichunks<-clusterSplit(cl,1:ndevices)
-    res<-clusterApply(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, envEmissions, alpha, llik, init) 
+    res<-clusterApplyLB(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, envEmissions, alpha, llik, init) 
     stopCluster(cl)
     
     matsim <- NULL
