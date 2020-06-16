@@ -20,7 +20,7 @@
 #' @export
 readGridParams <- function(gridFileName) {
   if (!file.exists(gridFileName))
-    stop(paste0(gridFileName, " doesn not exists!"))
+    stop(paste0(gridFileName, " does not exists!"))
   
   gridParam <- fread(
     gridFileName,
