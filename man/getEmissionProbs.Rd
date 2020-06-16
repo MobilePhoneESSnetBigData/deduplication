@@ -2,7 +2,7 @@
 % Please edit documentation in R/getEmissionProbs.R
 \name{getEmissionProbs}
 \alias{getEmissionProbs}
-\title{Builds the emission probabilities for the HMM used to estimate the prosterior location probabilitities.}
+\title{Builds the emission probabilities for the HMM used to estimate the posterior location probabilitities.}
 \usage{
 getEmissionProbs(
   nrows,
@@ -13,12 +13,35 @@ getEmissionProbs(
   simulatedData = TRUE
 )
 }
+\arguments{
+\item{signalFileName}{The name of the .csv file that contains the signal strength/quality for each tile in the grid.
+This file is one of the outputs of the data simulator. The data is organized as a matrix with the number of rows
+equals to the number of antennas and the the following columns: \code{Antenna ID, Tile 0, Tile 1, ... Tile (N-1)}.
+On the first column there are the antenna IDs and on the rest of the columns the coresponding signal 
+strength/quality.}
+
+\item{sigMin}{The minimum value of the signal strength/quality that allow a connection between a device and an
+antenna.}
+
+\item{handoverType}{The handover mechanism used by the mobile network. It could have two values:'strenght' or
+'quality'}
+
+\item{simulatedData}{If TRUE, the input data provided to this function come from tha simulator otherwise the data 
+come from a real mobile network.}
+
+\item{nrow}{the number of rows in the grid. It can be obtained by calling \code{readGridParams}.}
+
+\item{ncol}{the number of columns in the grid. It can be obtained by calling \code{readGridParams}.}
+}
 \value{
-Returns a matrix with the emmission probabilitiews for the HMM. The number of rows equals the numberof
-tiles in the grid and the number of columns equals the number of antennas.
+Returns a Matrix object with the emmission probabilities for the HMM. The number of rows equals the
+number of tiles in the grid and the number of columns equals the number of antennas. An element (i,j) of
+this matrix coresponds to the probability of a device being in tile i to be connected to antena j. The row
+names of the matrix are the tile indices and the column names are the antenna IDs.
 }
 \description{
-Builds the emission probabilities needed for the HMM used to estimate the posterior location probabilitities. 
+Builds the emission probabilities needed for the HMM used to estimate the posterior location
+probabilitities.
 In case of using simulated data, these probabilities are build using the signal strength or signal quality outputed
 by the simulation software for each tile in the grid.
 }
