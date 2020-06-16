@@ -22,7 +22,7 @@ getConnections <- function(events) {
   times <- unlist(times[order(times[, 1])])
   
   devices <- getDeviceIDs(events)
-  devices <- unlist(devices[order(devices[, 1])])
+  devices <- unlist(devices[order(devices)])
   
   n1 <- length(times)
   n2 <- length(devices)
