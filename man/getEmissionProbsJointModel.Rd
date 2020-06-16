@@ -6,12 +6,17 @@
 \usage{
 getEmissionProbsJointModel(emissionProbs)
 }
+\arguments{
+\item{emissionProbs}{the emission probalbities (the location probabilities) computed by calling 
+\code{getEmissionProbs}.}
+}
 \value{
-Returns a matrix with the joint emission probabilities for the HMM. The number of rows equals the number of
-tiles in the grid and the number of columns equals the number of antennas plus one.
+Returns a matrix with the joint emission probabilities for the HMM. The number of rows equals the
+number tiles and the number of columns equals the number of combinations between antenna IDs. Before the combination
+between antenna IDs are build, the NA value is added to the list of antenna IDs. An element in this matrix 
+represents the transition probability from an antenna to another, computed for each tile in the grid.
 }
 \description{
-Builds the emissions probabilities needed for the joint HMM used to estimate the posterior location probabilitities. 
-In case of using simulated data, these probabilities are build using the signal strength or signal quality outputed
-by the simulation software for each tile in the grid.
+Builds the emissions probabilities needed for the joint HMM used to estimate the posterior location
+probabilitities.
 }
