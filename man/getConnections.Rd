@@ -2,23 +2,23 @@
 % Please edit documentation in R/getConnections.R
 \name{getConnections}
 \alias{getConnections}
-\title{Builds a matrix object containing the IDs of the antennas to which devices are connected}
+\title{Builds a Matrix object containing the IDs of the antennas to which devices are connected.}
 \usage{
-getConnections(events.dt)
+getConnections(events)
 }
 \arguments{
-\item{events.dt}{A data.table object returned by \link{readEvents} function}
-
-\item{devices}{A vector with the devices IDs}
+\item{events}{A data.table object returned by \code{readEvents()} function.}
 }
 \value{
-A matrix object with the antenna IDs where devices are connected for every time instants in the event file. 
-If a device is not connected to any antenna at a time instant the corresponding element in the matrix will have the value NA.
+A matrix object with the antenna IDs where devices are connected for every time instants in the events file.
+If a device is not connected to any antenna at a time instant, the corresponding element in the matrix will have the
+value NA.
 }
 \description{
-Builds a matrix object containing the IDs of the antennas to which devices are connected. 
-The number of rows equals the number of devices and the number of columns equals the number of time instants 
-when the network events were recorded. 
-An element \code{[i,j]} in the returned matrix equals the ID of the antenna where the mobile device with index \code{i} 
-in the input vector \code{devices} is conntected at the time instant with index \code{j} in the input vector \code{times}.
+Builds a matrix object containing the IDs of the antennas to which devices are connected.
+The number of rows equals the number of devices and the number of columns equals the number of time instants
+when the network events were recorded. An element \code{[i,j]} in the returned matrix equals the ID of the antenna
+where the mobile device with index \code{i} in the ordered list of device IDs (returned by \code{getDeviceIDs()}) is
+conntected at the time instant with index \code{j} in the sequence of time instants when the network events
+where recorded.
 }
