@@ -11,13 +11,14 @@ getJointModel(nrows, ncols, jointEmissionProbs, initSteady = TRUE)
 
 \item{ncols}{Number of columns in the grid.}
 
-\item{jointEmissionProbs}{A matrix with the joint event location probabilities. The number of rows equals the number of
-tiles in the grid and the number of columns equals the number of antennas plus one.}
+\item{jointEmissionProbs}{A (sparse) matrix with the joint event location probabilities. The number of rows equals
+the number of tiles in the grid and the number of columns equals the number of antennas. This matrix is obtained
+by calling \code{getEmissionProbsJointModel}.}
 
-\item{initSteady}{If true the initial a-priori distribution is set to the steady state of the transition matrix.}
+\item{initSteady}{If TRUE the initial a-priori distribution is set to the steady state of the transition matrix.}
 }
 \value{
-Returns an HMM model with the initial a-priori distribution set to the steady state of the transition matrix.
+Returns a joint HMM model.
 }
 \description{
 Builds the joint HMM model using the emmission probabilities which are the event locations

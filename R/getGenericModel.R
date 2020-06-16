@@ -8,7 +8,8 @@
 #' @param ncols Number of columns in the grid.
 #'
 #' @param emissionProbs A matrix with the event location probabilities. The number of rows equals the number of
-#' tiles in the grid and the number of columns equals the number of antennas plus one.
+#' tiles in the grid and the number of columns equals the number of antennas. This matrix is obtained by calling
+#' \code{getEmissionProbs} function.
 #'
 #' @param initSteady If TRUE the initial a-priori distribution is set to the steady state of the transition matrix.
 #'
