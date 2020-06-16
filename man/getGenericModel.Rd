@@ -14,7 +14,7 @@ getGenericModel(nrows, ncols, emissionProbs, initSteady = TRUE)
 \item{emissionProbs}{A matrix with the event location probabilities. The number of rows equals the number of
 tiles in the grid and the number of columns equals the number of antennas plus one.}
 
-\item{initSteady}{If true the initial a-priori distribution is set to the steady state of the transition matrix.}
+\item{initSteady}{If TRUE the initial a-priori distribution is set to the steady state of the transition matrix.}
 }
 \value{
 Returns an HMM model with the initial a-priori distribution set to the steady state of the transition matrix.
