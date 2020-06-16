@@ -72,6 +72,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       clusterExport(cl, c('pairs4dupl', 'devices', 'keepCols', 'noEvents', 'modeljoin', 'colNamesEmissions', 'alpha', 'llik', 'init'), envir = environment())
     }
     ichunks<-clusterSplit(cl,1:ndevices)
+    #ichunks <- splitReverse(nrow(pairs4dup), detectCores())
     res<-clusterApplyLB(cl, ichunks, do1to1, pairs4dupl, devices, keepCols, noEvents, modeljoin, envEmissions, alpha, llik, init) 
     stopCluster(cl)
     
@@ -80,6 +81,7 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
       matsim<-rbind(matsim, res[[i]])
     }
     rm(res)
+
     matsim[lower.tri(matsim)]<-t(matsim)[lower.tri(matsim)]
     dupP.dt <- data.table(deviceID = deviceIDs, dupP = rep(0, ndevices))
     for(i in 1:ndevices) {
@@ -95,17 +97,16 @@ computeDuplicityBayesian <- function(method, deviceIDs, pairs4dupl, modeljoin, l
 
 do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, envEms, alpha, llik, init) {
   ndev<-length(devices)  
-  ll.matrix <- matrix(0L, nrow = length(ichunks), ncol = ndev)
-  
-  for(i in 1:(length(ichunks))) {
+  n <- length(ichunks)
+  ll.matrix <- matrix(0L, nrow = n, ncol = ndev)
+  for(i in 1:n) {
     ii<-ichunks[[i]]
-    #cat(paste0(ichunks[[i]], ': '))
+    llik_ii <- llik[ii]
     if((ii + 1) <= ndev)
       j_list<-(ii+1):ndev
     else
       j_list <-c()
     for (j in j_list){
-      #cat(paste0(j, ', '))
       newevents <- sapply(pairs[index.x == ii & index.y == j, ..keepCols],
                           function(x) ifelse(!is.na(x), envEms[[x]], NA))
       
@@ -119,10 +120,10 @@ do1to1 <-function(ichunks, pairs, devices, keepCols, noEvents, modeljoin, envEms
             llij <- logLik(modeljoin_ij, newevents)
           }
       }
-      ll.aux_ij <- llik[ii]+llik[j] - llij
+      ll.aux_ij <- llik_ii+llik[j] - llij
       ll.matrix[i, j] <- ll.aux_ij
     } #end for j
-    cat(".\n")
+    #cat(".\n")
   }
   return(ll.matrix)
 }
@@ -137,7 +138,7 @@ doPair<-function(ichunks, pairs, keepcols, noEvents, modeljoin, envEms, alpha, l
     if(all(is.na(newevents)) | any(noEvents[newevents[!is.na(newevents)]]==0)){
       llij <- Inf
     } else {
-      fitTry <- try( modeljoin_ij <- fit(modeljoin, newevents, init = init, method = "solnp")) # ML estimation of transition probabilities
+      fitTry <- try( modeljoin_ij <- fit(modeljoin, newevents, init = init, method = "solnp"))
       if(inherits(fitTry, "try-error")) {
         llij <- Inf
       } else {
