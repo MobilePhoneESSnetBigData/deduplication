@@ -4,11 +4,15 @@
 #' 
 #' @param ndevices The number of devices.
 #' 
-#' @param 
+#' @param model The HMM model returned by \code{getGenericModel()} function. This model is to be fit for each device.
 #' 
-#' @param 
+#' @param connections A matrix whose elements are the antenna ID where a device is connected at every time instant.
+#' This matrix is returned by \code{getConnections()} function.
 #' 
-#' @param 
+#' @param parallel If TRUE the computations are done in parallel to reduce the running time using all the available
+#' cores. It creates a cluster of working nodes, splits the devices equally and assign a partition of devices to each
+#' culster. For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows it uses a "SOCK"
+#' cluster.
 #' 
 #' @return 
 
