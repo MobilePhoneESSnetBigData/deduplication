@@ -18,16 +18,15 @@
 #' @include getDeviceIDs.R
 #' @export
 getConnections <- function(events) {
-  times <- unique(events[, 1])
-  times <- unlist(times[order(times[, 1])])
+  times <- unique(events[, 'time'])
+  times <- sort(unlist(times[,'time']))
   
   devices <- getDeviceIDs(events)
-  devices <- unlist(devices[order(devices)])
-  
+
   n1 <- length(times)
   n2 <- length(devices)
   
-  connections <- Matrix(-1L, ncol = n1, nrow = n2)
+  connections <- matrix(-1L, ncol = n1, nrow = n2)
   
   evv <- matrix(ncol = 2, nrow = n1)
   evv[, 1] <- times
