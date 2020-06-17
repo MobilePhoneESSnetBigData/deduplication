@@ -84,6 +84,7 @@ computeDuplicityBayesian <-
           envir = environment()
         )
       }
+      #cl <-buildCluster()
       ichunks <- clusterSplit(cl, 1:nrow(pairs4dupl))
       res <-
         clusterApplyLB(
