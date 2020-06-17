@@ -11,10 +11,10 @@
 #' 
 #' @param parallel If TRUE the computations are done in parallel to reduce the running time using all the available
 #' cores. It creates a cluster of working nodes, splits the devices equally and assign a partition of devices to each
-#' culster. For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows it uses a "SOCK"
+#' cluster. For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows it uses a "SOCK"
 #' cluster.
 #' 
-#' @return 
+#' @return A vector of log likelihoods computed using the fitted model for each device.
 
 #' @import parallel
 #' @import doParallel
