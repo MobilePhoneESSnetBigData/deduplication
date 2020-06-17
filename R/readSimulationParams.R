@@ -1,17 +1,16 @@
 #' @title Reads the parameters of the simulation used to generate a data set.
 #'
 #' @description Reads the parameters of the simulation used to generate a data set from an .xml file used by the
-#' simulation software. The following parameters are needed by this package: 
-#' - the connection threshold: the minimum signal strength/quality that can be used by a mobile device to connect to an
-#'  antenna; 
-#' - the probability of having a two mobile devices
+#'   simulation software. The following parameters are needed by this package: - the connection threshold: the minimum
+#'   signal strength/quality that can be used by a mobile device to connect to an antenna; - the probability of having a
+#'   two mobile devices
 #'
-#' @param simFileName the file name used to define a simulation scenario. It is the file that was provided as input
-#' for the simulation software.
-#' 
-#' @return a list with all the parameters read from the file: start_time, end_time, time_increment, time_stay, 
-#' interval_between_stays, prob_sec_mobile_phone, conn_threshold.
+#' @param simFileName the file name used to define a simulation scenario. It is the file that was provided as input for
+#'   the simulation software.
 #'
+#' @return a list with all the parameters read from the file: start_time, end_time, time_increment, time_stay,
+#'   interval_between_stays, prob_sec_mobile_phone, conn_threshold.
+#'   
 
 #' @import xml2
 #' @export

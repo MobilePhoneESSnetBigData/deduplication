@@ -11,8 +11,8 @@ getGenericModel(nrows, ncols, emissionProbs, initSteady = TRUE)
 
 \item{ncols}{Number of columns in the grid.}
 
-\item{emissionProbs}{A matrix with the event location probabilities. The number of rows equals the number of
-tiles in the grid and the number of columns equals the number of antennas. This matrix is obtained by calling
+\item{emissionProbs}{A matrix with the event location probabilities. The number of rows equals the number of tiles in
+the grid and the number of columns equals the number of antennas. This matrix is obtained by calling
 \code{getEmissionProbs} function.}
 
 \item{initSteady}{If TRUE the initial a-priori distribution is set to the steady state of the transition matrix.}
@@ -21,6 +21,6 @@ tiles in the grid and the number of columns equals the number of antennas. This 
 Returns an HMM model with the initial a-priori distribution set to the steady state of the transition matrix.
 }
 \description{
-Builds the generic HMM model using the emission probabilities which are the event locations
-computed using the mobile network parameters.
+Builds the generic HMM model using the emission probabilities which are the event locations computed
+  using the mobile network parameters.
 }
