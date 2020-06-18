@@ -1,6 +1,6 @@
 #' @title Computes the duplicity probabilities for each device using a Bayesian approach.
 #'
-#' @description Computes the duplicity probabilities for each device using a Bayesian approach. Th
+#' @description Computes the duplicity probabilities for each device using a Bayesian approach.
 #'
 #' @param method. Selects a method to compute the duplicity probabilities. It could have one of the two values: "pairs"
 #'   or "1to1". When selecting "pairs" method, the pairs4dupl parameter contains only the compatible pairs of devices,
@@ -62,29 +62,7 @@ computeDuplicityBayesian <-
     if (method == "pairs") {
       P2 <- 1 - P1
       alpha <- P2 / P1
-      if (Sys.info()[['sysname']] == 'Linux' |
-          Sys.info()[['sysname']] == 'Darwin') {
-        cl <- makeCluster(detectCores(), type = "FORK")
-      } else {
-        cl <- makeCluster(detectCores())
-        clusterEvalQ(cl, library("destim"))
-        clusterEvalQ(cl, library("data.table"))
-        clusterExport(
-          cl,
-          c(
-            'pairs4dupl',
-            'keepCols',
-            'noEvents',
-            'modeljoin',
-            'envEmissions',
-            'alpha',
-            'llik',
-            'init'
-          ),
-          envir = environment()
-        )
-      }
-      #cl <-buildCluster()
+      cl <-buildCluster(c('pairs4dupl','keepCols','noEvents','modeljoin','envEmissions','alpha', 'llik', 'init'), env = environment())
       ichunks <- clusterSplit(cl, 1:nrow(pairs4dupl))
       res <-
         clusterApplyLB(
@@ -101,66 +79,13 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      
-      dup <- NULL
-      for (i in 1:length(res))
-        dup <- rbind(dup, res[[i]])
-      rm(res)
-      
-      dup[, deviceID1 := deviceIDs[index.x]][, deviceID2 := deviceIDs[index.y]]
-      dup2 <- copy(dup)
-      dup2[, deviceID1 := deviceIDs[index.y]][, deviceID2 := deviceIDs[index.x]]
-      dup <- dup[, .(deviceID1, deviceID2, dupP)]
-      dup2 <- dup2[, .(deviceID1, deviceID2, dupP)]
-      dupProb.dt <- rbindlist(list(dup, dup2))
-      
-      allPairs <- expand.grid(devices, devices)
-      rows_to_keep <- allPairs[, 1] != allPairs[, 2]
-      allPairs <- as.data.table(allPairs[rows_to_keep, ])
-      setnames(allPairs, c(c("deviceID1", "deviceID2")))
-      allDupProb.dt <-
-        merge(
-          allPairs[, .(deviceID1, deviceID2)],
-          dupProb.dt,
-          all.x = TRUE
-          ,
-          by = c("deviceID1", "deviceID2")
-        )
-      allDupProb.dt[is.na(dupP), dupP := 0]
-      rm(dup)
-      rm(dup2)
-      dupP.dt <- copy(allDupProb.dt)[, max(dupP), by = "deviceID1"]
-      rm(dupProb.dt)
-      setnames(dupP.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))
+      dupP.dt<-buildDuplicityTablePairs(res,devices)
     }
     
     else if (method == "1to1") {
       Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
       alpha <- Pij / Pii
-      
-      if (Sys.info()[['sysname']] == 'Linux' |
-          Sys.info()[['sysname']] == 'Darwin') {
-        cl <- makeCluster(detectCores(), type = "FORK")
-      } else {
-        cl <- makeCluster(detectCores())
-        clusterEvalQ(cl, library("destim"))
-        clusterEvalQ(cl, library("data.table"))
-        clusterExport(
-          cl,
-          c(
-            'pairs4dupl',
-            'devices',
-            'keepCols',
-            'noEvents',
-            'modeljoin',
-            'colNamesEmissions',
-            'alpha',
-            'llik',
-            'init'
-          ),
-          envir = environment()
-        )
-      }
+      cl <- buildCluster(c('pairs4dupl','devices','keepCols','noEvents','modeljoin','colNamesEmissions','alpha','llik','init'),environment())
       ichunks <- clusterSplit(cl, 1:ndevices)
       res <-
         clusterApplyLB(
@@ -178,20 +103,7 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      
-      matsim <- NULL
-      for (i in 1:length(res)) {
-        matsim <- rbind(matsim, res[[i]])
-      }
-      rm(res)
-      
-      matsim[lower.tri(matsim)] <- t(matsim)[lower.tri(matsim)]
-      dupP.dt <-
-        data.table(deviceID = deviceIDs, dupP = rep(0, ndevices))
-      for (i in 1:ndevices) {
-        ll.aux <- matsim[i,-i]
-        dupP.dt[deviceID == devices[i], dupP := 1 - 1 / (1 + (alpha * sum(exp(ll.aux))))]
-      }
+      dupP.dt <- buildDuplicityTable1to1(res, devices)      
     } else {
       stop("Method unknown!")
     }

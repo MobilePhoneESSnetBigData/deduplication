@@ -46,5 +46,5 @@ a data.table object with two columns: 'deviceID' and 'dupP'. On the first column
   correspondence with the holder.
 }
 \description{
-Computes the duplicity probabilities for each device using a Bayesian approach. Th
+Computes the duplicity probabilities for each device using a Bayesian approach.
 }

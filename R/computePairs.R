@@ -9,8 +9,8 @@
 #'   the two devices are connected at that time instant.
 #'
 #' @param connections A matrix wuth the antenna ID where the mobile devices are connected at every time instant. Each
-#'   row corresponds to a device and each column to a time instant. This matrix is obtained by calling \code
-#'   {getConnections()} function.
+#'   row corresponds to a device and each column to a time instant. This matrix is obtained by calling
+#'   \code{getConnections()} function.
 #'
 #' @param ndevices The number of devices registered by the network. A vector with device IDs can be obtained by calling
 #'   \code{getDevices()} function and the number of devices is simply the lenght of this vector.
