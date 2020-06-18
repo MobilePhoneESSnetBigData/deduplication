@@ -43,7 +43,7 @@
 #' @export
 computePairs <- function(connections, ndevices, oneToOne = TRUE, P1 = 0, limit = 0.05, antennaNeighbors = NULL) {
   
-  if(oneToOne == TRUE & is.null(antennaNeighbors))
+  if(oneToOne == FALSE & is.null(antennaNeighbors))
     stop("To apply \"pairs\" method you need to provide antennaNeighbors parameter")
   
   pairs4duplicity <- NULL

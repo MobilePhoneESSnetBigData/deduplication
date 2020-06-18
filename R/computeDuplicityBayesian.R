@@ -59,10 +59,10 @@ computeDuplicityBayesian <-
     colNamesEmissions <- colnames(jointEmissions)
     eee0 <- 1:length(colNamesEmissions)
     envEmissions <- new.env(hash = TRUE)
-    
+      
     for (i in eee0)
       envEmissions[[colNamesEmissions[i]]] <- i
-    
+    rm(colNamesEmissions) 
     keepCols <-
       names(pairs4dupl)[-which(names(pairs4dupl) %in% c("index.x", "index.y"))]
     
@@ -90,9 +90,7 @@ computeDuplicityBayesian <-
     }
     
     else if (method == "1to1") {
-      Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
-      alpha <- Pij / Pii
-      cl <- buildCluster(c('pairs4dupl','devices','keepCols','noEvents','modeljoin','colNamesEmissions','alpha','llik','init'),environment())
+      cl <- buildCluster(c('pairs4dupl','devices','keepCols','noEvents','modeljoin','envEmissions','llik','init'), env = environment())
       ichunks <- clusterSplit(cl, 1:ndevices)
       res <-
         clusterApplyLB(
@@ -105,12 +103,11 @@ computeDuplicityBayesian <-
           noEvents,
           modeljoin,
           envEmissions,
-          alpha,
           llik,
           init
         )
       stopCluster(cl)
-      dupP.dt <- buildDuplicityTable1to1(res, devices)      
+      dupP.dt <- buildDuplicityTable1to1(res, devices, Pii)
     } else {
       stop("Method unknown!")
     }
@@ -126,9 +123,9 @@ do1to1 <-
            noEvents,
            modeljoin,
            envEms,
-           alpha,
            llik,
            init) {
+    
     ndev <- length(devices)
     n <- length(ichunks)
     ll.matrix <- matrix(0L, nrow = n, ncol = ndev)

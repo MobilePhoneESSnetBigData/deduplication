@@ -13,8 +13,11 @@
 #'
 #' @return a data.table object with two columns: the device IDs and the corresponding duplicity probability for each
 #'   device.
-buildDuplicityTable1to1 <- function(res, devices) {
-  ndevices <- lenght(devices)
+buildDuplicityTable1to1 <- function(res, devices, Pii) {
+  ndevices <- length(devices)
+  Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
+  alpha <- Pij / Pii
+  
   matsim <- NULL
   for (i in 1:length(res)) {
     matsim <- rbind(matsim, res[[i]])

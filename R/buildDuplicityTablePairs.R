@@ -37,8 +37,8 @@ buildDuplicityTablePairs <- function(res, devices) {
           by = c("deviceID1", "deviceID2"))
   rm(dup, dup2, dupProb.dt)
   allDupProb.dt[is.na(dupP), dupP := 0]
-  allDupProb.dt <- allDupProb.dt[, max(dupP), by = "deviceID1"]
-  setnames(allDupProb.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))
-  return(allDupProb.dt)
+  dupProb.dt <- copy(allDupProb.dt)[, max(dupP), by = "deviceID1"]
+  setnames(dupProb.dt, c("deviceID1", "V1"), c("deviceID", "dupP"))
+  return(dupProb.dt)
   
 }
