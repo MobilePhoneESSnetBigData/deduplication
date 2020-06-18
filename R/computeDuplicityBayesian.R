@@ -1,6 +1,13 @@
 #' @title Computes the duplicity probabilities for each device using a Bayesian approach.
 #'
-#' @description Computes the duplicity probabilities for each device using a Bayesian approach.
+#' @description Computes the duplicity probabilities for each device using a Bayesian approach. It uses two methods:
+#'   "pairs" and "1to1". The "pairs" method considers all the possible pairs of two compatible devices. These devices
+#'   where selected by \code{computePairs()} function taing into consideration the antennas where the devices are
+#'   connected and the coverage areas of antennas. Thus, the data set with pairs of devices will be considerable 
+#'   smaller than all possible combinations of two devices. The "1to1" method considers all pairs of two devices
+#'   when computing the duplicity probability, the time complexity being much greater than that of the "pairs" method.
+#'   Both methods uses parallel computations to speed up the execution. They build a cluster of working nodes and splits
+#'   the pairs of devices equally among these nodes.
 #'
 #' @param method. Selects a method to compute the duplicity probabilities. It could have one of the two values: "pairs"
 #'   or "1to1". When selecting "pairs" method, the pairs4dupl parameter contains only the compatible pairs of devices,
@@ -11,7 +18,7 @@
 #' @param deviceIDs A vector with the all device IDs. It is obtained by caliing the \code{getDevices()} function.
 #'
 #' @param pairs4dupl A data.table object with pairs of devices and pairs of antennas where these devices are connecting.
-#' It can be obtained by calling \code{computePairs()} function. 
+#'   It can be obtained by calling \code{computePairs()} function.
 #'
 #' @param modeljoin The joint HMM model returned by \code{getJointModel()} function.
 

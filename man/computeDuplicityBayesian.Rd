@@ -46,5 +46,12 @@ a data.table object with two columns: 'deviceID' and 'dupP'. On the first column
   correspondence with the holder.
 }
 \description{
-Computes the duplicity probabilities for each device using a Bayesian approach.
+Computes the duplicity probabilities for each device using a Bayesian approach. It uses two methods:
+  "pairs" and "1to1". The "pairs" method considers all the possible pairs of two compatible devices. These devices
+  where selected by \code{computePairs()} function taing into consideration the antennas where the devices are
+  connected and the coverage areas of antennas. Thus, the data set with pairs of devices will be considerable 
+  smaller than all possible combinations of two devices. The "1to1" method considers all pairs of two devices
+  when computing the duplicity probability, the time complexity being much greater than that of the "pairs" method.
+  Both methods uses parallel computations to speed up the execution. They build a cluster of working nodes and splits
+  the pairs of devices equally among these nodes.
 }
