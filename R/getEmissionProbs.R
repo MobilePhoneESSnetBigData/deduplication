@@ -77,13 +77,11 @@ getEmissionProbs <-
       
       RSS[, RSS := ifelse(RSS < sigMin, NA, RSS)]
       if (handoverType == 'strength') {
-        # The radio wave model is expressed in log10. It seems natural to recover the original scale
-        RSS <-
-          RSS[, eventLoc := 10 ** RSS / sum(10 ** RSS, na.rm = TRUE), by = 'tile']
+        RSS <-RSS[, eventLoc := 10 ** RSS / sum(10 ** RSS, na.rm = TRUE), by = 'tile']
         
       }
       else if(handoverType == 'quality') {
-        RSS[, eventLoc := RSS / sum(RSS, na.rm = TRUE), by = 'tile']
+        RSS <- RSS[, eventLoc := RSS / sum(RSS, na.rm = TRUE), by = 'tile']
       }
       else {
         stop("handover method unsupported")
