@@ -82,6 +82,12 @@ getEmissionProbs <-
           RSS[, eventLoc := 10 ** RSS / sum(10 ** RSS, na.rm = TRUE), by = 'tile']
         
       }
+      else if(handoverType == 'quality') {
+        RSS[, eventLoc := RSS / sum(RSS, na.rm = TRUE), by = 'tile']
+      }
+      else {
+        stop("handover method unsupported")
+      }
       # Make eventLoc=0 if the tile is out the coverage area
       RSS <- RSS[is.na(eventLoc), eventLoc := 0]
       RSS[, tile := as.numeric(tile)]
