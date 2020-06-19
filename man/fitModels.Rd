@@ -4,24 +4,22 @@
 \alias{fitModels}
 \title{Fits the HMM models for each device.}
 \usage{
-fitModels(ndevices, model, connections, parallel = TRUE)
+fitModels(ndevices, model, connections)
 }
 \arguments{
 \item{ndevices}{The number of devices.}
 
 \item{model}{The HMM model returned by \code{getGenericModel()} function. This model is to be fit for each device.}
 
-\item{connections}{A matrix whose elements are the antenna ID where a device is connected at every time instant.
-This matrix is returned by \code{getConnections()} function.}
-
-\item{parallel}{If TRUE the computations are done in parallel to reduce the running time using all the available
-cores. It creates a cluster of working nodes, splits the devices equally and assign a partition of devices to each
-cluster. For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows it uses a "SOCK"
-cluster.}
+\item{connections}{A matrix whose elements are the antenna ID where a device is connected at every time instant. This
+matrix is returned by \code{getConnections()} function.}
 }
 \value{
 A vector of log likelihoods computed using the fitted model for each device.
 }
 \description{
-Fits the HMM model for each device usin the \code{fit()} function from \code{destim} package.
+Fits the HMM model for each device usin the \code{fit()} function from \code{destim} package. The
+  computations are done in parallel to reduce the running time using all the available cores. This function creates a
+  cluster of working nodes, splits the devices equally and assign a partition of devices to each node in the cluster.
+  For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows it uses a "SOCK" cluster.
 }

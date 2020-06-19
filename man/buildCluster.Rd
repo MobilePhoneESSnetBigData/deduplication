@@ -4,7 +4,7 @@
 \alias{buildCluster}
 \title{Build a cluster of working nodes.}
 \usage{
-buildCluster(varlist, env)
+buildCluster(varlist, packList, env)
 }
 \arguments{
 \item{varlist}{A list of variables to be expoerted to every working node.}

@@ -31,7 +31,7 @@
 #' string representing a polygon (i.e. it should start with the word POLYGON) which is the coverage area 
 #' of the corresponding antenna. This area is also called the antenna cell.
 #'
-#'@ param simulatedData If TRUE the input data are provided by the simulation software, otherwise real data is used.
+#' @param simulatedData If TRUE the input data are provided by the simulation software, otherwise real data is used.
 #'
 #' @param simulationFileName the file name used to define a simulation scenario. It is the file that was provided as input for
 #'   the simulation software. This file is required only if simulatedData is TRUE.
@@ -48,59 +48,74 @@
 #'
 #'@export
 computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL) {
-
+  
   out_duplicity <- NULL
-
-  if(method != 'trajectory' & method != "1to1" & method != 'trajectory')
-    stop("method unknown!")
-
-  if(!file.exists(gridFileName))
-    stop(paste0(gridFileName, " doesn't exist"))
-  if(!file.exists(eventsFileName))
-    stop(paste0(eventsFileName, " doesn't exist"))
-  if(!file.exists(signalFileName))
-    stop(paste0(signalFileName, " doesn't exist"))
-  if(method == "pairs" & !file.exists(antennaCellsFileName))
-    stop(paste0(antennaCellsFileName, " doesn't exist. If you use \"pairs\" method you should provide a file with antenna cells."))
-  if(simulatedData == TRUE & (is.null(simulationFileName) | !file.exists(simulationFileName)))
-    stop(paste0(simulationFileName, " dooesn't exist. If you use simulated data you should provide the simulation input file."))
-  if(simulatedData == FALSE & is.null(netParams))
-    stop("In case of using real data you should provide a list with two params: the minimum value of the signal detectable by mobile devices and
+  
+  tryCatch ({
+    if(method != 'trajectory' & method != "1to1" & method != 'pairs')
+      stop(paste(method, " method unknown!"))
+    
+    if(!file.exists(gridFileName))
+      stop(paste0(gridFileName, " doesn't exist"))
+    
+    if(!file.exists(eventsFileName))
+      stop(paste0(eventsFileName, " doesn't exist"))
+    
+    if(!file.exists(signalFileName))
+      stop(paste0(signalFileName, " doesn't exist"))
+    
+    if(method == "pairs")
+      if(!file.exists(antennaCellsFileName))
+        stop(paste0(antennaCellsFileName, " doesn't exist. If you use \"pairs\" method you should provide a file with antenna cells."))
+    
+    if(simulatedData == TRUE)
+      if (is.null(simulationFileName) | !file.exists(simulationFileName))
+        stop(paste0(simulationFileName, " dooesn't exist. If you use simulated data you should provide the simulation input file."))
+    
+    if(simulatedData == FALSE & is.null(netParams))
+      stop("In case of using real data you should provide a list with two params: the minimum value of the signal detectable by mobile devices and
          the probability of a person to have two mobile devices")
-
-
-  gridParams <-readGridParams(gridFileName)
-  events <- readEvents(file.path(path_root3, 'AntennaInfo_MNO_MNO1.csv'), simulatedData)
-  if(simulatedData == TRUE)
-    simParams <-readSimulationParams(file.path(path_root4, 'simulation.xml'))
-  else
-    simParams <- netParams
-
-
-  devices <- getDeviceIDs(events)
-  connections <- getConnections(events)
-  emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold)
-  jointEmissionProbs <- getEmissionProbsJointModel(emissionProbs)
-
-  model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
-  modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
-
-  ll <- fitModels(length(devices), model,connections)
-  P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-  if(method == "pairs") {
-    coverarea <- readCells(antennaCellsFileName)
-    antennaNeigh <- antennaNeighbours(coverarea)
-    pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
+    
+    
+    gridParams <-readGridParams(gridFileName)
+    events <- readEvents(eventsFileName)
+    if(simulatedData == TRUE)
+      simParams <-readSimulationParams(simulationFileName)
+    else
+      simParams <- netParams
+    
+    if (method == 'trajectory')  {
+      stop(paste0(method, " method not yet implemented"))
+    }
+    devices <- getDeviceIDs(events)
+    connections <- getConnections(events)
+    emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold)
+    jointEmissionProbs <- getEmissionProbsJointModel(emissionProbs)
+    
+    model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
+    modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
+    
+    ll <- fitModels(length(devices), model,connections)
     P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-    out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
-  }
-  else if(method == "1to1"){
-    pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
-    Piia <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
-    out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Piia)
-  }
-  else if (method == 'trajectory')  {
-    stop("method not yet implemented")
-  }
+    if(method == "pairs") {
+      coverarea <- readCells(antennaCellsFileName)
+      antennaNeigh <- antennaNeighbours(coverarea)
+      pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
+      P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
+      out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
+    }
+    else if(method == "1to1"){
+      pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
+      Piia <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
+      out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Piia)
+    }
+  }, error = function(err){
+    print(err)
+  },
+  finally = {
+    rm(list = ls())
+    out_duplicity <- NULL
+  })
+  
   return(out_duplicity)
 }

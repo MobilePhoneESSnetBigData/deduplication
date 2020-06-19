@@ -3,7 +3,7 @@
 #' @description Computes the duplicity probabilities for each device using a Bayesian approach. It uses two methods:
 #'   "pairs" and "1to1". The "pairs" method considers all the possible pairs of two compatible devices. These devices
 #'   where selected by \code{computePairs()} function taing into consideration the antennas where the devices are
-#'   connected and the coverage areas of antennas. Thus, the data set with pairs of devices will be considerable 
+#'   connected and the coverage areas of antennas. Thus, the data set with pairs of devices will be considerable
 #'   smaller than all possible combinations of two devices. The "1to1" method considers all pairs of two devices
 #'   when computing the duplicity probability, the time complexity being much greater than that of the "pairs" method.
 #'   Both methods uses parallel computations to speed up the execution. They build a cluster of working nodes and splits
@@ -41,7 +41,6 @@
 #' @import data.table
 #' @import destim
 #' @import parallel
-#' @import doParallel
 #' @export
 computeDuplicityBayesian <-
   function(method,
@@ -52,24 +51,37 @@ computeDuplicityBayesian <-
            P1 = NULL,
            Pii = NULL,
            init = TRUE) {
-
     ndevices <- length(deviceIDs)
     jointEmissions <- emissions(modeljoin)
     noEvents <- apply(jointEmissions, 2, sum)
     colNamesEmissions <- colnames(jointEmissions)
     eee0 <- 1:length(colNamesEmissions)
     envEmissions <- new.env(hash = TRUE)
-      
+    
     for (i in eee0)
       envEmissions[[colNamesEmissions[i]]] <- i
-    rm(colNamesEmissions) 
+    rm(colNamesEmissions)
     keepCols <-
       names(pairs4dupl)[-which(names(pairs4dupl) %in% c("index.x", "index.y"))]
     
     if (method == "pairs") {
       P2 <- 1 - P1
       alpha <- P2 / P1
-      cl <-buildCluster(c('pairs4dupl','keepCols','noEvents','modeljoin','envEmissions','alpha', 'llik', 'init'), env = environment())
+      cl <-
+        buildCluster(
+          c(
+            'pairs4dupl',
+            'keepCols',
+            'noEvents',
+            'modeljoin',
+            'envEmissions',
+            'alpha',
+            'llik',
+            'init'
+          ),
+          c('destim', 'data.table'),
+          env = environment()
+        )
       ichunks <- clusterSplit(cl, 1:nrow(pairs4dupl))
       res <-
         clusterApplyLB(
@@ -86,11 +98,25 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      dupP.dt<-buildDuplicityTablePairs(res,devices)
+      dupP.dt <- buildDuplicityTablePairs(res, devices)
     }
     
     else if (method == "1to1") {
-      cl <- buildCluster(c('pairs4dupl','devices','keepCols','noEvents','modeljoin','envEmissions','llik','init'), env = environment())
+      cl <-
+        buildCluster(
+          c(
+            'pairs4dupl',
+            'devices',
+            'keepCols',
+            'noEvents',
+            'modeljoin',
+            'envEmissions',
+            'llik',
+            'init'
+          ),
+          c('destim', 'data.table'),
+          env = environment()
+        )
       ichunks <- clusterSplit(cl, 1:ndevices)
       res <-
         clusterApplyLB(
@@ -125,7 +151,6 @@ do1to1 <-
            envEms,
            llik,
            init) {
-    
     ndev <- length(devices)
     n <- length(ichunks)
     ll.matrix <- matrix(0L, nrow = n, ncol = ndev)
@@ -138,7 +163,8 @@ do1to1 <-
         j_list <- c()
       for (j in j_list) {
         newevents <- sapply(pairs[index.x == ii & index.y == j, ..keepCols],
-                            function(x)ifelse(!is.na(x), envEms[[x]], NA))
+                            function(x)
+                              ifelse(!is.na(x), envEms[[x]], NA))
         
         if (all(is.na(newevents)) |
             any(noEvents[newevents[!is.na(newevents)]] == 0)) {
@@ -196,8 +222,10 @@ doPair <-
           llij <- logLik(modeljoin_ij, newevents)
         }
       }
-      dupP0 <- 1 / (1 + (alpha * exp(llij - llik[index.x0] - llik[index.y0])))
-      localdup[index.x == index.x0 & index.y == index.y0, dupP := dupP0]
+      dupP0 <-
+        1 / (1 + (alpha * exp(llij - llik[index.x0] - llik[index.y0])))
+      localdup[index.x == index.x0 &
+                 index.y == index.y0, dupP := dupP0]
     }
     return(localdup)
   }

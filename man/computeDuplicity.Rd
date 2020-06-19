@@ -34,6 +34,8 @@ equals to the number of antennas and the the following columns: \code{Antenna ID
 On the first column there are the antenna IDs and on the rest of the columns the coresponding signal
 strength/quality.}
 
+\item{simulatedData}{If TRUE the input data are provided by the simulation software, otherwise real data is used.}
+
 \item{simulationFileName}{the file name used to define a simulation scenario. It is the file that was provided as input for
 the simulation software. This file is required only if simulatedData is TRUE.}
 
