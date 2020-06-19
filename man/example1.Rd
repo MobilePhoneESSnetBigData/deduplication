@@ -2,7 +2,7 @@
 % Please edit documentation in R/example1.R
 \name{example1}
 \alias{example1}
-\title{Example}
+\title{Example of using deduplication package - the simple way}
 \usage{
 example1()
 }
