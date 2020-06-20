@@ -2,4 +2,12 @@
 #'
 #' @docType package
 #' @name deduplication
+#' @import Matrix
+#' @import data.table
+#' @import destim
+#' @import doParallel
+#' @import parallel
+#' @import rgeos
+#' @import stringr
+#' @import xml2
 NULL
