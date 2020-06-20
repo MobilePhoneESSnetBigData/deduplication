@@ -6,7 +6,14 @@ Author: Bogdan Oancea <bogdan.oancea@gmail.com>, David Salgado <david.salgado.fe
 Maintainer: Bogdan Oancea <bogdan.oancea@gmail.com>
 Description: R package for deduplication (to be described)
 License: GPL3, EUPL
-Imports: data.table
+Imports: data.table,
+         destim,
+         Matrix,
+         doParallel,
+         parallel,
+         rgeos,
+         stringr,
+         xml2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
@@ -18,12 +25,17 @@ Collate:
     'antennaNeighbours.R'
     'aprioriDuplicityProb.R'
     'aprioriOneDevice.R'
-    'splitReverse.R'
+    'buildCluster.R'
+    'buildDuplicityTable1to1.R'
+    'buildDuplicityTablePairs.R'
+    'computeDuplicity.R'
     'computeDuplicityBayesian.R'
     'computePairs.R'
+    'deduplication.R'
+    'example1.R'
     'fitModels.R'
-    'getConnections.R'
     'getDeviceIDs.R'
+    'getConnections.R'
     'tileEquivalence.R'
     'getEmissionProbs.R'
     'getEmissionProbsJointModel.R'
@@ -33,3 +45,4 @@ Collate:
     'readEvents.R'
     'readGridParams.R'
     'readSimulationParams.R'
+    'splitReverse.R'

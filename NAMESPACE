@@ -3,6 +3,7 @@
 export(antennaNeighbours)
 export(aprioriDuplicityProb)
 export(aprioriOneDeviceProb)
+export(computeDuplicity)
 export(computeDuplicityBayesian)
 export(computePairs)
 export(fitModels)
