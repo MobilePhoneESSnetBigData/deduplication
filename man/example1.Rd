@@ -7,12 +7,14 @@
 example1()
 }
 \description{
-This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
-example are supposed to be produced using the simulation software. The "simulation.xml" file is an exeception and it
-is an input file for the simulation software. The files used in this example are provided with the deduplication
-package.
+Example of using deduplication package - the simple way
 }
 \examples{
+#This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
+#example are supposed to be produced using the simulation software. The "simulation.xml" file is an exeception and it
+#is an input file for the simulation software. The files used in this example are provided with the deduplication
+#package.
+
 # set the folder where the necessary input files are stored
 path_root      <- 'extdata'
 # set the grid file name, i.e. the file where the grid parameters are found
