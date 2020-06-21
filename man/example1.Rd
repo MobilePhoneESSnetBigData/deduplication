@@ -7,20 +7,19 @@
 example1()
 }
 \description{
-Example of using deduplication package - the simple way
-}
-\examples{
 #This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
 #example are supposed to be produced using the simulation software. The "simulation.xml" file is an exeception and it
 #is an input file for the simulation software. The files used in this example are provided with the deduplication
 #package.
+}
+\examples{
 
 # set the folder where the necessary input files are stored
 path_root      <- 'extdata'
 # set the grid file name, i.e. the file where the grid parameters are found
 gridfile <-file.path(path_root, 'grid.csv')
 
-# set the event file name, i.e. the file with network events registered during a simulation
+# set the events file name, i.e. the file with network events registered during a simulation
 eventsfile<-file.path(path_root, 'AntennaInfo_MNO_MNO1.csv')
 
 # set the signal file name, i.e. the file where the signal strength/quality for each tile in the grid is stored

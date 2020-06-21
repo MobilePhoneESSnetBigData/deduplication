@@ -33,6 +33,7 @@ Collate:
     'computePairs.R'
     'deduplication.R'
     'example1.R'
+    'example2.R'
     'fitModels.R'
     'getDeviceIDs.R'
     'getConnections.R'
