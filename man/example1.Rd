@@ -16,6 +16,7 @@ example1()
 
 # set the folder where the necessary input files are stored
 path_root      <- 'extdata'
+
 # set the grid file name, i.e. the file where the grid parameters are found
 gridfile <-file.path(path_root, 'grid.csv')
 
@@ -31,6 +32,7 @@ antennacellsfile<-file.path(path_root, 'AntennaCells_MNO1.csv')
 
 # set the simulation file name, i.e. the file with the simulation parameters used to produce the data set
 simulationfile<-file.path(path_root, 'simulation.xml')
+
 # compute the duplicity probabilities using the "pairs" method
 out1<-computeDuplicity("pairs", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile)
 
