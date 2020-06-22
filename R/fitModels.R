@@ -17,7 +17,7 @@
 
 #' @import parallel
 #' @import destim
-#' @import rsolnp
+#' @import Rsolnp
 #' @export
 fitModels <-
   function(ndevices, model, connections) {

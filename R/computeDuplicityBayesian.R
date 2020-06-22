@@ -41,7 +41,7 @@
 #' @import data.table
 #' @import destim
 #' @import parallel
-#' @import rsolnp
+#' @import Rsolnp
 #' @export
 computeDuplicityBayesian <-
   function(method,
