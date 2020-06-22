@@ -8,47 +8,58 @@
 #' 
 #' # set the folder where the necessary input files are stored
 #' path_root      <- 'extdata'
+#' 
 #' # 0. Read simulation params
 #' simParams <-readSimulationParams(file.path(path_root, 'simulation.xml'))
 #'
-# #1. Read grid parameters
+# # 1. Read grid parameters
 #' gridParams <-readGridParams(file.path(path_root, 'grid.csv'))
 #
-# #2.Read network events
+# # 2.Read network events
 #' events <- readEvents(file.path(path_root, 'AntennaInfo_MNO_MNO1.csv'))
 #'
-# #3. Get a list of detected devices
+# # 3. Get a list of detected devices
 #' devices <- getDeviceIDs(events)
 #'
-# #4. Read antennas file and build a matrix of neighboring antennas
-#' coverarea <- readCells(file.path(path_root, 'AntennaCells_MNO1.csv'))
-#' antennaNeigh <- antennaNeighbours(coverarea)
-#'
-#' #5. Get connections for each device
+#' #4. Get connections for each device
 #' connections <- getConnections(events)
 #'
-#' #6. Emission probabilities are computed from the signal strength/quality file
+#' #5. Emission probabilities are computed from the signal strength/quality file
 #' emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, file.path(path_root, 'SignalMeasure_MNO1.csv'), simParams$conn_threshold)
 #'
-#' #6. Build emission joint probabilities
+#' #6. Build joint emission probabilities
 #' jointEmissionProbs <- getEmissionProbsJointModel(emissionProbs)
 #' 
 #' #7. Build the generic model
 #' model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
 #'
-#' #8. Build the joint model
+#' #8. Fit models
+#' ll <- fitModels(length(devices), model,connections)
+#' 
+#' #9. Build the joint model
 #' modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
 #'
-#' #9. Build a matrix of pairs of devices to compute duplicity probability
+#' #10. Read antenna cells and build a matrix of neighboring antennas
+#' coverarea <- readCells(file.path(path_root, 'AntennaCells_MNO1.csv'))
+#' antennaNeigh <- antennaNeighbours(coverarea)
+#' 
+#' #11. Apriori probability of duplicity
 #' P1 <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-#' Pii <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
-#' pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE, P1=P1, limit = 0.05, antennaNeighbors = antennaNeigh)
-#'
-#' #10.Fit models
-#' ll <- fitModels(length(devices), model,connections)
-#
-#' #11. Compute duplicity probabilities
+#' 
+#' #12. Build a matrix of pairs of devices to compute duplicity probability
+#' pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, P1=P1, limit = 0.05, antennaNeighbors = antennaNeigh)
+#' 
+#' #13. Compute duplicity probabilities using the "pairs method (faster)
 #' out1 <- computeDuplicityBayesian("pairs", devices, pairs4dup, modelJ, ll, P1)
+#' 
+#' 
+#' #14. Apriori probability of 2-to-1 
+#' Pii <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
+#
+#' #15. Build a matrix of pairs of devices to compute duplicity probability
+#' pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
+#' 
+#' #16. Compute duplicity probabilities using "1to1" method
 #' out2 <- computeDuplicityBayesian("1to1", devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Pii)
 #' 
 example2 <- function() {}
