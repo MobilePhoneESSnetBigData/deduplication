@@ -50,7 +50,7 @@
 computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL) {
   
   out_duplicity <- NULL
-  
+  rmv <- FALSE
   tryCatch ({
     if(method != 'trajectory' & method != "1to1" & method != 'pairs')
       stop(paste(method, " method unknown!"))
@@ -112,10 +112,11 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
   }, error = function(err){
     print(err)
     rm(list = ls())
-    
+    rmv <- TRUE
   },
   finally = {
-    rm(list = c('events', 'pairs4dup', 'devices', 'connections', 'emissionProbs', 'jointEmissionProbs', 'model', 'modelJ', 'll'))
+    if (!rmv )
+      rm(list = c('events', 'pairs4dup', 'devices', 'connections', 'emissionProbs', 'jointEmissionProbs', 'model', 'modelJ', 'll'))
   })
   
   return(out_duplicity)
