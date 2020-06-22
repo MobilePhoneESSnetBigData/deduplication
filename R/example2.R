@@ -12,13 +12,13 @@
 #' # 0. Read simulation params
 #' simParams <-readSimulationParams(file.path(path_root, 'simulation.xml'))
 #'
-# # 1. Read grid parameters
+#'  # 1. Read grid parameters
 #' gridParams <-readGridParams(file.path(path_root, 'grid.csv'))
-#
-# # 2.Read network events
+#'
+#'  # 2.Read network events
 #' events <- readEvents(file.path(path_root, 'AntennaInfo_MNO_MNO1.csv'))
 #'
-# # 3. Get a list of detected devices
+#'  # 3. Get a list of detected devices
 #' devices <- getDeviceIDs(events)
 #'
 #' #4. Get connections for each device
@@ -49,17 +49,16 @@
 #' #12. Build a matrix of pairs of devices to compute duplicity probability
 #' pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, P1=P1, limit = 0.05, antennaNeighbors = antennaNeigh)
 #' 
-#' #13. Compute duplicity probabilities using the "pairs method (faster)
+#' #13. Compute duplicity probabilities using the "pairs" method (faster)
 #' out1 <- computeDuplicityBayesian("pairs", devices, pairs4dup, modelJ, ll, P1)
-#' 
 #' 
 #' #14. Apriori probability of 2-to-1 
 #' Pii <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
-#
+#'
 #' #15. Build a matrix of pairs of devices to compute duplicity probability
 #' pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
 #' 
-#' #16. Compute duplicity probabilities using "1to1" method
+#' #16. Compute duplicity probabilities using "1to1" method=
 #' out2 <- computeDuplicityBayesian("1to1", devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Pii)
 #' 
 example2 <- function() {}
