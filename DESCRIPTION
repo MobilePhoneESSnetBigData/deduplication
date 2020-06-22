@@ -13,7 +13,8 @@ Imports: data.table,
          parallel,
          rgeos,
          stringr,
-         xml2
+         xml2,
+         rsolnp
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
