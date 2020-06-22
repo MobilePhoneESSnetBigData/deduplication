@@ -14,7 +14,7 @@
 #' gridfile <-system.file(path_root, 'grid.csv', package = 'deduplication')
 #' 
 #' # set the events file name, i.e. the file with network events registered during a simulation
-#' eventsfile<-system.file(path_root, 'AntennaInfo_MNO_MNO1.csv', package = 'deduplication)
+#' eventsfile<-system.file(path_root, 'AntennaInfo_MNO_MNO1.csv', package = 'deduplication')
 #'
 #' # set the signal file name, i.e. the file where the signal strength/quality for each tile in the grid is stored
 #' signalfile<-system.file(path_root, 'SignalMeasure_MNO1.csv', package = 'deduplication')
