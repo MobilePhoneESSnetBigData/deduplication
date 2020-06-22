@@ -111,10 +111,11 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     }
   }, error = function(err){
     print(err)
+    rm(list = ls())
+    
   },
   finally = {
-    rm(list = ls())
-    out_duplicity <- NULL
+    rm(list = c('events', 'pairs4dup', 'devices', 'connections', 'emissionProbs', 'jointEmissionProbs', 'model', 'modelJ', 'll'))
   })
   
   return(out_duplicity)
