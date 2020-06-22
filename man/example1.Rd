@@ -12,34 +12,3 @@ example1()
 #is an input file for the simulation software. The files used in this example are provided with the deduplication
 #package.
 }
-\examples{
-
-# set the folder where the necessary input files are stored
-path_root      <- 'extdata'
-
-# set the grid file name, i.e. the file where the grid parameters are found
-gridfile <-file.path(path_root, 'grid.csv')
-
-# set the events file name, i.e. the file with network events registered during a simulation
-eventsfile<-file.path(path_root, 'AntennaInfo_MNO_MNO1.csv')
-
-# set the signal file name, i.e. the file where the signal strength/quality for each tile in the grid is stored
-signalfile<-file.path(path_root, 'SignalMeasure_MNO1.csv')
-
-# set the antenna cells file name, i.e. the file where the simulation software stored the coverage area for each antenna
-# This file is needed only if the duplicity probabilities are computed using "pairs" method
-antennacellsfile<-file.path(path_root, 'AntennaCells_MNO1.csv')
-
-# set the simulation file name, i.e. the file with the simulation parameters used to produce the data set
-simulationfile<-file.path(path_root, 'simulation.xml')
-
-# compute the duplicity probabilities using the "pairs" method
-out1<-computeDuplicity("pairs", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile)
-
-# compute the duplicity probabilities using the "1to1" method
-out2<-computeDuplicity("1to1", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, simulatedData = TRUE, simulationFileName = simulationfile)
-
-# compute the duplicity probabilities using the "trajectory" method
-out3<-computeDuplicity("trajectory", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, simulationFileName = simulationfile)
-
-}

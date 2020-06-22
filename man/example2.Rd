@@ -19,15 +19,15 @@ path_root      <- 'extdata'
 
 # 0. Read simulation params
 
-simParams <-readSimulationParams(file.path(path_root, 'simulation.xml'))
+simParams <-readSimulationParams(system.file('extdata', 'simulation.xml', package = 'deduplication'))
 
  # 1. Read grid parameters
  
-gridParams <-readGridParams(file.path(path_root, 'grid.csv'))
+gridParams <-readGridParams(system.file('extdata', 'grid.csv', package = 'deduplication'))
 
  # 2.Read network events
  
-events <- readEvents(file.path(path_root, 'AntennaInfo_MNO_MNO1.csv'))
+events <- readEvents(system.file('extdata', 'AntennaInfo_MNO_MNO1.csv', package = 'deduplication'))
 
  # 3. Get a list of detected devices
  
@@ -39,7 +39,7 @@ connections <- getConnections(events)
 
 #5. Emission probabilities are computed from the signal strength/quality file
 
-emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, file.path(path_root, 'SignalMeasure_MNO1.csv'), simParams$conn_threshold)
+emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, system.file('extdata', 'SignalMeasure_MNO1.csv', package = 'deduplication'), simParams$conn_threshold)
 
 #6. Build joint emission probabilities
 
@@ -59,7 +59,7 @@ modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
 
 #10. Read antenna cells and build a matrix of neighboring antennas
 
-coverarea <- readCells(file.path(path_root, 'AntennaCells_MNO1.csv'))
+coverarea <- readCells(system.file('extdata', 'AntennaCells_MNO1.csv', package = 'deduplication'))
 
 antennaNeigh <- antennaNeighbours(coverarea)
 
