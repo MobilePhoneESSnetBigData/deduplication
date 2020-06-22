@@ -99,7 +99,7 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      dupP.dt <- buildDuplicityTablePairs(res, devices)
+      dupP.dt <- buildDuplicityTablePairs(res, deviceIDs)
     }
     
     else if (method == "1to1") {
@@ -134,7 +134,7 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      dupP.dt <- buildDuplicityTable1to1(res, devices, Pii)
+      dupP.dt <- buildDuplicityTable1to1(res, deviceIDs, Pii)
     } else {
       stop("Method unknown!")
     }
