@@ -107,7 +107,7 @@ computeDuplicityBayesian <-
         buildCluster(
           c(
             'pairs4dupl',
-            'devices',
+            'deviceIDs',
             'keepCols',
             'noEvents',
             'modeljoin',
@@ -125,7 +125,7 @@ computeDuplicityBayesian <-
           ichunks,
           do1to1,
           pairs4dupl,
-          devices,
+          deviceIDs,
           keepCols,
           noEvents,
           modeljoin,
