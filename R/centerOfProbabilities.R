@@ -33,8 +33,8 @@ centerOfProbabilities <- function(centroid, postLocProb) {
   cp_x <- vector(mode ='numeric', length = ncol(postLocProb))
   cp_y <- vector(mode = 'numeric', length = ncol(postLocProb))
   for (i in 1:ncol(postLocProb)) {
-    cp_x[i] <- sum(postLocProb[, ..i] * centroid[, 1]) / sum(postLocProb[, ..i])
-    cp_y[i] <- sum(postLocProb[, ..i] * centroid[, 2]) / sum(postLocProb[, ..i])
+    cp_x[i] <- sum(postLocProb[, ..i] * centroid[, 1]) / sum(postLocProb[, ..i]) #inutila impartirea (numitorul e 1)
+    cp_y[i] <- sum(postLocProb[, ..i] * centroid[, 2]) / sum(postLocProb[, ..i]) #inutila impartirea (numitorul e 1)
   }
   cp <- cbind(cp_x, cp_y)
   colnames(cp) <- c('centerProb_x', 'centerProb_y')
