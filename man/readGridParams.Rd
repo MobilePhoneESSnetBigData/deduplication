@@ -15,8 +15,8 @@ rows and columns and the tile size on OX and OY axes. Therefore, the file provid
 have at least the following 4 columns: 'No Tiles X' ,'No Tiles X, 'X Tile Dim' and 'Y Tile Dim'.}
 }
 \value{
-Returns a list with the folloind items: \code{nrow} - the number of rows in the grid, \code{ncol}
-- the number of columns in the grid, \code{tileX} - the dimension of a tile on OX axis,
+Returns a list with the following items: \code{nrow} - the number of tiles is a row of the grid, \code{ncol}
+- the number of tiles in a column of the grid, \code{tileX} - the dimension of a tile on OX axis,
 \code{tileY} - the dimension of a tile on OY axis
 }
 \description{
