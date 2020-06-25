@@ -1,0 +1,45 @@
+---
+title: "Introduction to deduplication package"
+author: "Bogdan Oancea"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette contains an introduction to *deduplication* package. It describes its main purpose, presents some technical details of its implementation and provide examples on how to use this package. Some basic knowledge about *destim* pacakge would be useful to understand how the package works. A detailed description of the methodological approach
+implemented by this package can be found in @WP5Deliverable1.3.
+
+
+# Introduction
+This section contains a brief explanation about the intended use of the package and provieds a short introduction to the underlaying methodology.
+
+## Device duplicity problem
+The problem of device multiplicity comes from the fact that the statistical unit of analysis with mobile network data is the individual of a target population, not a mobile device. Since an individual can carry more than one device with him/her, this introduces the problem of multiple counting. For simplicity we make the simplifying assumption that each individual can carry at most $2$ devices. 
+
+The main purpose of this package is to classify each device $d$ in a dataset as corresponding to an individual with only one device (1:1 correspondence between devices and individuals) or as corresponding to an individual with two devices (2:1 correspondence between devices and individuals). This classification will be probabilistic, thus assigning a probability $p_{d}$ of duplicity to each device $d$.
+
+Two main methodological approaches are implemented by the *deduplication* package:
+
+1. a Bayesian approach with network events data
+2. an approach based on the distance between centers of location probabilities
+
+## The Bayesian approach 
+Denoting by $D_{d1}$ the  event in which the device $d$ has a 1:1 device-individual correspondence and by$D_{d2}$ the event in which the device $d$ has a 2:1 device-individual correspondence we need to compute the probabilities $p_{d}=\mathbb{P}\left(D_{d2}|\mathbf{E}, \mathbf{I}\right)$ and $q_{d}=1-p_{d}$ making use of the network event information $\mathbf{E}_{d}=\{E_{dt_{0}}, E_{dt_{1}},\dots, E_{dt_{N}}\}$ of all devices $d$ and auxiliary information already used for the construction of the underlying HMMs. 
+
+If we denote by $D_{d_{1}d_{2}}$ the event "devices $d_{1}$ and $d_{2}$ are carried by the same individual" (duplicity event), the probability $p_{d}$ for a device $d$ is the probability of pair-duplicity $p_{dd'}\equiv\mathbb{P}\left(D_{dd'}|\mathbf{E},\mathbf{I}\right)$ corresponding to the device $d'$ more similar to $d$ and we can write $p_{d}= \max_{d'\neq d}\mathbb{P}\left(D_{dd'}|\mathbf{E}, \mathbf{I}\right)$.
+
+We compute the pair-duplicity probabilities $p_{d_{1}d_{2}}$ for two devices $d_{1}$ and $d_{2}$ using the Bayes theorem: $\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{E}, \mathbf{I}\right)=\frac{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}\right)\mathbb{P}\left(D_{d_{1}d_{2}}^{c}| \mathbf{I}\right)}{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}\right)\mathbb{P}\left(D_{d_{1}d_{2}}| \mathbf{I}\right) + \mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}\mathbf{I}\right)\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{I}\right)} =\frac{1}{1 + \frac{\mathbb{P}\left(D_{d_{1}d_{2}}|\mathbf{I}\right)}{\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{I}\right)}\times \frac{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}, \mathbf{I}\right)}{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}, \mathbf{I}\right)} }$
+
+Here  $D_{d_{1}d_{2}}^{c}$ stands for "devices $d_{1}$ and $d_{2}$ are not carried by the same individual" event, $\mathbb{P}\left(D_{d_{1}d_{2}}|\mathbf{I}\right)$ and $\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{I}\right)$ are prior probabilities for the duplicity and non-duplicity events and $\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}, \mathbf{I}\right)$ and $\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}, \mathbf{I}\right)$ stand for the likelihoods under each hypothesis $D_{d_{1}d_{2}}$ and $D_{d_{1}d_{2}}^{c}$, respectively.
+
+After some mathematical manipulations we arrive at the following formula:
