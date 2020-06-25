@@ -19,12 +19,12 @@ dispersionRadius(
 \item{center}{The center of posterior location probabilities. If it is not provided, it is
 computed here.}
 
-\item{method}{The distance to be used. Currently only the euclidean distance is implemented.}
+\item{method}{The distance function to be used. The euclidean distance is the default method.}
 
 \item{p}{the power of the Minkowski distance. The default value is 2 (euclidean distance).}
 }
 \value{
-
+a vector with dispersion radius for each time instant, for the device under consideration.
 }
 \description{
 Computes the radius of dispersion for the probability cloud of a device at each
