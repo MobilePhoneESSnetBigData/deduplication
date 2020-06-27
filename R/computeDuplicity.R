@@ -50,7 +50,6 @@
 computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL) {
   
   out_duplicity <- NULL
-  
   tryCatch ({
     if(method != 'trajectory' & method != "1to1" & method != 'pairs')
       stop(paste(method, " method unknown!"))
@@ -76,6 +75,9 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
       stop("In case of using real data you should provide a list with two params: the minimum value of the signal detectable by mobile devices and
          the probability of a person to have two mobile devices")
     
+    if (method == 'trajectory')  {
+      stop(paste0(method, " method not yet implemented"))
+    }
     
     gridParams <-readGridParams(gridFileName)
     events <- readEvents(eventsFileName)
@@ -84,9 +86,7 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     else
       simParams <- netParams
     
-    if (method == 'trajectory')  {
-      stop(paste0(method, " method not yet implemented"))
-    }
+   
     devices <- getDeviceIDs(events)
     connections <- getConnections(events)
     emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold)
@@ -111,10 +111,11 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     }
   }, error = function(err){
     print(err)
+    rm(list=setdiff(ls(), "out_duplicity"))
+
   },
   finally = {
-    rm(list = ls())
-    out_duplicity <- NULL
+    rm(list=setdiff(ls(), "out_duplicity"))
   })
   
   return(out_duplicity)

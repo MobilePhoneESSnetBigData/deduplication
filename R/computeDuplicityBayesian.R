@@ -41,6 +41,7 @@
 #' @import data.table
 #' @import destim
 #' @import parallel
+#' @import Rsolnp
 #' @export
 computeDuplicityBayesian <-
   function(method,
@@ -98,7 +99,7 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      dupP.dt <- buildDuplicityTablePairs(res, devices)
+      dupP.dt <- buildDuplicityTablePairs(res, deviceIDs)
     }
     
     else if (method == "1to1") {
@@ -106,7 +107,7 @@ computeDuplicityBayesian <-
         buildCluster(
           c(
             'pairs4dupl',
-            'devices',
+            'deviceIDs',
             'keepCols',
             'noEvents',
             'modeljoin',
@@ -124,7 +125,7 @@ computeDuplicityBayesian <-
           ichunks,
           do1to1,
           pairs4dupl,
-          devices,
+          deviceIDs,
           keepCols,
           noEvents,
           modeljoin,
@@ -133,7 +134,7 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      dupP.dt <- buildDuplicityTable1to1(res, devices, Pii)
+      dupP.dt <- buildDuplicityTable1to1(res, deviceIDs, Pii)
     } else {
       stop("Method unknown!")
     }
