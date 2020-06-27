@@ -13,11 +13,11 @@
 #' @param center The center of posterior location probabilities. If it is not provided, it is
 #'   computed here.
 #'
-#' @param method The distance to be used. Currently only the euclidean distance is implemented.
+#' @param method The distance function to be used. The euclidean distance is the default method.
 #'
 #' @param p the power of the Minkowski distance. The default value is 2 (euclidean distance).
 #'
-#' @return
+#' @return a vector with dispersion radius for each time instant, for the device under consideration.
 #'
 #' @import data.table
 #' @include centerOfProbabilities.R
