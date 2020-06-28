@@ -41,6 +41,7 @@ buildDeltaProb<-function(centroids, device1, device2, path, dim, t) {
     }
     deltaX[,p1:=pp1]
     deltaX[,p2:=pp2]
+    deltaX[, .p:=p1*p1]
   }
   return(deltaX)
 }
