@@ -7,7 +7,7 @@
 #'
 #' @param centroid The centroids of all tiles in the grid.
 #'
-#' @postLocProb The posterior location probabilities for a device, for each tile and each time
+#' @param postLocProb The posterior location probabilities for a device, for each tile and each time
 #'   instant.
 #'
 #' @param center The center of posterior location probabilities. If it is not provided, it is
