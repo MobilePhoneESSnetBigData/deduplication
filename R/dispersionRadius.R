@@ -46,7 +46,7 @@ dispersionRadius <- function(centroid, postLocProb, center = NULL, method = 'euc
     for(i in 1:ntimes) {
       coordMatrix <- rbind(center[i,], tmp)
       distance <- dist(coordMatrix, method = method, p = p)[1:nc]
-      rd[i] <- sqrt(sum(postLocProb[,..i] * distance**2))
+      rd[i] <- sqrt(sum(postLocProb[,i] * distance**2))
     }
     return(rd)
 }

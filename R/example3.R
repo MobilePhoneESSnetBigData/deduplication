@@ -15,16 +15,20 @@
 #'  
 #' gridParams <-readGridParams(system.file(path_root, 'grid.csv', package = 'deduplication'))
 #' 
-#' centrs <- buildCentroids(gridParams$ncol, gridParams$nrow, gridParams$tileX, gridParam$tileY)
+#' centrs <- buildCentroids(gridParams$ncol, gridParams$nrow, gridParams$tileX, gridParams$tileY)
 #' 
-#' #' events <- readEvents(system.file(path_root, 'AntennaInfo_MNO_MNO1.csv', package = 'deduplication'))
+#' events <- readEvents(system.file(path_root, 'AntennaInfo_MNO_MNO1.csv', package = 'deduplication'))
 #'
 #' # 3. Get a list of detected devices
 #'  
 #' devices <- getDeviceIDs(events)
+#'
+#' postLoc <- list()
+#' centerOfProbs <- list() 
 #' 
 #' for( i in 1:length(devices)) {
-#'     postLoc[i] <- readPostLocProb(path_root, devices[i])
+#'     postLoc[[i]] <- readPostLocProb(path_root, devices[i])
+#'     centerOfProbs[[i]] <- centerOfProbabilities(centrs, postLoc[[i]])
 #' }
 #' 
 #' 

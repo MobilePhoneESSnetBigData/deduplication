@@ -13,19 +13,21 @@
 #'
 #' @param dim If dim is 1 this function computes the probability distribution for Delta X, if it is 2 for Delta Y.
 #'
-#' @param  t The time instant index in the list of all time instants.
-#'
 #' @return The probability distribution for Delta X or Delta Y.
 #'
+#' @import Matrix
+#' @import data.table
 #' @export
 buildDeltaProb <-
-  function(centroids, postLocProbDevice1, postLocProbDevice2, path, dim, t) {
+  function(centroids, postLocProbDevice1, postLocProbDevice2, dim) {
     if (dim != 1 & dim != 2)
       stop('dim should be 1 or 2')
-    
-    posLoc1 <- readPostLocProb(path, device1)[, ..t]
-    posLoc2 <- readPostLocProb(path, device2)[, ..t]
-    x <- unique(as.vector(centroids[, ..dim]))
+    T  <- nrow(postLocProbDevice1)
+    #posLoc1 <- postLocProbDevice1[((t-1)*T+1):((t-1)*T+T)]
+    #posLoc2 <- postLocProbDevice1[((t-1)*T+1):((t-1)*T+T)]
+    posLoc1 <- postLocProbDevice1
+    posLoc2 <- postLocProbDevice2
+    x <- unique(centroids[, ..dim][[1]])
     deltaX <- as.data.table(expand.grid(x, x))
     colnames(deltaX) <- c('x1', 'x2')
     pp1 <- vector(length = nrow(deltaX))
@@ -34,8 +36,8 @@ buildDeltaProb <-
       xx <- x[i]
       tiles1 <- centroids[, x] == xx
       tiles2 <- centroids[, x] == xx
-      pp1[deltaX[, x1] == xx] <- sum(posLoc1[tiles1, ])
-      pp2[deltaX[, x2] == xx] <- sum(posLoc2[tiles2, ])
+      pp1[deltaX[, x1] == xx] <- sum(posLoc1[tiles1])
+      pp2[deltaX[, x2] == xx] <- sum(posLoc2[tiles2])
     }
     deltaX[, p := pp1 * pp2]
     deltaX[, dx := x1 - x2]
