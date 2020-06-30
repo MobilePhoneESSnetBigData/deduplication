@@ -35,8 +35,8 @@ for(i in 1:4) {
       s1<-0
       mm<-max(dr[[i]], dr[[j]])
       for(t in 1:90) {
-        mdx[[t]]<-buildDeltaProb(centrs, postLoc[[i]][,t], postLoc[[j]][,t], path_root, 1, t)
-        mdy[[t]]<-buildDeltaProb(centrs, postLoc[[i]], postLoc[[j]], path_root, 2, t)
+        mdx[[t]]<-buildDeltaProb(centrs, postLoc[[i]][,t], postLoc[[j]][,t], 1)
+        mdy[[t]]<-buildDeltaProb(centrs, postLoc[[i]], postLoc[[j]],2)
         print(paste0(modeDelta(mdx[[t]]), ":", mm ,"\n"))
         print(paste0(modeDelta(mdy[[t]]), ":", mm ,"\n"))
         s1<-s1+(abs(modeDelta(mdx[[t]]))<mm & abs(modeDelta(mdy[[t]]))<mm)
