@@ -29,9 +29,9 @@ alpha<-P1/P2
 n<-length(devices)
 pmoded1d2<-Matrix(nrow = n, ncol = n )
 pd1d2<-Matrix(nrow = n, ncol = n )
-for(i in 1:4) {
-  if(i<4) {
-    for(j in (i+1):4) {
+for(i in 1:n) {
+  if(i<n) {
+    for(j in (i+1):n) {
       s1<-0
       mm<-max(dr[[i]], dr[[j]])
       for(t in 1:90) {
