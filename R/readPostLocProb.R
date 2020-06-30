@@ -14,9 +14,9 @@
 #' @export
 readPostLocProb <-function(path, deviceID) {
   if(!file.exists(path))
-    stop ('directory with posterior location probabilities files does not exist')
+    stop (paste0('directory with posterior location probabilities files does not exist', path))
   
-  filename <- paste0(path, "postLocDevice_", as.character(deviceID), ".csv")
+  filename <- paste0(path, "/postLocDevice_", as.character(deviceID), ".csv")
   
   if(!file.exists(filename))
     stop (paste0('posterior location probabilities file for device ', deviceID,  ' does not exist'))
