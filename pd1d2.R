@@ -39,7 +39,7 @@ for(i in 1:4) {
         mdy[[t]]<-buildDeltaProb(centrs, postLoc[[i]], postLoc[[j]], path_root, 2, t)
         print(paste0(modeDelta(mdx[[t]]), ":", mm ,"\n"))
         print(paste0(modeDelta(mdy[[t]]), ":", mm ,"\n"))
-        s1<-s1+(modeDelta(mdx[[t]])<mm & modeDelta(mdy[[t]])<mm)
+        s1<-s1+(abs(modeDelta(mdx[[t]]))<mm & abs(modeDelta(mdy[[t]]))<mm)
       }
       pmoded1d2[i,j] <- s1/90
       pd1d2[i,j] <- 1- 1/(1+alpha*pmoded1d2[i,j]/(1-pmoded1d2[i,j]))
