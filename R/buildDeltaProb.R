@@ -22,11 +22,11 @@ buildDeltaProb <-
   function(centroids, postLocProbDevice1, postLocProbDevice2, dim) {
     if (dim != 1 & dim != 2)
       stop('dim should be 1 or 2')
-    T  <- nrow(postLocProbDevice1)
+    #T  <- nrow(postLocProbDevice1)
     #posLoc1 <- postLocProbDevice1[((t-1)*T+1):((t-1)*T+T)]
     #posLoc2 <- postLocProbDevice1[((t-1)*T+1):((t-1)*T+T)]
-    posLoc1 <- postLocProbDevice1
-    posLoc2 <- postLocProbDevice2
+    #posLoc1 <- postLocProbDevice1
+    #posLoc2 <- postLocProbDevice2
     x <- unique(centroids[, ..dim][[1]])
     deltaX <- as.data.table(expand.grid(x, x))
     colnames(deltaX) <- c('x1', 'x2')
@@ -35,9 +35,9 @@ buildDeltaProb <-
     for (i in 1:length(x)) {
       xx <- x[i]
       tiles1 <- centroids[, x] == xx
-      tiles2 <- centroids[, x] == xx
-      pp1[deltaX[, x1] == xx] <- sum(posLoc1[tiles1])
-      pp2[deltaX[, x2] == xx] <- sum(posLoc2[tiles2])
+      #tiles2 <- centroids[, x] == xx
+      pp1[deltaX[, x1] == xx] <- sum(postLocProbDevice1[tiles1])
+      pp2[deltaX[, x2] == xx] <- sum(postLocProbDevice2[tiles1])
     }
     deltaX[, p := pp1 * pp2]
     deltaX[, dx := x1 - x2]

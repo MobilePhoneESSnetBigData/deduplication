@@ -36,7 +36,7 @@ for(i in 1:4) {
       mm<-max(dr[[i]], dr[[j]])
       for(t in 1:90) {
         mdx[[t]]<-buildDeltaProb(centrs, postLoc[[i]][,t], postLoc[[j]][,t], 1)
-        mdy[[t]]<-buildDeltaProb(centrs, postLoc[[i]][,t], postLoc[[j]][,t],2)
+        mdy[[t]]<-buildDeltaProb(centrs, postLoc[[i]][,t], postLoc[[j]][,t], 2)
         print(paste0(modeDelta(mdx[[t]]), ":", mm ,"\n"))
         print(paste0(modeDelta(mdy[[t]]), ":", mm ,"\n"))
         s1<-s1+(abs(modeDelta(mdx[[t]]))<mm & abs(modeDelta(mdy[[t]]))<mm)
@@ -44,7 +44,7 @@ for(i in 1:4) {
       pmoded1d2[i,j] <- s1/90
       pd1d2[i,j] <- 1- 1/(1+alpha*pmoded1d2[i,j]/(1-pmoded1d2[i,j]))
       print(paste0(pmoded1d2[i,j], " : ", pd1d2[i,j], "\n"))
-      print(paste0(modeDelta(mdx[[t]]), ":", modeDelta(mdy[[t]])))
+      #print(paste0(modeDelta(mdx[[t]]), ":", modeDelta(mdy[[t]])))
     }
   }
 }
