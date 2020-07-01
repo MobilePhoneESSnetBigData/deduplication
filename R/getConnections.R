@@ -21,7 +21,7 @@ getConnections <- function(events) {
   times <- unique(events[, 'time'])
   times <- sort(unlist(times[,'time']))
   
-  devices <- getDeviceIDs(events)
+  devices <- sort(as.numeric(getDeviceIDs(events)))
 
   n1 <- length(times)
   n2 <- length(devices)
