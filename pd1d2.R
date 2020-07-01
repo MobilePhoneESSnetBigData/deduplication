@@ -43,6 +43,7 @@ for(i in 1:n) {
       for(t in 1:T) {
         mdelta[[t]]<-buildDeltaProb5(centrs, postLoc[[i]][,t], postLoc[[j]][,t])
         s1<-s1+(abs(modeDelta(mdelta[[t]][[1]]))<mm & abs(modeDelta(mdelta[[t]][[2]]))<mm)
+        #s1<-s1+(abs(mdelta[[t]][[1]])<mm & abs( mdelta[[t]][[2]])<mm )
       }
       tmp <- s1/T
       pd1d2[i,j] <- 1- 1/(1+alpha*tmp/(1-tmp))
@@ -57,25 +58,26 @@ total_time <-  difftime(t2, t1, units = "mins")
 total_time
 
 t3 <- Sys.time()
-# for(i in 1:nrow(pairs4dup)) {
-#   print(paste0("i:", i))
-#   index_i <-pairs4dup[i,1][[1]]
-#   index_j <-pairs4dup[i,2][[1]]
-#   s1<-0
-#   mm<-max(dr[[index_i]], dr[[index_j]])
-#   for(t in 1:T) {
-#     mdelta[[t]]<-buildDeltaProb5(centrs, postLoc[[index_i]][,t], postLoc[[index_j]][,t])
-#     s1<-s1+(abs(modeDelta(mdelta[[t]][[1]]))<mm & abs(modeDelta(mdelta[[t]][[2]]))<mm)
-#   }
-#   tmp <- s1/T
-#   pd1d2[index_i,index_j] <- 1- 1/(1+alpha*tmp/(1-tmp))
-#   pd1d2[index_j,index_i] <- pd1d2[i,j]
-#   if( pd1d2[index_i,index_j]>0.5)
-#     print(paste0(index_i, ":", index_j))
-#   
-# }
+for(i in 1:nrow(pairs4dup)) {
+  print(paste0("i:", i))
+  index_i <-pairs4dup[i,1][[1]]
+  index_j <-pairs4dup[i,2][[1]]
+  s1<-0
+
+  for(t in 1:T) {
+    mm<-0.5*max(dr[[index_i]][t], dr[[index_j]][t])
+    mdelta[[t]]<-buildDeltaProb5(centrs, postLoc[[index_i]][,t], postLoc[[index_j]][,t])
+    s1<-s1+(abs(modeDelta(mdelta[[t]][[1]]))<mm & abs(modeDelta(mdelta[[t]][[2]]))<mm)
+  }
+  tmp <- s1/T
+  pd1d2[index_i,index_j] <- 1- 1/(1+alpha*tmp/(1-tmp))
+  pd1d2[index_j,index_i] <- pd1d2[index_i,index_j]
+  if( pd1d2[index_i,index_j]>0.5)
+    print(paste0(index_i, ":", index_j))
+
+}
 t4 <- Sys.time()
-total_time2 <-  difftime(t2, t1, units = "mins")
+total_time2 <-  difftime(t4, t3, units = "mins")
 total_time2
 
 dup<-data.table(devices=devices, dupP=0)

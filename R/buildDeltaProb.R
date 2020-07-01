@@ -133,6 +133,36 @@ buildDeltaProb5 <-function(centroids, postLocProbDevice1, postLocProbDevice2) {
 }
 
 
+buildDeltaProb6 <-function(centroids, postLocProbDevice1, postLocProbDevice2) {
+  
+  xp1<-cbind(centroids[,.(x,y)], postLocProbDevice1)
+  xp2<-cbind(centroids[,.(x,y)], postLocProbDevice2)
+  
+  colnames(xp1)<-c('x1', 'y1', 'p1')
+  colnames(xp2)<-c('x2', 'y2', 'p2')
+  
+  xp1<-xp1[p1!=0][,]
+  xp2<-xp2[p2!=0][,]
+  deltaX <- CJ.table(xp1[,.(x1,p1)],xp2[,.(x2,p2)])
+  deltaX <- deltaX[, delta:=x1-x2]
+  deltaX <- deltaX[, p:=p1*p2]
+  deltaX <- deltaX[, .(delta, p)]
+  deltaX<-deltaX[, lapply(.SD,sum), by=.(delta)]
+  
+  deltaY <- CJ.table(xp1[,.(y1,p1)],xp2[,.(y2,p2)])
+  deltaY <- deltaY[, delta:=y1-y2]
+  deltaY <- deltaY[, p:=p1*p2]
+  deltaY <- deltaY[, .(delta, p)]
+  deltaY<-deltaY[, lapply(.SD,sum), by=.(delta)]
+  
+  mdy <- deltaY[which.max(deltaY$p), delta]
+  mdx <- deltaX[which.max(deltaX$p), delta]
+  #mdx <- sum(deltaX$p*deltaX$delta)
+  #mdy <- sum(deltaY$p*deltaY$delta)
+  return(list(modeDeltaX=abs(mdx), modeDeltaY=abs(mdy)))
+}
+
+
 CJ.table <- function(X,Y) {
    setkey(X[,c(k=1,.SD)],k)[Y[,c(k=1,.SD)],allow.cartesian=TRUE][,k:=NULL]
 }
