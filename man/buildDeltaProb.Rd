@@ -4,18 +4,18 @@
 \alias{buildDeltaProb}
 \title{Computes the probability distribution for Delta X and Delta Y}
 \usage{
-buildDeltaProb(centroids, postLocProbDevice1, postLocProbDevice2, dim)
+buildDeltaProb(delta, postLocProbDevice1, postLocProbDevice2)
 }
 \arguments{
 \item{centroids}{The centroids of all tiles in the grid.}
-
-\item{dim}{If dim is 1 this function computes the probability distribution for Delta X, if it is 2 for Delta Y.}
 
 \item{device1}{The ID of the first device.}
 
 \item{device2}{The ID of the second device.}
 
 \item{path}{The path to the location where the posterior location probabilities are stored.}
+
+\item{dim}{If dim is 1 this function computes the probability distribution for Delta X, if it is 2 for Delta Y.}
 }
 \value{
 The probability distribution for Delta X or Delta Y.
