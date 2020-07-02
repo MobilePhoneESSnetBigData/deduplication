@@ -30,17 +30,17 @@ computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T) 
   
   # cl <- buildCluster( c('path', 'devices', 'centrs', 'centerOfProbs'), env = environment())
   # ichunks <- clusterSplit(cl, 1:ndevices)
-  # res <- clusterApplyLB( cl,ichunks, doLocations, path, devices, centrs, centerOfProbs )
+  # res <- clusterApplyLB( cl, ichunks, doLocations, path, devices, centrs, centerOfProbs )
   # for(i in 1:length(res)) {
-  #   postLoc <- c(postLoc, res[[i]]$postLoc) 
+  #   postLoc <- c(postLoc, res[[i]]$postLoc)
   #   centerOfProbs <- c(centerOfProbs, res[[i]]$centerOfProbs)
   #   dr <- c(dr, res[[i]]$dr)
   # }
   # stopCluster(cl)
-  
+
  
   for( i in 1:ndevices) {
-    postLoc[[i]] <- readPostLocProb(path, devices[i]) 
+    postLoc[[i]] <- readPostLocProb(path, devices[i])
     centerOfProbs[[i]] <- centerOfProbabilities(centrs, postLoc[[i]])
     dr[[i]] <- dispersionRadius(centrs, postLoc[[i]], centerOfProbs[[i]])
   }
@@ -94,17 +94,17 @@ computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T) 
 
 # doLocations <- function(ichunks, path, devices, centrs, centerOfProbs ) {
 #   n <- length(ichunks)
-#   local_postLoc<-list(length = n) 
-#   local_CenterOfProbs<-list(length = n)
+#   local_postLoc<-list(length = n)
+#   local_centerOfProbs<-list(length = n)
 #   local_dr <- list(length = n)
-#   k<-0
+#   k<-1
 #   for( i in ichunks) {
-#     local_postLoc[[k]] <- readPostLocProb(path, devices[i]) 
-#     local_centerOfProbs[[k]] <- centerOfProbabilities(centrs, postLoc[[i]])
-#     local_dr[[k]] <- dispersionRadius(centrs, postLoc[[i]], centerOfProbs[[i]])
+#     local_postLoc[[k]] <- readPostLocProb(path, devices[i])
+#     local_centerOfProbs[[k]] <- centerOfProbabilities(centrs, local_postLoc[[k]])
+#     local_dr[[k]] <- dispersionRadius(centrs, local_postLoc[[k]], local_centerOfProbs[[k]])
 #     k <- k + 1
 #   }
-#   res<-list(postLoc = local_postLoc, centerOfProbs = local_centerOfProbs[[k]], dr = local_dr )
+#   res<-list(postLoc = local_postLoc, centerOfProbs = local_centerOfProbs, dr = local_dr )
 #   return (res)
 # }
 
