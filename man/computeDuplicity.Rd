@@ -12,7 +12,8 @@ computeDuplicity(
   antennaCellsFileName = NULL,
   simulatedData = TRUE,
   simulationFileName,
-  netParams = NULL
+  netParams = NULL,
+  path = NULL
 )
 }
 \arguments{

@@ -47,7 +47,7 @@
 #'   correspondence with the holder.
 #'
 #'@export
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL) {
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL) {
   
   out_duplicity <- NULL
   tryCatch ({
@@ -75,10 +75,6 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
       stop("In case of using real data you should provide a list with two params: the minimum value of the signal detectable by mobile devices and
          the probability of a person to have two mobile devices")
     
-    if (method == 'trajectory')  {
-      stop(paste0(method, " method not yet implemented"))
-    }
-    
     gridParams <-readGridParams(gridFileName)
     events <- readEvents(eventsFileName)
     if(simulatedData == TRUE)
@@ -97,12 +93,17 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     
     ll <- fitModels(length(devices), model,connections)
     P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-    if(method == "pairs") {
+    if(method == "pairs" | method == "trajectory") {
       coverarea <- readCells(antennaCellsFileName)
       antennaNeigh <- antennaNeighbours(coverarea)
       pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
       P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-      out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
+      if (method == "pairs")
+        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
+      else {
+        T<-nrow(unique(events[,1]))
+        out_duplicity <-computeDuplicityTrajectory(path, devices, gridParams, pairs4dup, P1=P1a , T)
+      }
     }
     else if(method == "1to1"){
       pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
