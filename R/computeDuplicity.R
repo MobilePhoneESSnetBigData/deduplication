@@ -47,7 +47,7 @@
 #'   correspondence with the holder.
 #'
 #'@export
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL) {
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5) {
   
   out_duplicity <- NULL
   tryCatch ({
@@ -102,7 +102,7 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
         out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
       else {
         T<-nrow(unique(events[,1]))
-        out_duplicity <-computeDuplicityTrajectory(path, devices, gridParams, pairs4dup, P1=P1a , T)
+        out_duplicity <-computeDuplicityTrajectory(path, devices, gridParams, pairs4dup, P1 = P1a , T, gamma = gamma)
       }
     }
     else if(method == "1to1"){

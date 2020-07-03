@@ -12,81 +12,47 @@
 #' @import data.table
 #' @import parallel
 #' @export
-computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T) {
+computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T, gamma) {
   devices <- sort(as.numeric(devices))
   centrs <- buildCentroids(gridParams$ncol, gridParams$nrow, gridParams$tileX, gridParams$tileY)
   ndevices <- length(devices)
+  
   postLoc <- NULL
   centerOfProbs <- NULL
   dr<-NULL
-
+  cpp<-NULL
+  
   P2 <- 1 - P1
   alpha<-P1/P2
-  pd1d2<-matrix(0L, nrow = ndevices, ncol = ndevices )
-  cpp<-NULL
-  mdelta<-list()
 
   ### from this point the code should go parallel  
   
   cl <- buildCluster( c('path', 'devices', 'centrs', 'centerOfProbs'), env = environment())
   ichunks <- clusterSplit(cl, 1:ndevices)
-  res <- clusterApplyLB( cl, ichunks, doLocations, path, devices, centrs, centerOfProbs )
+  res <- clusterApplyLB( cl, ichunks, doLocations, path, devices, centrs )
   for(i in 1:length(res)) {
     postLoc <- c(postLoc, res[[i]]$postLoc)
     centerOfProbs <- c(centerOfProbs, res[[i]]$centerOfProbs)
     dr <- c(dr, res[[i]]$dr)
   }
   rm(res)
-  # for( i in 1:ndevices) {
-  #   postLoc[[i]] <- readPostLocProb(path, devices[i])
-  #   centerOfProbs[[i]] <- centerOfProbabilities(centrs, postLoc[[i]])
-  #   dr[[i]] <- dispersionRadius(centrs, postLoc[[i]], centerOfProbs[[i]])
-  # }
 
   ichunks2 <- clusterSplit(cl, 1:T)
+  clusterExport(cl, varlist = c('postLoc'), envir = environment())
   res <- clusterApplyLB( cl, ichunks2, doCPP, centrs, postLoc )
   for(i in 1:length(res)) {
     cpp <- c(cpp, res[[i]])
   }
   rm(res)
 
-  # for(t in 1:T) {
-  #   cpp[[t]]<-buildCentroidProbs(centrs, postLoc, t)
-  # }
 
+  pairs<-pairs[,1:2]
   ichunks3 <- clusterSplit(cl, 1:nrow(pairs))
-  res<-clusterApplyLB(cl, ichunks3, doPairs, pairs, cpp, dr, T, cpp)
-  pd1d2 <- NULL
-  for (i in 1:length(res)) {
-    pd1d2 <- rbind(pd1d2, res[[i]])
-  }
-  rm(res)
+  
+  clusterExport(cl, varlist = c('pairs', 'cpp', 'dr', 'ndevices', 'T', 'gamma', 'alpha'), envir = environment())
+  res<-clusterApplyLB(cl, ichunks3, doPairs, pairs, cpp, ndevices, dr, T, alpha, gamma)
   stopCluster(cl)
-  
-  pd1d2[lower.tri(pd1d2)] <- t(pd1d2)[lower.tri(pd1d2)]
-  
-  # for(i in 1:nrow(pairs)) {
-  #   #print(paste0("i:", i))
-  #   index_i <-pairs[i,1][[1]]
-  #   index_j <-pairs[i,2][[1]]
-  #   s1<-0
-  #   for(t in 1:T) {
-  #     mm<-0.5*max(dr[[index_i]][t], dr[[index_j]][t])
-  #     mdelta[[t]]<-buildDeltaProb(cpp[[t]][[index_i]], cpp[[t]][[index_j]])
-  #     s1<-s1+(abs(modeDelta(mdelta[[t]][[1]]))<mm & abs(modeDelta(mdelta[[t]][[2]]))<mm)
-  #   }
-  #   tmp <- s1/T
-  #   pd1d2[index_i,index_j] <- 1- 1/(1+alpha*tmp/(1-tmp))
-  #   pd1d2[index_j,index_i] <- pd1d2[index_i,index_j]
-  # }
-  
-  ######
-  
-  dup<-data.table(devices=devices, dupP=0)
-  for(i in 1:nrow(pd1d2)) {
-    dup[i,2]<-max(pd1d2[i,])
-  }  
-  
+  dup<-buildDuplicityTablePairs(res, devices)
   return (dup)
   
 }
@@ -119,11 +85,10 @@ doCPP <- function(ichunks, centrs, postLoc) {
 }
 
 
-doPairs <- function(ichunks, pairs, cpp, ndev, dr, T) {
+doPairs <- function(ichunks, pairs, cpp, ndev, dr, T, alpha, gamma) {
   n <- length(ichunks)  
-  ll.matrix <- matrix(0L, nrow = n, ncol = ndev)
+  localdup <- copy(pairs[ichunks, 1:2])
   for( i in ichunks ) {
-    #print(paste0("i:", i))
     index_i <-pairs[i,1][[1]]
     index_j <-pairs[i,2][[1]]
     s1<-0
@@ -133,11 +98,8 @@ doPairs <- function(ichunks, pairs, cpp, ndev, dr, T) {
       s1<-s1+(abs(modeDelta(mdelta[[1]]))<mm & abs(modeDelta(mdelta[[2]]))<mm)
     }
     tmp <- s1/T
-    ll.matrix[index_i,index_j] <- 1- 1/(1+alpha*tmp/(1-tmp))
+    dupP0 <- 1 - 1/(1+alpha*tmp/(1-tmp))
+    localdup[index.x == index_i &index.y == index_j, dupP := dupP0]
   }
-  return (ll.matrix)
+  return (localdup)
 }
-#
-#
-#
-#

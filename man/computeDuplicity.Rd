@@ -13,7 +13,8 @@ computeDuplicity(
   simulatedData = TRUE,
   simulationFileName,
   netParams = NULL,
-  path = NULL
+  path = NULL,
+  gamma = 0.5
 )
 }
 \arguments{

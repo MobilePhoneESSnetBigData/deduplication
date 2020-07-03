@@ -80,7 +80,6 @@ computeDuplicityBayesian <-
             'llik',
             'init'
           ),
-          c('destim', 'data.table'),
           env = environment()
         )
       ichunks <- clusterSplit(cl, 1:nrow(pairs4dupl))
@@ -115,7 +114,6 @@ computeDuplicityBayesian <-
             'llik',
             'init'
           ),
-          c('destim', 'data.table'),
           env = environment()
         )
       ichunks <- clusterSplit(cl, 1:ndevices)

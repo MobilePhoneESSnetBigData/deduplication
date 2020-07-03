@@ -4,7 +4,7 @@
 \alias{computeDuplicityTrajectory}
 \title{Computes the duplicity probabilities for each device using the trajectory approach.}
 \usage{
-computeDuplicityTrajectory(path, devices, gridParams, pairs, P1, T)
+computeDuplicityTrajectory(path, devices, gridParams, pairs, P1, T, gamma)
 }
 \description{
 Computes the duplicity probabilities for each device using the trajectory approach.
