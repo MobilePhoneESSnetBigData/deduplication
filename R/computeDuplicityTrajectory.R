@@ -22,7 +22,7 @@ computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T) 
 
   P2 <- 1 - P1
   alpha<-P1/P2
-  pd1d2<-matrix(0L, nrow = n, ncol = n )
+  pd1d2<-matrix(0L, nrow = ndevices, ncol = ndevices )
   cpp<-list(length = T)
   mdelta<-list()
 
