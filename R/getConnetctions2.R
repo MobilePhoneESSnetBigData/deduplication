@@ -17,12 +17,12 @@
 #' @import data.table
 #' @include getDeviceIDs.R
 #' @export
-getConnections <- function(events) {
+getConnections2 <- function(events) {
   times <- unique(events[, 'time'])
   times <- sort(unlist(times[,'time']))
   
-  devices <- sort(getDeviceIDs(events))
-
+  devices <- sort(as.numeric(getDeviceIDs(events)))
+  
   n1 <- length(times)
   n2 <- length(devices)
   
@@ -37,6 +37,6 @@ getConnections <- function(events) {
       merge(evv, events[deviceID == devices[i], ][, c(1, 4)], by = 'time', all.x = TRUE)[, c(1, 3)]
     connections[i, ] <- t(evv[, 2])
   }
-
-    return (connections)
+  
+  return (connections)
 }
