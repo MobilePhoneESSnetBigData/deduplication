@@ -49,7 +49,6 @@ Collate:
     'fitModels.R'
     'getDeviceIDs.R'
     'getConnections.R'
-    'getConnections2.R'
     'tileEquivalence.R'
     'getEmissionProbs.R'
     'getEmissionProbsJointModel.R'

@@ -97,14 +97,12 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
       coverarea <- readCells(antennaCellsFileName)
       antennaNeigh <- antennaNeighbours(coverarea)
       P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
+      pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
       if (method == "pairs") {
-        pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
         out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
       }
       else {
         T<-nrow(unique(events[,1]))
-        connections <- getConnections2(events)
-        pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
         out_duplicity <-computeDuplicityTrajectory(path, devices, gridParams, pairs4dup, P1 = P1a , T, gamma = gamma)
       }
     }

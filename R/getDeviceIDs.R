@@ -12,6 +12,7 @@
 #'
 #' @export
 getDeviceIDs <- function(events) {
-  return (unique(events[, 2])[[1]])
+  devices <- unique(events[, 2])[[1]]
+  return (sort(as.numeric(devices)))
   
 }
