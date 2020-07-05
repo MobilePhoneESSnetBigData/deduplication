@@ -50,7 +50,6 @@ Collate:
     'getDeviceIDs.R'
     'getConnections.R'
     'getConnections2.R'
-    'getConnetctions2.R'
     'tileEquivalence.R'
     'getEmissionProbs.R'
     'getEmissionProbsJointModel.R'
