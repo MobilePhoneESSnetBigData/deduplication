@@ -47,7 +47,7 @@
 #'   correspondence with the holder.
 #'
 #'@export
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5) {
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL) {
   
   out_duplicity <- NULL
   tryCatch ({
@@ -88,7 +88,11 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold)
     jointEmissionProbs <- getEmissionProbsJointModel(emissionProbs)
     
-    model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
+    if(is.null(aprioriProbModel))
+      model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
+    else 
+      model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs, initSteady = FALSE, aprioriProb = aprioriProbModel)
+    
     modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
     
     ll <- fitModels(length(devices), model,connections)

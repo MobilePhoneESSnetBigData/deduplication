@@ -14,7 +14,8 @@ computeDuplicity(
   simulationFileName,
   netParams = NULL,
   path = NULL,
-  gamma = 0.5
+  gamma = 0.5,
+  aprioriProbModel = NULL
 )
 }
 \arguments{
