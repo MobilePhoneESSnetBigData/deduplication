@@ -13,10 +13,23 @@
 #'
 #' @return a data.table object with two columns: the device IDs and the corresponding duplicity probability for each
 #'   device.
-buildDuplicityTable1to1 <- function(res, devices, Pii) {
+buildDuplicityTable1to1 <- function(res, devices, Pii, lamdba = NULL) {
   ndevices <- length(devices)
-  Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
-  alpha <- Pij / Pii
+  
+  if(!is.null(Pii)) {
+    Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
+    alpha <- Pij / Pii
+  } else {
+    if(!is.null(lamdba)) {
+      alpha <- vector(length = ndevices)
+      if(length(lambda) == 1) {
+        alpha <- rep(1/(lambda *(ndevices-1)), times = ndevices)
+      }
+      else {
+        alpha <- 1/(lambda *(ndevices-1))
+      }
+    }
+  }
   
   matsim <- NULL
   for (i in 1:length(res)) {
@@ -26,12 +39,16 @@ buildDuplicityTable1to1 <- function(res, devices, Pii) {
   
   matsim[lower.tri(matsim)] <- t(matsim)[lower.tri(matsim)]
   
-  dupP.dt <-
-    data.table(deviceID = devices, dupP = rep(0, ndevices))
+  dupP.dt <- data.table(deviceID = devices, dupP = rep(0, ndevices))
   
   for (i in 1:ndevices) {
     ll.aux <- matsim[i, -i]
-    dupP.dt[deviceID == devices[i], dupP := 1 - 1 / (1 + (alpha * sum(exp(ll.aux))))]
+    if(!is.null(Pii)) {
+      dupP.dt[deviceID == devices[i], dupP := 1 - 1 / (1 + (alpha * sum(exp(ll.aux))))]
+    }
+    else {
+      dupP.dt[deviceID == devices[i], dupP := 1 - 1 / (1 + (sum(alpha * exp(ll.aux))))]
+    }
   }
   return (dupP.dt)
   

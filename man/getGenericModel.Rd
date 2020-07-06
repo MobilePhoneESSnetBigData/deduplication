@@ -4,7 +4,13 @@
 \alias{getGenericModel}
 \title{Builds the generic HMM model.}
 \usage{
-getGenericModel(nrows, ncols, emissionProbs, initSteady = TRUE)
+getGenericModel(
+  nrows,
+  ncols,
+  emissionProbs,
+  initSteady = TRUE,
+  aprioriProb = NULL
+)
 }
 \arguments{
 \item{nrows}{Number of rows in the grid.}
@@ -15,7 +21,10 @@ getGenericModel(nrows, ncols, emissionProbs, initSteady = TRUE)
 the grid and the number of columns equals the number of antennas. This matrix is obtained by calling
 \code{getEmissionProbs} function.}
 
-\item{initSteady}{If TRUE the initial a-priori distribution is set to the steady state of the transition matrix.}
+\item{initSteady}{If TRUE the initial apriori distribution is set to the steady state of the transition matrix, if FALSE
+the apriori distribution is given as a parameter.}
+
+\item{aprioriProb}{The apriori distribution for the HMM model. It is needed only if initSteady isd FALSE.}
 }
 \value{
 Returns an HMM model with the initial a-priori distribution set to the steady state of the transition matrix.
