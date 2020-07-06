@@ -96,7 +96,6 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
     
     if(method == "pairs" | method == "trajectory") {
-      P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
       coverarea <- readCells(antennaCellsFileName)
       antennaNeigh <- antennaNeighbours(coverarea)
       P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
@@ -114,7 +113,7 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
       pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
       ll <- fitModels(length(devices), model,connections)
       if(!is.null(lambda)) {
-        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii = NULL, lambda = lambda)
+        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii = NULL, init = TRUE, lambda = lambda)
       }
       else {
         Piia <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))

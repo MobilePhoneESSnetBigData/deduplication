@@ -13,17 +13,17 @@
 #'
 #' @return a data.table object with two columns: the device IDs and the corresponding duplicity probability for each
 #'   device.
-buildDuplicityTable1to1 <- function(res, devices, Pii, lamdba = NULL) {
+buildDuplicityTable1to1 <- function(res, devices, Pii, lambda = NULL) {
   ndevices <- length(devices)
   
   if(!is.null(Pii)) {
     Pij <- (1 - Pii) / (ndevices - 1)    # priori prob. of duplicity 2:1
     alpha <- Pij / Pii
   } else {
-    if(!is.null(lamdba)) {
-      alpha <- vector(length = ndevices)
+    if(!is.null(lambda)) {
+      alpha <- vector(length = ndevices-1)
       if(length(lambda) == 1) {
-        alpha <- rep(1/(lambda *(ndevices-1)), times = ndevices)
+        alpha <- rep(1/(lambda *(ndevices-1)), times = ndevices-1)
       }
       else {
         alpha <- 1/(lambda *(ndevices-1))
