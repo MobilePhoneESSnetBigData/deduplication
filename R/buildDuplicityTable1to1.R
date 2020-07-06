@@ -21,9 +21,9 @@ buildDuplicityTable1to1 <- function(res, devices, Pii, lambda = NULL) {
     alpha <- Pij / Pii
   } else {
     if(!is.null(lambda)) {
-      alpha <- vector(length = ndevices-1)
+      alpha <- vector(length = ndevices)
       if(length(lambda) == 1) {
-        alpha <- rep(1/(lambda *(ndevices-1)), times = ndevices-1)
+        alpha <- rep(1/(lambda *(ndevices-1)), times = ndevices)
       }
       else {
         alpha <- 1/(lambda *(ndevices-1))
@@ -47,7 +47,8 @@ buildDuplicityTable1to1 <- function(res, devices, Pii, lambda = NULL) {
       dupP.dt[deviceID == devices[i], dupP := 1 - 1 / (1 + (alpha * sum(exp(ll.aux))))]
     }
     else {
-      dupP.dt[deviceID == devices[i], dupP := 1 - 1 / (1 + (sum(alpha * exp(ll.aux))))]
+      alpha2<-alpha[-i]
+      dupP.dt[deviceID == devices[i], dupP := 1 - 1 / (1 + (sum(alpha2 * exp(ll.aux))))]
     }
   }
   return (dupP.dt)
