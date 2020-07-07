@@ -15,7 +15,8 @@ computeDuplicity(
   netParams = NULL,
   path = NULL,
   gamma = 0.5,
-  aprioriProbModel = NULL
+  aprioriProbModel = NULL,
+  lambda = NULL
 )
 }
 \arguments{

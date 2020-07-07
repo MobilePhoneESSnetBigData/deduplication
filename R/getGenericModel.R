@@ -27,7 +27,6 @@ getGenericModel <-  function(nrows, ncols, emissionProbs, initSteady = TRUE, apr
   model <- initparams(model)
   model <- minparams(model)
   
-
   if( initSteady && !is.null(aprioriProb)) {
     stop("getGenericModel: either initSteady is TRUE and aprioriProb is NULL or initSteady is FALSE and aprioriProb in 
          not NULL")

@@ -47,8 +47,8 @@
 #'   correspondence with the holder.
 #'
 #'@export
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL) {
-  
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, lambda = NULL) {
+
   out_duplicity <- NULL
   tryCatch ({
     if(method != 'trajectory' & method != "1to1" & method != 'pairs')
@@ -82,7 +82,7 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     else
       simParams <- netParams
     
-   
+    
     devices <- getDeviceIDs(events)
     connections <- getConnections(events)
     emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold)
@@ -95,14 +95,13 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     
     modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
     
-    ll <- fitModels(length(devices), model,connections)
-    P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
     if(method == "pairs" | method == "trajectory") {
       coverarea <- readCells(antennaCellsFileName)
       antennaNeigh <- antennaNeighbours(coverarea)
       P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
       pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
       if (method == "pairs") {
+        ll <- fitModels(length(devices), model,connections)
         out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
       }
       else {
@@ -112,13 +111,19 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     }
     else if(method == "1to1"){
       pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
-      Piia <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
-      out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Piia)
+      ll <- fitModels(length(devices), model,connections)
+      if(!is.null(lambda)) {
+        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii = NULL, init = TRUE, lambda = lambda)
+      }
+      else {
+        Piia <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
+        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii = Piia)
+      }
     }
   }, error = function(err){
     print(err)
     rm(list=setdiff(ls(), "out_duplicity"))
-
+    
   },
   finally = {
     rm(list=setdiff(ls(), "out_duplicity"))

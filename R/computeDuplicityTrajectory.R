@@ -93,7 +93,7 @@ doPairs <- function(ichunks, pairs, cpp, ndev, dr, T, alpha, gamma) {
     index_j <-pairs[i,2][[1]]
     s1<-0
     for(t in 1:T) {
-      mm<-0.5*max(dr[[index_i]][t], dr[[index_j]][t])
+      mm<-gamma*max(dr[[index_i]][t], dr[[index_j]][t])
       mdelta<-buildDeltaProb(cpp[[t]][[index_i]], cpp[[t]][[index_j]])
       s1<-s1+(abs(modeDelta(mdelta[[1]]))<mm & abs(modeDelta(mdelta[[2]]))<mm)
     }

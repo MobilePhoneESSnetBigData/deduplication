@@ -4,7 +4,7 @@
 \alias{buildDuplicityTable1to1}
 \title{Builds a datatable with device IDs and the duplicity probability for each device.}
 \usage{
-buildDuplicityTable1to1(res, devices, Pii)
+buildDuplicityTable1to1(res, devices, Pii, lambda = NULL)
 }
 \arguments{
 \item{a}{vector with device IDs.}
