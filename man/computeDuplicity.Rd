@@ -16,7 +16,9 @@ computeDuplicity(
   path = NULL,
   gamma = 0.5,
   aprioriProbModel = NULL,
-  lambda = NULL
+  lambda = NULL,
+  emissionModel = NULL,
+  antennaFileName = NULL
 )
 }
 \arguments{

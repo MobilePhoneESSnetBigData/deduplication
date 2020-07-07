@@ -21,7 +21,7 @@
 #' @export
 fitModels <-
   function(ndevices, model, connections) {
-      cl<-buildCluster(c('connections', 'model'), env = environment())
+      cl<-buildCluster(c('connections', 'model2'), env = environment())
       ichunks <- clusterSplit(cl, 1:ndevices)
       res <- clusterApplyLB(cl, ichunks, doFit, model, connections)
       stopCluster(cl)
@@ -33,9 +33,12 @@ doFit <- function(index, model, connections) {
   local_ll <- vector(length = length(index))
   k = 1
   for (j in index) {
-    modeli <-
-      fit(model, connections[j, ], init = TRUE,  method = "solnp")
-    local_ll[k] <- logLik(modeli, connections[j, ])
+    fitTry <-try(modeli <- fit(model,connections[j,], init = TRUE, method = "solnp"))
+    if (inherits(fitTry, "try-error")) {
+      local_ll[k] <- Inf
+    } else {
+      local_ll[k] <- logLik(modeli, connections[j, ])
+    }
     k <- k + 1
   }
   return (local_ll)

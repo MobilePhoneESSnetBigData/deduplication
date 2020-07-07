@@ -34,6 +34,7 @@
 #' @import data.table
 #' @import stringr
 #' @import Matrix
+#' @import XML
 #' @include tileEquivalence.R
 #'
 #' @export
@@ -43,15 +44,28 @@ getEmissionProbs <-
            signalFileName,
            sigMin,
            handoverType = 'strength',
-           simulatedData = TRUE) {
-
+           simulatedData = TRUE,
+           emissionModel = NULL,
+           antennaFileName = NULL) {
+    
     if (simulatedData == TRUE) {
       if (!file.exists(signalFileName))
         stop(paste0(signalFileName, " doesn't exist!"))
       
+      if( (is.null(emissionModel)  && !is.null(antennaFileName) ) || ((!is.null(emissionModel)  && is.null(antennaFileName) )) )
+        stop("Either both emissionModel and antennaParam are not null or they are both null")
+      
+      if(handoverType == 'strength' && emissionModel == 'RSS') {
+        emissionModel = NULL
+        antennaFileName = NULL
+      }
+      if(handoverType == 'qaulity' && emissionModel == 'SDM') {
+        emissionModel = NULL
+        antennaFileName = NULL
+      }
+
       tileEquiv.dt <- data.table(tileEquivalence(nrows, ncols))
-      
-      
+
       RSS <-
         fread(
           signalFileName,
@@ -59,6 +73,7 @@ getEmissionProbs <-
           header = TRUE,
           stringsAsFactors = FALSE
         )
+      antennasIDs<-RSS[,1]
       nTiles1 <- dim(RSS)[2] - 1
       nTiles2 <- nrows * ncols
       if (nTiles1 != nTiles2) {
@@ -75,17 +90,48 @@ getEmissionProbs <-
           value.name = 'RSS'
         )
       
-      RSS[, RSS := ifelse(RSS < sigMin, NA, RSS)]
-      if (handoverType == 'strength') {
-        RSS <-RSS[, eventLoc := 10 ** RSS / sum(10 ** RSS, na.rm = TRUE), by = 'tile']
+      if((is.null(emissionModel)  && is.null(antennaFileName) ) ) {
         
-      }
-      else if(handoverType == 'quality') {
-        RSS <- RSS[, eventLoc := RSS / sum(RSS, na.rm = TRUE), by = 'tile']
-      }
+        RSS[, RSS := ifelse(RSS < sigMin, NA, RSS)]
+        if (handoverType == 'strength') {
+          RSS <-RSS[, eventLoc := 10 ** RSS / sum(10 ** RSS, na.rm = TRUE), by = 'tile']
+          
+        }
+        else { 
+          if(handoverType == 'quality') {
+            RSS <- RSS[, eventLoc := RSS / sum(RSS, na.rm = TRUE), by = 'tile']
+          }
+          else {
+            stop("handover method unsupported")
+          }
+        }
+      } 
       else {
-        stop("handover method unsupported")
+        antennas<-xmlToDataFrame(antennaFileName)
+        antennas<-do.call(cbind, lapply(antennas, rev))
+        
+        antennas<-cbind(antennasIDs, antennas)
+        cols<-colnames(antennas)
+        cols[1]<-'antennaID'
+        colnames(antennas)<-cols
+        antennas<-antennas[,c(1,7:10)]
+        RSS <- merge(RSS, antennas, all.x = TRUE, by = "antennaID")
+        RSS[, SSteep := as.numeric(SSteep)]
+        RSS[, Smid := as.numeric(Smid)]
+        RSS[, Qmin := as.numeric(Qmin)]
+        if(handoverType == 'strength' && emissionModel == 'SDM') {
+          RSS[, SDM := (1/(1 + exp(-SSteep * (RSS - Smid))))]
+          RSS[, SDM := ifelse(SDM < Qmin, NA, SDM)]
+          RSS <- RSS[, eventLoc := SDM / sum(SDM, na.rm = TRUE), by = 'tile']
+        }
+        if(handoverType == 'quality' && emissionModel == 'RSS') {
+          RSS[, RSS_actual := (1/(SSteep * log(RSS/(1-RSS)) ))]
+          RSS[, RSS_actual := ifelse(RSS_actual < Smin, NA, RSS_actual)]
+          RSS <- RSS[, eventLoc := RSS_actual / sum(RSS_actual, na.rm = TRUE), by = 'tile']
+        }
       }
+      
+      
       # Make eventLoc=0 if the tile is out the coverage area
       RSS <- RSS[is.na(eventLoc), eventLoc := 0]
       RSS[, tile := as.numeric(tile)]
