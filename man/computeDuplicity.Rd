@@ -17,6 +17,7 @@ computeDuplicity(
   gamma = 0.5,
   aprioriProbModel = NULL,
   lambda = NULL,
+  handoverType = "strength",
   emissionModel = NULL,
   antennaFileName = NULL
 )

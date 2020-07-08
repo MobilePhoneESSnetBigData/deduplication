@@ -55,15 +55,23 @@ getEmissionProbs <-
       if( (is.null(emissionModel)  && !is.null(antennaFileName) ) || ((!is.null(emissionModel)  && is.null(antennaFileName) )) )
         stop("Either both emissionModel and antennaParam are not null or they are both null")
       
-      if(handoverType == 'strength' && emissionModel == 'RSS') {
-        emissionModel = NULL
-        antennaFileName = NULL
+      if( !(handoverType == 'strength' || handoverType == 'quality') )
+        stop(paste0("Unsupported handover type: ", handoverType))
+      
+      if(!is.null(emissionModel) && !(emissionModel == "RSS" || emissionModel == "SDM") )
+        stop(paste0("Unsupported emission model: ", emissionModel))
+        
+      if(!is.null(emissionModel)) {
+        if(handoverType == 'strength' && emissionModel == 'RSS') {
+          emissionModel <- NULL
+          antennaFileName <- NULL
+        }
+        
+        if(handoverType == 'quality' && emissionModel == 'SDM') {
+          emissionModel <- NULL
+          antennaFileName <- NULL
+        }
       }
-      if(handoverType == 'qaulity' && emissionModel == 'SDM') {
-        emissionModel = NULL
-        antennaFileName = NULL
-      }
-
       tileEquiv.dt <- data.table(tileEquivalence(nrows, ncols))
 
       RSS <-

@@ -21,7 +21,7 @@
 #' @export
 fitModels <-
   function(ndevices, model, connections) {
-      cl<-buildCluster(c('connections', 'model2'), env = environment())
+      cl<-buildCluster(c('connections', 'model'), env = environment())
       ichunks <- clusterSplit(cl, 1:ndevices)
       res <- clusterApplyLB(cl, ichunks, doFit, model, connections)
       stopCluster(cl)
