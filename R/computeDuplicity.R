@@ -47,8 +47,9 @@
 #'   correspondence with the holder.
 #'
 #'@export
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, lambda = NULL) {
 
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, lambda = NULL, handoverType = 'strength', emissionModel = NULL, antennaFileName = NULL) {
+  
   out_duplicity <- NULL
   tryCatch ({
     if(method != 'trajectory' & method != "1to1" & method != 'pairs')
@@ -85,16 +86,16 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     
     devices <- getDeviceIDs(events)
     connections <- getConnections(events)
-    emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold)
+    emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold, handoverType, simulatedData = TRUE, emissionModel, antennaFileName)
     jointEmissionProbs <- getEmissionProbsJointModel(emissionProbs)
-    
-    if(is.null(aprioriProbModel))
+    if(is.null(aprioriProbModel)) {
       model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
-    else 
+    }
+    else {
       model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs, initSteady = FALSE, aprioriProb = aprioriProbModel)
-    
+    }
     modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
-    
+
     if(method == "pairs" | method == "trajectory") {
       coverarea <- readCells(antennaCellsFileName)
       antennaNeigh <- antennaNeighbours(coverarea)
