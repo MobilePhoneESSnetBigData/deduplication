@@ -20,18 +20,38 @@
 #' @export
 #' 
 getJointModel <-
-  function(nrows,
-           ncols,
-           jointEmissionProbs,
-           initSteady = TRUE) {
+  function(nrows,ncols,jointEmissionProbs, initSteady = TRUE, aprioriJointProb = NULL) {
    
     modeljoin <- HMMrectangle(nrows, ncols)
     emissions(modeljoin) <- jointEmissionProbs
     modeljoin <- initparams(modeljoin)
     modeljoin <- minparams(modeljoin)
     
-    if (initSteady == TRUE)
+    
+    if( initSteady && !is.null(aprioriJointProb)) {
+      stop("getJointModel: either initSteady is TRUE and aprioriJointProb is NULL or initSteady is FALSE and aprioriJointProb is 
+         not NULL")
+    }
+    
+    if( !initSteady && is.null(aprioriJointProb)) {
+      stop("getJointModel: either initSteady is TRUE and aprioriJointProb is NULL or initSteady is FALSE and aprioriProb is 
+         not NULL")
+    }
+    
+    
+    if (initSteady == TRUE) {
       modeljoin <- initsteady(modeljoin)
+    } else {
+      if(is.null(aprioriJointProb) ) {
+        stop("getJointModel: if initSteady is FALSE then you should specify the apriori probability for the HMM model!")
+      }
+      else {
+        if(sum(aprioriJointProb) != 1)
+          stop("getJointModel: aprioriJointProb should sum up to 1!")
+        else
+          istates(model)<-aprioriJointProb
+      }
+    }
     
     return (modeljoin)
   }

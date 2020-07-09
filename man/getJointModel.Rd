@@ -4,7 +4,13 @@
 \alias{getJointModel}
 \title{Builds the joint HMM model.}
 \usage{
-getJointModel(nrows, ncols, jointEmissionProbs, initSteady = TRUE)
+getJointModel(
+  nrows,
+  ncols,
+  jointEmissionProbs,
+  initSteady = TRUE,
+  aprioriJointProb = NULL
+)
 }
 \arguments{
 \item{nrows}{Number of rows in the grid.}
