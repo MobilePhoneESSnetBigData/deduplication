@@ -7,7 +7,7 @@
 buildCluster(varlist, env)
 }
 \arguments{
-\item{varlist}{A list of variables to be expoerted to every working node.}
+\item{varlist}{A list of variables to be exported to every working node.}
 
 \item{env}{An environment to be exported to every working node.}
 }
@@ -15,8 +15,8 @@ buildCluster(varlist, env)
 a cluster object.
 }
 \description{
-Build a cluster of working nodes using the parallel package. On Unix-like operating systems it builds as
-  "FORK" cluster while on Windows it builds a "SOCKET" cluster. Ther number of working nodes equals the number of 
-  available (logical) cores as it is detected by the call of \code{detectCores()} function. On Windows, it also exports
-  a list of variables and an environment passed as arguments.
+Build a cluster of working nodes using the \code{parallel} package. On Unix-like operating systems it
+  builds as "FORK" cluster while on Windows it builds a "SOCKET" cluster. Ther number of working nodes equals the
+  number of available (logical) cores as it is detected by the call of \code{detectCores()} function. On Windows, it
+  also exports a list of variables and an environment passed as arguments.
 }

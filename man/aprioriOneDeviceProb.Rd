@@ -17,6 +17,6 @@ The apriori probability of a device to be in a 1-to-1 correspondence with the ho
 }
 \description{
 Apriori probability of a device to be in a 1-to-1 correspondence with the holder. It is computed simply
- as (2*Ndev1-Ndev)/Ndev1 where Ndev1 is the number of devices that are in a 1-to-1 correspondence with the persons
- that hold them and Ndev is the total number of devices.
+ as \eqn{(2*Ndev1-Ndev)/Ndev1} where \eqn{Ndev1} is the number of devices that are in a 1-to-1 correspondence with the persons
+ that hold them and \eqn{Ndev} is the total number of devices.
 }
