@@ -22,5 +22,5 @@ Computes the probability distribution for Delta X and Delta Y where Delta X and 
   differences between the centroids of the tiles on OX and OY. For a detailed explanation of what Delta X and Delta Y
   mean please reffer to
   \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
-   Deliverable 3} The posterior location probability for each tile and each device comes from \code{destim}.
+   Deliverable 3} The posterior location probability for each tile and each device comes from \pkg{destim}.
 }
