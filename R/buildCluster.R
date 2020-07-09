@@ -15,7 +15,7 @@
 #' @import parallel
 #' @import doParallel
 #'   
-buildCluster <- function(varlist, packList, env) {
+buildCluster <- function(varlist, env) {
   
   if (Sys.info()[['sysname']] == 'Linux' |
       Sys.info()[['sysname']] == 'Darwin') {

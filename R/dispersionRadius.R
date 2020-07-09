@@ -7,7 +7,7 @@
 #'
 #' @param centroid The centroids of all tiles in the grid.
 #'
-#' @postLocProb The posterior location probabilities for a device, for each tile and each time
+#' @param postLocProb The posterior location probabilities for a device, for each tile and each time
 #'   instant.
 #'
 #' @param center The center of posterior location probabilities. If it is not provided, it is
@@ -46,7 +46,7 @@ dispersionRadius <- function(centroid, postLocProb, center = NULL, method = 'euc
     for(i in 1:ntimes) {
       coordMatrix <- rbind(center[i,], tmp)
       distance <- dist(coordMatrix, method = method, p = p)[1:nc]
-      rd[i] <- sqrt(sum(postLocProb[,..i] * distance**2))
+      rd[i] <- sqrt(sum(postLocProb[,i] * distance**2))
     }
     return(rd)
 }

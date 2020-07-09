@@ -16,6 +16,9 @@ dispersionRadius(
 \arguments{
 \item{centroid}{The centroids of all tiles in the grid.}
 
+\item{postLocProb}{The posterior location probabilities for a device, for each tile and each time
+instant.}
+
 \item{center}{The center of posterior location probabilities. If it is not provided, it is
 computed here.}
 

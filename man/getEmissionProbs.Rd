@@ -10,7 +10,9 @@ getEmissionProbs(
   signalFileName,
   sigMin,
   handoverType = "strength",
-  simulatedData = TRUE
+  simulatedData = TRUE,
+  emissionModel = NULL,
+  antennaFileName = NULL
 )
 }
 \arguments{

@@ -12,7 +12,8 @@ computeDuplicityBayesian(
   llik,
   P1 = NULL,
   Pii = NULL,
-  init = TRUE
+  init = TRUE,
+  lambda = NULL
 )
 }
 \arguments{

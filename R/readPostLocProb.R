@@ -11,18 +11,15 @@
 #'   equals to deviceID. A row corresponds to a tile and a column corresponds to a time instant.
 #'
 #' @import data.table
+#' @import Matrix
 #' @export
 readPostLocProb <-function(path, deviceID) {
-  if(!file.exists(path))
-    stop ('directory with posterior location probabilities files does not exist')
+  file <- system.file(path, paste0("postLocDevice_", as.character(deviceID), ".csv"), package = 'deduplication')
+  if(!file.exists(file))
+    stop (paste0('file with posterior location probabilities files does not exist ', file))
+
+  postLoc <- fread(file, sep = ',',stringsAsFactors = FALSE,header = FALSE)
   
-  filename <- paste0(path, "postLocDevice_", as.character(deviceID), ".csv")
-  
-  if(!file.exists(filename))
-    stop (paste0('posterior location probabilities file for device ', deviceID,  ' does not exist'))
-  
-  postLoc <- fread(filename, sep = ',',stringsAsFactors = FALSE,header = FALSE)
-  
-  return (postLoc)
+  return (Matrix(as.matrix(postLoc)))
   
 }

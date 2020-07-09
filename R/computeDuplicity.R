@@ -47,7 +47,8 @@
 #'   correspondence with the holder.
 #'
 #'@export
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL) {
+
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, aprioriProbJointModel = NULL, lambda = NULL, handoverType = 'strength', emissionModel = NULL, antennaFileName = NULL) {
   
   out_duplicity <- NULL
   tryCatch ({
@@ -75,10 +76,6 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
       stop("In case of using real data you should provide a list with two params: the minimum value of the signal detectable by mobile devices and
          the probability of a person to have two mobile devices")
     
-    if (method == 'trajectory')  {
-      stop(paste0(method, " method not yet implemented"))
-    }
-    
     gridParams <-readGridParams(gridFileName)
     events <- readEvents(eventsFileName)
     if(simulatedData == TRUE)
@@ -86,33 +83,52 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     else
       simParams <- netParams
     
-   
+    
     devices <- getDeviceIDs(events)
     connections <- getConnections(events)
-    emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold)
+    emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, signalFileName, simParams$conn_threshold, handoverType, simulatedData = TRUE, emissionModel, antennaFileName)
     jointEmissionProbs <- getEmissionProbsJointModel(emissionProbs)
-    
-    model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
-    modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
-    
-    ll <- fitModels(length(devices), model,connections)
-    P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-    if(method == "pairs") {
+    if(is.null(aprioriProbModel)) {
+      model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs)
+    }
+    else {
+      model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs, initSteady = FALSE, aprioriProb = aprioriProbModel)
+    }
+    if(is.null(aprioriProbJointModel)) {
+      modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
+    } else {
+      modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs, initSteady = FALSE, aprioriJointProb = aprioriProbJointModel)
+    }
+
+    if(method == "pairs" | method == "trajectory") {
       coverarea <- readCells(antennaCellsFileName)
       antennaNeigh <- antennaNeighbours(coverarea)
-      pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
       P1a <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
-      out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
+      pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, antennaNeighbors = antennaNeigh)
+      if (method == "pairs") {
+        ll <- fitModels(length(devices), model,connections)
+        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
+      }
+      else {
+        T<-nrow(unique(events[,1]))
+        out_duplicity <-computeDuplicityTrajectory(path, devices, gridParams, pairs4dup, P1 = P1a , T, gamma = gamma)
+      }
     }
     else if(method == "1to1"){
       pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
-      Piia <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
-      out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Piia)
+      ll <- fitModels(length(devices), model,connections)
+      if(!is.null(lambda)) {
+        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii = NULL, init = TRUE, lambda = lambda)
+      }
+      else {
+        Piia <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
+        out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = NULL, Pii = Piia)
+      }
     }
   }, error = function(err){
     print(err)
     rm(list=setdiff(ls(), "out_duplicity"))
-
+    
   },
   finally = {
     rm(list=setdiff(ls(), "out_duplicity"))

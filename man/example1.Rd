@@ -39,7 +39,10 @@ out1<-computeDuplicity("pairs", gridFileName = gridfile, eventsFileName = events
 # compute the duplicity probabilities using the "1to1" method
 out2<-computeDuplicity("1to1", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, simulatedData = TRUE, simulationFileName = simulationfile)
 
+# compute the duplicity probabilities using the "1to1" method with lambda
+out2p<-computeDuplicity("1to1", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, simulatedData = TRUE, simulationFileName = simulationfile, lambda = 0.67)
+
 # compute the duplicity probabilities using the "trajectory" method
-out3<-computeDuplicity("trajectory", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, simulationFileName = simulationfile)
+out3<-computeDuplicity("trajectory", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile, path= path_root)
 
 }

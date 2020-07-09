@@ -51,7 +51,8 @@ computeDuplicityBayesian <-
            llik,
            P1 = NULL,
            Pii = NULL,
-           init = TRUE) {
+           init = TRUE,
+           lambda = NULL) {
     ndevices <- length(deviceIDs)
     jointEmissions <- emissions(modeljoin)
     noEvents <- apply(jointEmissions, 2, sum)
@@ -62,8 +63,7 @@ computeDuplicityBayesian <-
     for (i in eee0)
       envEmissions[[colNamesEmissions[i]]] <- i
     rm(colNamesEmissions)
-    keepCols <-
-      names(pairs4dupl)[-which(names(pairs4dupl) %in% c("index.x", "index.y"))]
+    keepCols <- names(pairs4dupl)[-which(names(pairs4dupl) %in% c("index.x", "index.y"))]
     
     if (method == "pairs") {
       P2 <- 1 - P1
@@ -80,7 +80,6 @@ computeDuplicityBayesian <-
             'llik',
             'init'
           ),
-          c('destim', 'data.table'),
           env = environment()
         )
       ichunks <- clusterSplit(cl, 1:nrow(pairs4dupl))
@@ -115,7 +114,6 @@ computeDuplicityBayesian <-
             'llik',
             'init'
           ),
-          c('destim', 'data.table'),
           env = environment()
         )
       ichunks <- clusterSplit(cl, 1:ndevices)
@@ -134,7 +132,7 @@ computeDuplicityBayesian <-
           init
         )
       stopCluster(cl)
-      dupP.dt <- buildDuplicityTable1to1(res, deviceIDs, Pii)
+      dupP.dt <- buildDuplicityTable1to1(res, deviceIDs, Pii, lambda)
     } else {
       stop("Method unknown!")
     }
