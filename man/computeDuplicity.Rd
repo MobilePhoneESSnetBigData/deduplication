@@ -16,6 +16,7 @@ computeDuplicity(
   path = NULL,
   gamma = 0.5,
   aprioriProbModel = NULL,
+  aprioriProbJointModel = NULL,
   lambda = NULL,
   handoverType = "strength",
   emissionModel = NULL,

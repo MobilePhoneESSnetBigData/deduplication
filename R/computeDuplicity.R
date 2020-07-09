@@ -48,7 +48,7 @@
 #'
 #'@export
 
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, lambda = NULL, handoverType = 'strength', emissionModel = NULL, antennaFileName = NULL) {
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, aprioriProbJointModel = NULL, lambda = NULL, handoverType = 'strength', emissionModel = NULL, antennaFileName = NULL) {
   
   out_duplicity <- NULL
   tryCatch ({
@@ -94,7 +94,11 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
     else {
       model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs, initSteady = FALSE, aprioriProb = aprioriProbModel)
     }
-    modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
+    if(is.null(aprioriProbJointModel)) {
+      modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
+    } else {
+      modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs, initSteady = FALSE, aprioriJointProb = aprioriProbJointModel)
+    }
 
     if(method == "pairs" | method == "trajectory") {
       coverarea <- readCells(antennaCellsFileName)
