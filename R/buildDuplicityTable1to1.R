@@ -13,7 +13,7 @@
 #' 
 #' @param Pii Apriori probability of devices to be in 1-to-1 correspondence with the owner.
 #' 
-#' @lambda If this parameter is non NULL, the duplicity probabilities are computed according to the approach described in
+#' @param lambda If this parameter is non NULL, the duplicity probabilities are computed according to the approach described in
 #' "An end-to-end statistical process with mobile network data for Official Statistics" paper.
 #'
 #' @return A data.table object with two columns: the device IDs and the corresponding duplicity probability for each

@@ -6,6 +6,28 @@
 \usage{
 computeDuplicityTrajectory(path, devices, gridParams, pairs, P1, T, gamma)
 }
+\arguments{
+\item{path}{The path where the files with the posterior location probabilities for each device are to be found.}
+
+\item{devices}{}
+
+\item{gridParams}{}
+
+\item{pairs}{}
+
+\item{P1}{}
+
+\item{T}{}
+
+\item{gamma}{}
+}
+\value{
+a data.table object with two columns: 'deviceID' and 'dupP'. On the first column there are deviceIDs and on
+ the second column the corresponding duplicity probability, i.e. the probability that a device is in a 2-to-1
+ correspondence with the holder.
+}
 \description{
-Computes the duplicity probabilities for each device using the trajectory approach.
+Computes the duplicity probabilities for each device using the trajectory approach described in
+ \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
+  Deliverable 3}.
 }

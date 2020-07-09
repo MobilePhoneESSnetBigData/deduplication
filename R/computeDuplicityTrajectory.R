@@ -1,17 +1,36 @@
-#' @title Computes the duplicity probabilities for each device using the trajectory approach.
+#'@title Computes the duplicity probabilities for each device using the trajectory approach.
 #'
+#'@description  Computes the duplicity probabilities for each device using the trajectory approach described in
+#'  \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
+#'   Deliverable 3}.
 #'
+#'@param path The path where the files with the posterior location probabilities for each device are to be found.
 #'
+#'@param devices
 #'
-#' @include centerOfProbabilities.R
-#' @include readPostLocProb.R
-#' @include dispersionRadius.R
-#' @include buildCentroidProbs.R
-#' @include buildCentroids.R
-#' @include buildDeltaProb.R
-#' @import data.table
-#' @import parallel
-#' @export
+#'@param gridParams
+#'
+#'@param pairs
+#'
+#'@param P1
+#'
+#'@param T
+#'
+#'@param gamma
+#'
+#'@return  a data.table object with two columns: 'deviceID' and 'dupP'. On the first column there are deviceIDs and on
+#'  the second column the corresponding duplicity probability, i.e. the probability that a device is in a 2-to-1
+#'  correspondence with the holder.
+#'
+#'@include centerOfProbabilities.R
+#'@include readPostLocProb.R
+#'@include dispersionRadius.R
+#'@include buildCentroidProbs.R
+#'@include buildCentroids.R
+#'@include buildDeltaProb.R
+#'@import data.table
+#'@import parallel
+#'@export
 computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T, gamma) {
   devices <- sort(as.numeric(devices))
   centrs <- buildCentroids(gridParams$ncol, gridParams$nrow, gridParams$tileX, gridParams$tileY)

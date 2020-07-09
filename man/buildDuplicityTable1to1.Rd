@@ -13,6 +13,9 @@ of devices allocated to an working node and the number of columns equals to the 
 \item{devices}{A vector with device IDs.}
 
 \item{Pii}{Apriori probability of devices to be in 1-to-1 correspondence with the owner.}
+
+\item{lambda}{If this parameter is non NULL, the duplicity probabilities are computed according to the approach described in
+"An end-to-end statistical process with mobile network data for Official Statistics" paper.}
 }
 \value{
 A data.table object with two columns: the device IDs and the corresponding duplicity probability for each
