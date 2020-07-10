@@ -9,7 +9,6 @@
 #' @return A vector with the IDs of the mobile devices detected by the network.
 #'
 #' @import data.table
-#'
 #' @export
 getDeviceIDs <- function(events) {
   devices <- unique(events[, 2])[[1]]
