@@ -3,7 +3,7 @@
 \name{tileEquivalence}
 \alias{tileEquivalence}
 \title{Transforms the tiles indices from the notation used by the simulation software to the one used by the raster
-package.}
+  package.}
 \usage{
 tileEquivalence(nrows, ncols)
 }
@@ -14,14 +14,14 @@ tileEquivalence(nrows, ncols)
 }
 \value{
 Returns a data.frame object with two columns: on the first column are the tile indices according to the
-raster package numbering and on the second column are the equivalent tile indices according to the simulation
-software numbering.
+  raster package numbering and on the second column are the equivalent tile indices according to the simulation
+  software numbering.
 }
 \description{
 In order to perform the population estimations, the area of interest is overlapped with a rectangular
-grid of tiles.
-Each tile is a rectangle with predefined dimensions. This function is a utility function which transform the tiles
-indices from the numberingt system used by the simulation software to the one used by the raster package. 
-The simulation software uses a notation where the tile with index 0 is the bottom left tile while the raster package
-uses another way to number the tiles, tiles being numbered starting with 1 for the upper left tile.
+  grid of tiles. Each tile is a rectangle with predefined dimensions. This function is a utility function which
+  transform the tiles indices from the numbering system used by the simulation software to the one used by the
+  \pkg{raster} package. The simulation software uses a notation where the tile with index 0 is the bottom left tile while
+  the raster package uses another way to number the tiles, tiles being numbered starting with 1 for the upper left
+  tile.
 }
