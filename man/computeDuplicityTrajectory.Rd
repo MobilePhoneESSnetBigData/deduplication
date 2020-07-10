@@ -9,17 +9,21 @@ computeDuplicityTrajectory(path, devices, gridParams, pairs, P1, T, gamma)
 \arguments{
 \item{path}{The path where the files with the posterior location probabilities for each device are to be found.}
 
-\item{devices}{}
+\item{devices}{A vector with device IDs.}
 
-\item{gridParams}{}
+\item{gridParams}{A list with the number of rows and columns of the grid and the tile dimensions on OX and OY axes.
+The items of the list are named 'nrow', 'ncol', 'tileX' and 'tileY'.}
 
-\item{pairs}{}
+\item{pairs}{A data.table object containing pairs with the IDs of compatible devices. It is obtained calling
+\code{buildPairs()} function.}
 
-\item{P1}{}
+\item{P1}{The apriori probabilitity for a device to be in 1-to-1 correspondence with its owner.}
 
-\item{T}{}
+\item{T}{The number of time instants in the data set.}
 
-\item{gamma}{}
+\item{gamma}{A coefficient needed to compute the duplicity probability. See
+\href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
+ Deliverable 3}.}
 }
 \value{
 a data.table object with two columns: 'deviceID' and 'dupP'. On the first column there are deviceIDs and on
