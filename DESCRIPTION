@@ -50,7 +50,6 @@ Collate:
     'tileEquivalence.R'
     'getEmissionProbs.R'
     'getEmissionProbsJointModel.R'
-    'getFittedModels.R'
     'getGenericModel.R'
     'getJointModel.R'
     'modeDelta.R'
