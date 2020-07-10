@@ -1,7 +1,6 @@
 #' @title Builds the joint HMM model.
 #'
-#' @description Builds the joint HMM model using the emmission probabilities which are the event locations computed
-#'   using the mobile network parameters.
+#' @description Builds the joint HMM model using the emmission probabilities given by \code{getEmissionProbsJointModel()}.
 #'
 #' @param nrows Number of rows in the grid.
 #'
@@ -11,14 +10,16 @@
 #'   the number of tiles in the grid and the number of columns equals the number of antennas. This matrix is obtained by
 #'   calling \code{getEmissionProbsJointModel}.
 #'
-#' @param initSteady If TRUE the initial a-priori distribution is set to the steady state of the transition matrix.
+#' @param initSteady If TRUE the initial apriori distribution is set to the steady state of the transition matrix, if
+#'   FALSE the apriori distribution should be given as a parameter.
 #'
+#' @param aprioriJointProb The apriori distribution for the HMM model. It is needed only if initSteady is FALSE.
 #'
-#' @return Returns a joint HMM model.
+#' @return Returns an HMM model with the initial apriori distribution set to the steady state of the transition matrix
+#'   or to the value given by \code{aprioriJointProb} parameter.
 #'
 #' @import destim
 #' @export
-#' 
 getJointModel <-
   function(nrows,ncols,jointEmissionProbs, initSteady = TRUE, aprioriJointProb = NULL) {
    

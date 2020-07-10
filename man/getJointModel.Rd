@@ -21,12 +21,15 @@ getJointModel(
 the number of tiles in the grid and the number of columns equals the number of antennas. This matrix is obtained by
 calling \code{getEmissionProbsJointModel}.}
 
-\item{initSteady}{If TRUE the initial a-priori distribution is set to the steady state of the transition matrix.}
+\item{initSteady}{If TRUE the initial apriori distribution is set to the steady state of the transition matrix, if
+FALSE the apriori distribution should be given as a parameter.}
+
+\item{aprioriJointProb}{The apriori distribution for the HMM model. It is needed only if initSteady is FALSE.}
 }
 \value{
-Returns a joint HMM model.
+Returns an HMM model with the initial apriori distribution set to the steady state of the transition matrix
+  or to the value given by \code{aprioriJointProb} parameter.
 }
 \description{
-Builds the joint HMM model using the emmission probabilities which are the event locations computed
-  using the mobile network parameters.
+Builds the joint HMM model using the emmission probabilities given by \code{getEmissionProbsJointModel()}.
 }
