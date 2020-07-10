@@ -43,7 +43,6 @@ Collate:
     'deduplication.R'
     'example1.R'
     'example2.R'
-    'example3.R'
     'fitModels.R'
     'getDeviceIDs.R'
     'getConnections.R'
