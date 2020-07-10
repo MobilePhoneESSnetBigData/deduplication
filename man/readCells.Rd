@@ -7,7 +7,7 @@
 readCells(cellsFileName, simulatedData = TRUE)
 }
 \arguments{
-\item{cellsFileName}{It is the file name where the coverage areas of antennas are to be found. The data have two
+\item{cellsFileName}{It is the name of the file where the coverage areas of antennas are to be found. The data have two
 columns, the first one is the antenna ID and the second one is a WKT string representing a polygon (i.e. it should
 start with the word POLYGON) which is the coverage area of the corresponding antenna. This area is also called the
 antenna cell.}
