@@ -1,13 +1,14 @@
-#' @title Fits the HMM models for each device.
+#' @title Fits the HMM model for each device.
 #'
-#' @description Fits the HMM model for each device using the \code{fit()} function from \code{destim} package. The
+#' @description Fits the HMM model for each device using the \code{fit()} function from \pkg{destim} package. The
 #'   computations are done in parallel to reduce the running time using all the available cores. This function creates a
-#'   cluster of working nodes, splits the devices equally and assign a partition of devices to each node in the cluster.
-#'   For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows it uses a "SOCK" cluster.
+#'   cluster of working nodes, splits the devices equally among the working nodes and assigns a partition of devices to
+#'   each node in the cluster. For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows
+#'   it uses a "SOCK" cluster.
 #'
 #' @param ndevices The number of devices.
 #'
-#' @param model The HMM model returned by \code{getGenericModel()} function. This model is to be fit for each device.
+#' @param model The HMM model returned by \code{getGenericModel()} function. This model is fittted for each device.
 #'
 #' @param connections A matrix whose elements are the antenna ID where a device is connected at every time instant. This
 #'   matrix is returned by \code{getConnections()} function.
