@@ -2,8 +2,7 @@
 % Please edit documentation in R/dispersionRadius.R
 \name{dispersionRadius}
 \alias{dispersionRadius}
-\title{Computes the radius of dispersion for the probability cloud of a device at each time
-  instant.}
+\title{Computes the radius of dispersion for the probability cloud of a device at each time instant.}
 \usage{
 dispersionRadius(
   centroid,
@@ -16,21 +15,21 @@ dispersionRadius(
 \arguments{
 \item{centroid}{The centroids of all tiles in the grid.}
 
-\item{postLocProb}{The posterior location probabilities for a device, for each tile and each time
-instant.}
+\item{postLocProb}{The posterior location probabilities for a device, for each tile and each time instant.}
 
-\item{center}{The center of posterior location probabilities. If it is not provided, it is
-computed here.}
+\item{center}{The (mass) center of posterior location probabilities. If it is not provided, it is computed here.}
 
 \item{method}{The distance function to be used. The euclidean distance is the default method.}
 
-\item{p}{the power of the Minkowski distance. The default value is 2 (euclidean distance).}
+\item{p}{The power of the Minkowski distance. The default value is 2 (euclidean distance).}
 }
 \value{
-a vector with dispersion radius for each time instant, for the device under consideration.
+A vector with dispersion radius for each time instant, for the device under consideration.
 }
 \description{
-Computes the radius of dispersion for the probability cloud of a device at each
-  time instant. The posterior location probabilities for a specific device, for each tile and
-  each time instant, is provided as a parameter.
+Computes the radius of dispersion for the probability cloud of a device at each time instant. The
+  posterior location probabilities for a specific device, for each tile and each time instant, is provided as a
+  parameter. The definition of the dispersion radius is given in
+  \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
+   Deliverable 3}.
 }
