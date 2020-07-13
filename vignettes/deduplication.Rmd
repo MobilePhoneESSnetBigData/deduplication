@@ -16,12 +16,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette contains an introduction to *deduplication* package. It describes its main purpose, presents some technical details of its implementation and provide examples on how to use this package. Some basic knowledge about *destim* pacakge would be useful to understand how the package works. A detailed description of the methodological approach
-implemented by this package can be found in @WP5Deliverable1.3.
+This vignette contains a short introduction to *deduplication* package. It describes its main purpose, presents some technical details of its implementation and provide examples on how to use this package. Some basic knowledge about *destim* package would be useful to understand how this package works. A detailed description of the methodological approach implemented by this package can be found in @WP5Deliverable1.3 and in @bmc_paper. To fully understand the theory behind this package it is recommended to read the above mentioned papers.
 
 
 # Introduction
-This section contains a brief explanation about the intended use of the package and provieds a short introduction to the underlaying methodology.
+This section contains a brief explanation about the intended use of the package and provides a short introduction to the underlaying methodology.
 
 ## Device duplicity problem
 The problem of device multiplicity comes from the fact that the statistical unit of analysis with mobile network data is the individual of a target population, not a mobile device. Since an individual can carry more than one device with him/her, this introduces the problem of multiple counting. For simplicity we make the simplifying assumption that each individual can carry at most $2$ devices. 
@@ -30,16 +29,38 @@ The main purpose of this package is to classify each device $d$ in a dataset as 
 
 Two main methodological approaches are implemented by the *deduplication* package:
 
-1. a Bayesian approach with network events data
-2. an approach based on the distance between centers of location probabilities
+1. A Bayesian approach with network events data
+2. An approach based on the distance between centers of location probabilities
 
 ## The Bayesian approach 
-Denoting by $D_{d1}$ the  event in which the device $d$ has a 1:1 device-individual correspondence and by$D_{d2}$ the event in which the device $d$ has a 2:1 device-individual correspondence we need to compute the probabilities $p_{d}=\mathbb{P}\left(D_{d2}|\mathbf{E}, \mathbf{I}\right)$ and $q_{d}=1-p_{d}$ making use of the network event information $\mathbf{E}_{d}=\{E_{dt_{0}}, E_{dt_{1}},\dots, E_{dt_{N}}\}$ of all devices $d$ and auxiliary information already used for the construction of the underlying HMMs. 
+Denoting by $D_{d_i d_j}$ the event which has the meaning "devices $d_i$ and $d_j$ are carried by the same individual" and by$D^c_{d_i d_j}$ the event with the meaning "devices $d_i$ and $d_j$ are not carried by the same individual" the duplicity probability for device $d_i$ is the pair duplicity probability $p_{d_id_j} \equiv \mathbb{P}(D_{d_i d_j}| \mathbf{E}, \mathbf{I})$ corresponding to device $d_j$more similar to $d_i$ and we can write $p_{d_i}= \max_{d_j\neq d_i}\mathbb{P}\left(D_{d_id_j}|\mathbf{E}, \mathbf{I}\right)$. Obviously, $p_{d_i d_i} = 0$ for all $i$.
 
-If we denote by $D_{d_{1}d_{2}}$ the event "devices $d_{1}$ and $d_{2}$ are carried by the same individual" (duplicity event), the probability $p_{d}$ for a device $d$ is the probability of pair-duplicity $p_{dd'}\equiv\mathbb{P}\left(D_{dd'}|\mathbf{E},\mathbf{I}\right)$ corresponding to the device $d'$ more similar to $d$ and we can write $p_{d}= \max_{d'\neq d}\mathbb{P}\left(D_{dd'}|\mathbf{E}, \mathbf{I}\right)$.
+### The pair approach
+We compute the pair-duplicity probabilities $p_{d_{i}d_{j}}$ for two devices $d_{i}$ and $d_{j}$ using the Bayes theorem: $\mathbb{P}\left(D_{d_{i}d_{j}}^{c}|\mathbf{E}, \mathbf{I}\right)=\frac{\mathbb{P}\left(\mathbf{E}|D_{d_{i}d_{j}}^{c}\right)\mathbb{P}\left(D_{d_{i}d_{j}}^{c}| \mathbf{I}\right)}{\mathbb{P}\left(\mathbf{E}|D_{d_{i}d_{j}}\right)\mathbb{P}\left(D_{d_{i}d_{j}}| \mathbf{I}\right) + \mathbb{P}\left(\mathbf{E}|D_{d_{i}d_{j}}^{c}\mathbf{I}\right)\mathbb{P}\left(D_{d_{i}d_{j}}^{c}|\mathbf{I}\right)} =\frac{1}{1 + \frac{\mathbb{P}\left(D_{d_{i}d_{j}}|\mathbf{I}\right)}{\mathbb{P}\left(D_{d_{i}d_{j}}^{c}|\mathbf{I}\right)}\times \frac{\mathbb{P}\left(\mathbf{E}|D_{d_{i}d_{j}}, \mathbf{I}\right)}{\mathbb{P}\left(\mathbf{E}|D_{d_{i}d_{j}}^{c}, \mathbf{I}\right)} }$
 
-We compute the pair-duplicity probabilities $p_{d_{1}d_{2}}$ for two devices $d_{1}$ and $d_{2}$ using the Bayes theorem: $\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{E}, \mathbf{I}\right)=\frac{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}\right)\mathbb{P}\left(D_{d_{1}d_{2}}^{c}| \mathbf{I}\right)}{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}\right)\mathbb{P}\left(D_{d_{1}d_{2}}| \mathbf{I}\right) + \mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}\mathbf{I}\right)\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{I}\right)} =\frac{1}{1 + \frac{\mathbb{P}\left(D_{d_{1}d_{2}}|\mathbf{I}\right)}{\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{I}\right)}\times \frac{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}, \mathbf{I}\right)}{\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}, \mathbf{I}\right)} }$
-
-Here  $D_{d_{1}d_{2}}^{c}$ stands for "devices $d_{1}$ and $d_{2}$ are not carried by the same individual" event, $\mathbb{P}\left(D_{d_{1}d_{2}}|\mathbf{I}\right)$ and $\mathbb{P}\left(D_{d_{1}d_{2}}^{c}|\mathbf{I}\right)$ are prior probabilities for the duplicity and non-duplicity events and $\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}, \mathbf{I}\right)$ and $\mathbb{P}\left(\mathbf{E}|D_{d_{1}d_{2}}^{c}, \mathbf{I}\right)$ stand for the likelihoods under each hypothesis $D_{d_{1}d_{2}}$ and $D_{d_{1}d_{2}}^{c}$, respectively.
+Here  $\mathbb{P}\left(D_{d_{i}d_{j}}|\mathbf{I}\right)$ and $\mathbb{P}\left(D_{d_{i}d_{j}}^{c}|\mathbf{I}\right)$ are the prior probabilities for the duplicity and non-duplicity events and $\mathbb{P}\left(\mathbf{E}|D_{d_{i}d_{j}}, \mathbf{I}\right)$ and $\mathbb{P}\left(\mathbf{E}|D_{d_{i}d_{j}}^{c}, \mathbf{I}\right)$ stand for the likelihoods under each hypothesis $D_{d_{i}d_{j}}$ and $D_{d_{i}d_{j}}^{c}$, respectively.
 
 After some mathematical manipulations we arrive at the following formula:
+
+$p_{d_{i}}=\max_{j\neq i}\left(\frac{1}{\left(1 + \alpha*\exp\left(\ell_{ij} - \ell_{i} -\ell_{j}\right)\right)}\right)$, where $\alpha = \frac{P_2}{P_1}$, $P_1$ is the aprori probablity of duplicity for a device and $P_2=1-P_1$.
+
+### The one-to-one approach
+If we start from $p_{d_i} = \mathbb{P}\left( D_{d_i d_i} |  \mathbf{E}, \mathbf{I}  \right)$ and take into consideration  that the entire event set $\Omega_{d_i}$ for device $d_i$ can be decomposed as $\Omega_{d_i} = \cup_{d_j} D_{d_i d_j}$ we can apply again the Bayes theorem and obtain:
+$p_{d_i} = 1 - \frac{1}{1 + \alpha_{d_id_j} * \sum_{j\neq i} \exp\ (\ell_i + \ell_j - \ell_{ij}) }$ where $\ell_i$ and $\ell_j$ are loglikelihoods for single a device ($i$ and $j$ in this case), $\ell_{ij}$ is the loglikelihood for two the devices $d_i$ and $d_j$ and $\alpha = \frac{1-P_1}{P_1}$, $P_1$ is the apriori probability of 1:1 correspondence for all devices.
+
+In both approaches, the likelihood for two devices $\ell_{ij}$ is computed using a similar HMM model as for one device with the difference in the emission model:  the emission probabilitiea are computed as as the product of the
+original single-device emission probabilities for $d_i$ and $d_j$.
+
+If we denote $\lambda^{(1)}_{d_i} = \frac{\mathbb{P}\left(D_{d_i d_i}|\mathbf{I}\right)}{1-\mathbb{P}\left(D_{d_i d_j}|\mathbf{I}\right)}$
+the prior odds ratio which gives how much more probable is that an individual carries a priori only one device
+$d_i$ than another device together with $d_i$, considering that apriori any other device $d_j$ can be the second device so that $\mathbb{P}\left( D_{d_i d_j}|\mathbf{I} \right)$ is constant for any other device $d_j$ and $\mathbb{P}\left( D_{d_id_i} | \mathbf{I} \right) + (N_D-1)* \mathbb{P}\left( D_{d_id_j} | \mathbf{I} \right) =1$, where $N_D$ is the total number of devices, we arrive at:
+$\alpha_{d_id_j} = \frac{1}{\lambda_{d_i}*\left(N_D-1\right)}$ and the probability of duplicity $p_{d_i}= 1 - \frac{1}{1+\frac{\exp\left(-\ell_{d_i}\right)}{\lambda_{d_i}*\left(N_D-1\right)} \sum_{j \neq i} \exp\left(\ell_{d_i d_j}\right)}$
+
+Thus, depending on the available information, if there is information at the device level that can be used to evaluate $\lambda_{d_i}$ the latter formula can be used to compute the duplicity probability, otherwise, the former formula with a single value of $\alpha$ for all devices is used.
+
+## The trajectory approach 
+
+This approach also follows a Bayesian approach, but instead of using network event variables $\mathbf{E}$ we will use properties of the trajectories derived from the HMM. i.e. the location probability distributions $\{\gamma_{dti}\}$ of all devices $d$.
+Applying the Bayes theorem again we have:
+$\mathbb{P}\left(D_{d_{i}d_{j}}^{c}|\mathbf{X}, \mathbf{I}\right) = \frac{1}{1 + \frac{\mathbb{P}\left(D_{d_{i}d_{j}}|\mathbf{I}\right)}{\mathbb{P}\left(D_{d_{i}d_{j}}^{c}|\mathbf{I}\right)}\times    \frac{\mathbb{P}\left(\mathbf{X}|D_{d_{i}d_{j}}, \mathbf{I}\right)}{\mathbb{P}\left(\mathbf{X}|D_{d_{i}d_{j}}^{c}, \mathbf{I}\right)} }$, where $\mathbf{X}$ is a variable related to the estimated trajectories in terms of posterior location probabilities.
+Firstly we  the probability distribution of the signed distance between the x- and y-axis position of each pair of devices (

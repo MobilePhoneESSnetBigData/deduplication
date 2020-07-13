@@ -8,7 +8,7 @@ getEmissionProbsJointModel(emissionProbs)
 }
 \arguments{
 \item{emissionProbs}{the emission probabilities (the location probabilities) computed by calling
-\code{getEmissionProbs} for each individual device.}
+\code{getEmissionProbs()} for each individual device.}
 }
 \value{
 Returns a matrix with the joint emission probabilities for the HMM. The number of rows equals the number
