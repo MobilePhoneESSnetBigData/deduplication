@@ -319,8 +319,9 @@ The HMM models (both individual ones and the joint models) are build storing the
 If a user wants to use some specific apriori probabilities this can be done as in the following sequence:
 
 ```{r}
+aprioriProbModel <- matrix (1 / (gridParams$nrow * gridParams$ncol), nrow = gridParams$nrow, ncol = gridParams$ncol)
 model <- getGenericModel(gridParams$nrow, gridParams$ncol, emissionProbs, initSteady = FALSE, aprioriProb = aprioriProbModel)
-modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs, initSteady = FALSE, aprioriJointProb = aprioriProbJointModel)
+modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs, initSteady = FALSE, aprioriJointProb = aprioriProbModel)
 ```
 
 ## Some remarks about computational efficiency
