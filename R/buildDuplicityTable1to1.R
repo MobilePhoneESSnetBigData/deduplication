@@ -1,18 +1,24 @@
-#' @title  Builds a datatable with device IDs and the duplicity probability for each device.
+#' @title  Builds a data.table object with device IDs and the duplicity probability for each device.
 #'
-#' @description Builds a datatable with with two columns: device IDs and the duplicity probability for each device. This
-#'   function is called in case of using the "1to1" method of computing the dupicity probabilities, receiving a list of
-#'   matrix objects returned by each worker node with lines correponding to a subset of devices. These parts a put
-#'   together and form a symmetic matrix used to compute the duplicity probability. It is a utility function and it is
-#'   not accesible from outside the package.
+#' @description Builds a data.table object with with two columns: device IDs and the duplicity probability for each
+#'   device. This function is called in case of using the "1to1" method of computing the duplicity probabilities,
+#'   receiving a list of matrix objects returned by each worker node with lines corresponding to a subset of devices.
+#'   These parts a put together and form a symmetic matrix used to compute the duplicity probability. It is a utility
+#'   function and it is not accesible from outside the package.
 #'
-#' @param a list of data.table objects returned by each worker node with the device IDs on the first two columns and the
-#'   corresponding duplicity probability on the third column for (the pair of devices in the first two columns).
+#' @param res A list of matrix objects returned by each worker node with the number of rows corresponding to the number
+#'   of devices allocated to an working node and the number of columns equals to the number of devices.
 #'
-#' @param a vector with device IDs.
+#' @param devices A vector with device IDs.
+#' 
+#' @param Pii Apriori probability of devices to be in 1-to-1 correspondence with the owner.
+#' 
+#' @param lambda If this parameter is non NULL, the duplicity probabilities are computed according to the approach described in
+#' "An end-to-end statistical process with mobile network data for Official Statistics" paper.
 #'
-#' @return a data.table object with two columns: the device IDs and the corresponding duplicity probability for each
+#' @return A data.table object with two columns: the device IDs and the corresponding duplicity probability for each
 #'   device.
+#'   
 buildDuplicityTable1to1 <- function(res, devices, Pii, lambda = NULL) {
   ndevices <- length(devices)
   

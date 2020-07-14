@@ -7,17 +7,18 @@
 aprioriDuplicityProb(prob2Devices, ndevices)
 }
 \arguments{
-\item{prob2Devices}{The probability of a person to have 2 devices. In case of using simulated data, this parameter is read
-from the simulation configuration file.}
+\item{prob2Devices}{The probability of a person to have 2 devices. In case of using simulated data, this parameter is
+read from the simulation configuration file.}
 
 \item{ndevices}{The number of devices detected by the network during the time horizon under consideration.}
 }
 \value{
-Apriori probability of duplicity, i.e. the probability of a device to be in a 2-to-1 correspondence with
-the person who holds it.
+Apriori probability of duplicity, i.e. the probability of a device to be in a 2-to-1 correspondence with the
+  person who holds it.
 }
 \description{
 Apriori probability of duplicity, i.e. the probability of a device to be in a 2-to-1 correspondence with
-the person who holds it. It is computed as 2*(Ndev-Ndev2)/(Ndev*(Ndev-1)) where Ndev is the total number of devices and
-Ndev2 is the number of devices that are in a 1-to-1 correspondence with the persons that hold them.
+  the person who holds it. It is computed as \eqn{ 2 * (Ndev-Ndev2) / (Ndev * (Ndev-1)) } where \eqn{Ndev} is the
+  total number of devices and \eqn{Ndev2} is the number of devices that are in a 1-to-1 correspondence with the
+  persons that hold them.
 }

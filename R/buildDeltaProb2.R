@@ -4,7 +4,7 @@
 #'   differences between the centroids of the tiles on OX / OY. For a detailed explanation of what Delta X and Delta Y
 #'   mean please reffer to
 #'   \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
-#'    Deliverable 3} The location probability for each tile nd each device comes from \code{destim}. 
+#'    Deliverable 3} The posterior location probability for each tile nd each device comes from \pkg{destim}.
 #'
 #' @param centroids The centroids of all tiles in the grid.
 #'

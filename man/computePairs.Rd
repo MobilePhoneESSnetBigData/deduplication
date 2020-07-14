@@ -2,7 +2,7 @@
 % Please edit documentation in R/computePairs.R
 \name{computePairs}
 \alias{computePairs}
-\title{Builds pairs of devices and corresponding connections}
+\title{Builds pairs of devices and corresponding connections.}
 \usage{
 computePairs(
   connections,
@@ -14,31 +14,31 @@ computePairs(
 )
 }
 \arguments{
-\item{connections}{A matrix wuth the antenna ID where the mobile devices are connected at every time instant. Each
+\item{connections}{A matrix with the antenna IDs where the mobile devices are connected at every time instant. Each
 row corresponds to a device and each column to a time instant. This matrix is obtained by calling
 \code{getConnections()} function.}
 
 \item{ndevices}{The number of devices registered by the network. A vector with device IDs can be obtained by calling
 \code{getDevices()} function and the number of devices is simply the lenght of this vector.}
 
-\item{oneToOne}{If TRUE, the result is build to apply the method "1to1" to compute the duplicity probability for each
+\item{oneToOne}{If TRUE, the result is built to apply the method "1to1" to compute the duplicity probability for each
 device. This means that the result will contain all combinations of devices. If FALSE, the result will consider the
 proximity of antennas through the parameter antennaNeighbors and remove all the combinations of devices that are
 impossible to belong to a single person. If most of the time instants two devices are connected to two antennas
 that are not neighbours (i.e. their cells don't overlap) we consider that these two devices belong to different
-person and remove this combination of devices form the data.table result. The term "most of the time instants" is
-implemented like this: we add how many times during the time horizon two devices are connected to neighbouring
-antennas and than keep in the final result only those combinations of devices with this number greater than the
-quantile of the sequence 0...(Number of time instants) with probability 1-P1-limit. In this way we reduce the time
-complexity of the duplicity probability computation.}
+persons and remove this combination of devices from the result. The term "most of the time instants" is implemented
+like this: we add how many times during the time horizon two devices are connected to neighbouring antennas and
+than keep in the final result only those combinations of devices with this number greater than the quantile of the
+sequence 0...(Number of time instants) with probability 1-P1-limit. In this way we reduce the time complexity of
+the duplicity probability computation.}
 
 \item{P1}{The apriori probability of duplicity. It is obtained by calling \code{aprioriDuplicityProb()} function.}
 
-\item{limit}{A number that stands for the error in computing  apriori probability of duplicity.}
+\item{limit}{A number that stands for the error in computing apriori probability of duplicity.}
 
-\item{antennaNeighbors}{A data.table object with a single column 'nei' that contains pairs of antenna IDs in the form
-antennaID1-antennaID2 that are neighbours. We consider that two antennas are neighbours if their coverage areas has
-a non void intersection.}
+\item{antennaNeighbors}{A data.table object with a single column 'nei' that contains pairs of antenna IDs  that are
+neighbours in the form antennaID1-antennaID2. We consider that two antennas are neighbours if their coverage
+areas has a non void intersection.}
 }
 \value{
 a data.table object. The first two columns contain the devices indices while the rest of the columns contains
@@ -46,11 +46,11 @@ a data.table object. The first two columns contain the devices indices while the
   instant for the whole time horizon.
 }
 \description{
-Build a data.table object that contains pairs of antenna IDs in the form "antennaID1-antennaID2", where
+Builds a data.table object that contains pairs of antenna IDs in the form "antennaID1-antennaID2", where
   antennaID1 corresponds to a device while antennaID2 corresponds to another device, for each time instant over a
   time period when the network events are registered. These pairs are build for each distinct combination
   "deviceID1-deviceID2" of devices. The rows of the data.table object corresponds to a combination of devices and the
-  columns correponds to different time instants. The first two columns contains the device IDs of each pair af
+  columns correponds to different time instants. The first two columns contains the device IDs of each pair of
   devices and the rest of the columns correspond to a time instant and contains the pairs antennaID1-antennaID2 where
   the two devices are connected at that time instant.
 }

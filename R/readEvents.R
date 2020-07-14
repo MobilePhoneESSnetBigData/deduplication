@@ -3,10 +3,10 @@
 #' @description Reads the network events file. This file can come from the network simulator or it ca be a file with
 #'   real mobile network events provided by an MNO.
 #'
-#' @param eventsFileName The file name with the network events to be used. Depending on the parameter
+#' @param eventsFileName The name of the file with the network events to be used. Depending on the parameter
 #'   \code{simulatedData} it could be a .csv file coming from the simulation software or from a real MNO. In case the
 #'   file comes from the simulation software it should contain following columns: \code{time, antennaID, eventCode,
-#'   deviceID, x, y, tile} Only the first 4 columns are used, the rest are ignored.
+#'   deviceID, x, y, tile}. Only the first 4 columns are used, the rest are ignored.
 #'
 #' @param simulatedData If TRUE it means that the input data are simulated data, otherwise the data come from a real
 #'   MNO.
@@ -15,7 +15,6 @@
 #'   equals the number of connection events recorded by the network. The returned object has the following columns:
 #'   \code{time, deviceID, eventCode, antennaID, x, y, tile, obsVar}. \code{obsVar} stands for observed variable and is
 #'   a concatenation between the antenna ID and the event code.
-#'
 #'
 #' @import data.table
 #' @import stringr

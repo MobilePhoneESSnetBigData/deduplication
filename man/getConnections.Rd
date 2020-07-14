@@ -2,7 +2,7 @@
 % Please edit documentation in R/getConnections.R
 \name{getConnections}
 \alias{getConnections}
-\title{Builds a Matrix object containing the IDs of the antennas to which devices are connected.}
+\title{Builds a matrix object containing the IDs of the antennas to which devices are connected.}
 \usage{
 getConnections(events)
 }
@@ -19,6 +19,6 @@ Builds a matrix object containing the IDs of the antennas to which devices are c
 The number of rows equals the number of devices and the number of columns equals the number of time instants
 when the network events were recorded. An element \code{[i,j]} in the returned matrix equals the ID of the antenna
 where the mobile device with index \code{i} in the ordered list of device IDs (returned by \code{getDeviceIDs()}) is
-conntected at the time instant with index \code{j} in the sequence of time instants when the network events
-where recorded.
+connected at the time instant with index \code{j} in the sequence of time instants when the network events
+were recorded.
 }

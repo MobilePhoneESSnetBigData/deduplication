@@ -4,8 +4,8 @@
 #' @description Builds the emissions probabilities needed for the joint HMM used to estimate the posterior location
 #'   probabilitities.
 #'
-#' @param emissionProbs the emission probalbities (the location probabilities) computed by calling
-#'   \code{getEmissionProbs}.
+#' @param emissionProbs the emission probabilities (the location probabilities) computed by calling
+#'   \code{getEmissionProbs()} for each individual device.
 #'
 #'
 #' @return Returns a matrix with the joint emission probabilities for the HMM. The number of rows equals the number

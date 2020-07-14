@@ -10,4 +10,5 @@
 #' @import rgeos
 #' @import stringr
 #' @import xml2
+#' @import XML
 NULL

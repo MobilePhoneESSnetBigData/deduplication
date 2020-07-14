@@ -1,7 +1,6 @@
 #' @title Builds the generic HMM model.
 #'
-#' @description Builds the generic HMM model using the emission probabilities which are the event locations computed
-#'   using the mobile network parameters.
+#' @description Builds the generic HMM model using the emission probabilities given by \code{getEmissionProbs()}.
 #'
 #' @param nrows Number of rows in the grid.
 #'
@@ -9,14 +8,15 @@
 #'
 #' @param emissionProbs A matrix with the event location probabilities. The number of rows equals the number of tiles in
 #'   the grid and the number of columns equals the number of antennas. This matrix is obtained by calling
-#'   \code{getEmissionProbs} function.
+#'   \code{getEmissionProbs()} function.
 #'
-#' @param initSteady If TRUE the initial apriori distribution is set to the steady state of the transition matrix, if FALSE
-#' the apriori distribution is given as a parameter.
-#' 
-#' @param aprioriProb The apriori distribution for the HMM model. It is needed only if initSteady isd FALSE.
+#' @param initSteady If TRUE the initial apriori distribution is set to the steady state of the transition matrix, if
+#'   FALSE the apriori distribution should be given as a parameter.
 #'
-#' @return Returns an HMM model with the initial a-priori distribution set to the steady state of the transition matrix.
+#' @param aprioriProb The apriori distribution for the HMM model. It is needed only if initSteady is FALSE.
+#'
+#' @return Returns an HMM model with the initial apriori distribution set to the steady state of the transition matrix
+#'   or to the value given by \code{aprioriProb} parameter.
 #'
 #' @import destim
 #'

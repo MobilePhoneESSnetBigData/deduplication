@@ -7,7 +7,7 @@
 buildDeltaProb(xp1, xp2)
 }
 \arguments{
-\item{xp1}{a data.table object with 3 columns representing the x and y coordinates of the centroids of tiles in the
+\item{xp1}{A data.table object with 3 columns representing the x and y coordinates of the centroids of tiles in the
 grid and the location probability for each corresponding tile for the first device.}
 
 \item{xp2}{a data.table object with 3 columns representing the x and y coordinates of the centroids of tiles in the
@@ -18,9 +18,9 @@ a list with two data.table objects, the first is the probability distribution fo
   Delta Y. The elements are named DeltaX and DeltaY.
 }
 \description{
-Computes the probability distribution for Delta X and Delta Y where Delta X / Delta Y are the
-  differences between the centroids of the tiles on OX / OY. For a detailed explanation of what Delta X and Delta Y
+Computes the probability distribution for Delta X and Delta Y where Delta X and Delta Y are the
+  differences between the centroids of the tiles on OX and OY. For a detailed explanation of what Delta X and Delta Y
   mean please reffer to
   \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
-   Deliverable 3} The location probability for each tile nd each device comes from \code{destim}.
+   Deliverable 3} The posterior location probability for each tile and each device comes from \pkg{destim}.
 }

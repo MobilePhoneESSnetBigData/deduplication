@@ -2,7 +2,7 @@
 % Please edit documentation in R/buildCentroids.R
 \name{buildCentroids}
 \alias{buildCentroids}
-\title{Builds the centroid of the rectangular tiles}
+\title{Builds the centroid of the rectangular tiles.}
 \usage{
 buildCentroids(ntiles_x, ntiles_y, tile_sizeX, tile_sizeY)
 }
@@ -12,9 +12,9 @@ buildCentroids(ntiles_x, ntiles_y, tile_sizeX, tile_sizeY)
 \item{ntiles_y}{The number of tiles on OY.}
 }
 \value{
-A data.table object with three columns: tile, centroidCoord_x and centroidCoord_y.
+A data.table object with three columns: tile ID, centroidCoord_x and centroidCoord_y.
 }
 \description{
-Builds the centroid of each rectangular tile in the grid. The centroid is simple the center of the tile, i.e.
-the intersection poit of the diagonals of the tile.
+Builds the centroid of each (rectangular) tile in the grid. The centroid is simple the center of the
+  tile, i.e. the intersection poit of the diagonals of the tile.
 }
