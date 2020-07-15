@@ -14,7 +14,7 @@ ID.}
 \item{deviceID}{The device ID for which the posterior location probabilities are read.}
 }
 \value{
-A data.table object with the posterior location probabilities for the device with ID equals to deviceID. A
+A Matrix object with the posterior location probabilities for the device with ID equals to deviceID. A
   row corresponds to a tile and a column corresponds to a time instant.
 }
 \description{
