@@ -69,11 +69,11 @@ P1 <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
 
 #12. Build a matrix of pairs of devices to compute duplicity probability
 
-pairs4dup<-computePairs(connections, length(devices), oneToOne = FALSE, P1=P1, limit = 0.05, antennaNeighbors = antennaNeigh)
+pairs4dupP<-computePairs(connections, length(devices), oneToOne = FALSE, P1=P1, limit = 0.05, antennaNeighbors = antennaNeigh)
 
 #13. Compute duplicity probabilities using the "pairs" method (faster)
 
-out1 <- computeDuplicityBayesian("pairs", devices, pairs4dup, modelJ, ll, P1)
+out1 <- computeDuplicityBayesian("pairs", devices, pairs4dupP, modelJ, ll, P1)
 
 #14. Apriori probability of 2-to-1 
 
@@ -81,9 +81,15 @@ Pii <- aprioriOneDeviceProb(simParams$prob_sec_mobile_phone, length(devices))
 
 #15. Build a matrix of pairs of devices to compute duplicity probability
 
-pairs4dup<-computePairs(connections, length(devices), oneToOne = TRUE)
+pairs4dupO<-computePairs(connections, length(devices), oneToOne = TRUE)
 
 #16. Compute duplicity probabilities using "1to1" method
 
-out2 <- computeDuplicityBayesian("1to1", devices, pairs4dup, modelJ, ll, P1 = NULL, Pii=Pii)
+out2 <- computeDuplicityBayesian("1to1", devices, pairs4dupO, modelJ, ll, P1 = NULL, Pii=Pii)
+
+#17. Compute duplicity probabilities using "trajectory method"
+
+T<-nrow(unique(events[,1]))
+
+out3 <-computeDuplicityTrajectory(path=path_root, devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
 }
