@@ -44,7 +44,7 @@ getGenericModel <-  function(nrows, ncols, emissionProbs, initSteady = TRUE, apr
       stop("getGenericModel: if initSteady is FALSE then you should specify the apriori probability for the HMM model!")
     }
     else {
-      if(sum(aprioriProb) != 1)
+      if(abs(sum(aprioriProb) - 1) > .Machine$double.eps)
         stop("getGenericModel: aprioriProb should sum up to 1!")
       else
         istates(model)<-aprioriProb

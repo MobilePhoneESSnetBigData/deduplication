@@ -47,10 +47,10 @@ getJointModel <-
         stop("getJointModel: if initSteady is FALSE then you should specify the apriori probability for the HMM model!")
       }
       else {
-        if(sum(aprioriJointProb) != 1)
+        if(abs(sum(aprioriJointProb) - 1) > .Machine$double.eps)
           stop("getJointModel: aprioriJointProb should sum up to 1!")
         else
-          istates(model)<-aprioriJointProb
+          istates(modeljoin)<-aprioriJointProb
       }
     }
     
