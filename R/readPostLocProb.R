@@ -16,7 +16,7 @@
 #' @import Matrix
 #' @export
 readPostLocProb <-function(path, deviceID) {
-  file <- system.file(path, paste0("postLocDevice_", as.character(deviceID), ".csv"), package = 'deduplication')
+  file <- paste0(path,"/postLocDevice_", as.character(deviceID), ".csv")
   if(!file.exists(file))
     stop (paste0('file with posterior location probabilities files does not exist ', file))
 

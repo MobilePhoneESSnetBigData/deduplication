@@ -84,5 +84,5 @@
 #' 
 #' T<-nrow(unique(events[,1]))
 #' 
-#' out3 <-computeDuplicityTrajectory(path=path_root, devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
+#' out3 <-computeDuplicityTrajectory(path=system.file(path_root, package = 'deduplication'), devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
 example2 <- function() {}
