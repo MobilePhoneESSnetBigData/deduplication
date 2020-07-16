@@ -8,23 +8,23 @@
 #' @examples
 #'
 #' # set the folder where the necessary input files are stored
-#' path_root      <- 'extdata/'
+#' path_root      <- 'extdata'
 #' 
 #' # set the grid file name, i.e. the file where the grid parameters are found
-#' gridfile <-paste0(path_root, 'grid.csv')
+#' gridfile <-system.file(path_root, 'grid.csv', package = 'deduplication')
 #' 
 #' # set the events file name, i.e. the file with network events registered during a simulation
-#' eventsfile<-paste0(path_root, 'AntennaInfo_MNO_MNO1.csv')
+#' eventsfile<-system.file(path_root, 'AntennaInfo_MNO_MNO1.csv', package = 'deduplication')
 #'
 #' # set the signal file name, i.e. the file where the signal strength/quality for each tile in the grid is stored
-#' signalfile<-paste0(path_root, 'SignalMeasure_MNO1.csv')
+#' signalfile<-system.file(path_root, 'SignalMeasure_MNO1.csv', package = 'deduplication')
 #'
 #' # set the antenna cells file name, i.e. the file where the simulation software stored the coverage area for each antenna
 #' # This file is needed only if the duplicity probabilities are computed using "pairs" method
-#' antennacellsfile<-paste0(path_root, 'AntennaCells_MNO1.csv')
+#' antennacellsfile<-system.file(path_root, 'AntennaCells_MNO1.csv', package = 'deduplication')
 #'
 #' # set the simulation file name, i.e. the file with the simulation parameters used to produce the data set
-#' simulationfile<-paste0(path_root, 'simulation.xml')
+#' simulationfile<-system.file(path_root, 'simulation.xml', package = 'deduplication')
 #' 
 #' # compute the duplicity probabilities using the "pairs" method
 #' out1<-computeDuplicity("pairs", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile)
