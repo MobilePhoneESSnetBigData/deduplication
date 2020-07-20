@@ -1,10 +1,11 @@
 #' Example of using deduplication package - the long way
 #' 
-#' #This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
-#' #example are supposed to be produced using the simulation software. The "simulation.xml" file is an exception and it
-#' #is an input file for the simulation software. The files used in this example are provided with the deduplication
-#' #package.
+#' This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
+#' example are supposed to be produced using the simulation software. The "simulation.xml" file is an exception and it
+#' is an input file for the simulation software. The files used in this example are provided with the deduplication
+#' package.
 #'
+#' #' @examples
 #' 
 #' # set the folder where the necessary input files are stored
 #' 

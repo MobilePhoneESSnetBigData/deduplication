@@ -20,7 +20,7 @@ readPostLocProb <-function(path, deviceID) {
   if(!file.exists(file))
     stop (paste0('file with posterior location probabilities files does not exist ', file))
 
-  postLoc <- fread(file, sep = ',',stringsAsFactors = FALSE,header = FALSE)
+  postLoc <- fread(file, sep = ',',stringsAsFactors = FALSE, header = FALSE)
   
   return (Matrix(as.matrix(postLoc)))
   
