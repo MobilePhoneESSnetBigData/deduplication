@@ -12,8 +12,7 @@ example are supposed to be produced using the simulation software. The "simulati
 is an input file for the simulation software. The files used in this example are provided with the deduplication
 package.
 }
-\details{
-#' @examples
+\examples{
 
 # set the folder where the necessary input files are stored
 

@@ -5,7 +5,7 @@
 #' is an input file for the simulation software. The files used in this example are provided with the deduplication
 #' package.
 #'
-#' #' @examples
+#' @examples
 #' 
 #' # set the folder where the necessary input files are stored
 #' 
