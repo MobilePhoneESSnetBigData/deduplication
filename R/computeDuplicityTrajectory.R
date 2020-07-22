@@ -35,7 +35,7 @@
 #'@import data.table
 #'@import parallel
 #'@export
-computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T, gamma) {
+computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, P1 , T, gamma) {
   devices <- sort(as.numeric(devices))
   centrs <- buildCentroids(gridParams$ncol, gridParams$nrow, gridParams$tileX, gridParams$tileY)
   ndevices <- length(devices)
@@ -50,7 +50,7 @@ computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T, 
 
   ### from this point the code should go parallel  
   
-  cl <- buildCluster( c('path', 'devices', 'centrs', 'centerOfProbs'), env = environment())
+  cl <- buildCluster( c('path', 'prefix', 'devices', 'centrs', 'centerOfProbs'), env = environment())
   ichunks <- clusterSplit(cl, 1:ndevices)
   res <- clusterApplyLB( cl, ichunks, doLocations, path, devices, centrs )
   for(i in 1:length(res)) {
@@ -80,14 +80,14 @@ computeDuplicityTrajectory <-function(path, devices, gridParams, pairs, P1 , T, 
   
 }
 
-doLocations <- function(ichunks, path, devices, centrs, centerOfProbs ) {
+doLocations <- function(ichunks, path, prefix, devices, centrs, centerOfProbs ) {
   n <- length(ichunks)
   local_postLoc<-list(length = n)
   local_centerOfProbs<-list(length = n)
   local_dr <- list(length = n)
   k<-1
   for( i in ichunks) {
-    local_postLoc[[k]] <- readPostLocProb(path, devices[i])
+    local_postLoc[[k]] <- readPostLocProb(path, prefix, devices[i])
     local_centerOfProbs[[k]] <- centerOfProbabilities(centrs, local_postLoc[[k]])
     local_dr[[k]] <- dispersionRadius(centrs, local_postLoc[[k]], local_centerOfProbs[[k]])
     k <- k + 1

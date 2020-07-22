@@ -4,7 +4,16 @@
 \alias{computeDuplicityTrajectory}
 \title{Computes the duplicity probabilities for each device using the trajectory approach.}
 \usage{
-computeDuplicityTrajectory(path, devices, gridParams, pairs, P1, T, gamma)
+computeDuplicityTrajectory(
+  path,
+  prefix,
+  devices,
+  gridParams,
+  pairs,
+  P1,
+  T,
+  gamma
+)
 }
 \arguments{
 \item{path}{The path where the files with the posterior location probabilities for each device are to be found.}
