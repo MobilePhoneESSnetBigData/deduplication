@@ -1,20 +1,25 @@
-#'@title Computes the duplicity probabilities for each device using the trajectory approach.
+#'@title Computes the duplicity probabilities for each device using the
+#'  trajectory approach.
 #'
-#'@description  Computes the duplicity probabilities for each device using the trajectory approach described in
+#'@description  Computes the duplicity probabilities for each device using the
+#'  trajectory approach described in
 #'  \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
 #'   Deliverable 3}.
 #'
-#'@param path The path where the files with the posterior location probabilities for each device are to be found.
+#'@param path The path where the files with the posterior location probabilities
+#'  for each device are to be found.
 #'
 #'@param devices A vector with device IDs.
 #'
-#'@param gridParams A list with the number of rows and columns of the grid and the tile dimensions on OX and OY axes.
-#'  The items of the list are named 'nrow', 'ncol', 'tileX' and 'tileY'.
+#'@param gridParams A list with the number of rows and columns of the grid and
+#'  the tile dimensions on OX and OY axes. The items of the list are named
+#'  'nrow', 'ncol', 'tileX' and 'tileY'.
 #'
-#'@param pairs A data.table object containing pairs with the IDs of compatible devices. It is obtained calling
-#'  \code{buildPairs()} function.
+#'@param pairs A data.table object containing pairs with the IDs of compatible
+#'  devices. It is obtained calling \code{buildPairs()} function.
 #'
-#'@param P1 The apriori probabilitity for a device to be in 1-to-1 correspondence with its owner.
+#'@param P1 The apriori probabilitity for a device to be in 1-to-1
+#'  correspondence with its owner.
 #'
 #'@param T The number of time instants in the data set.
 #'
@@ -22,8 +27,13 @@
 #'  \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
 #'   Deliverable 3}.
 #'
-#'@return  a data.table object with two columns: 'deviceID' and 'dupP'. On the first column there are deviceIDs and on
-#'  the second column the corresponding duplicity probability, i.e. the probability that a device is in a 2-to-1
+#'@param type The type of the posterior location probability files. It could be
+#'  'csv or 'MM'. The default value is 'MM' which means that the files are in
+#'  the Matrix Market format.
+#'
+#'@return  a data.table object with two columns: 'deviceID' and 'dupP'. On the
+#'  first column there are deviceIDs and on the second column the corresponding
+#'  duplicity probability, i.e. the probability that a device is in a 2-to-1
 #'  correspondence with the holder.
 #'
 #'@include centerOfProbabilities.R
@@ -35,11 +45,12 @@
 #'@import data.table
 #'@import parallel
 #'@export
-computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, P1 , T, gamma) {
+computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, P1 , T, gamma, type = 'MM') {
   devices <- sort(as.numeric(devices))
   centrs <- buildCentroids(gridParams$ncol, gridParams$nrow, gridParams$tileX, gridParams$tileY)
   ndevices <- length(devices)
   
+ 
   postLoc <- NULL
   centerOfProbs <- NULL
   dr<-NULL
@@ -49,16 +60,17 @@ computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, 
   alpha<-P1/P2
 
   ### from this point the code should go parallel  
-  
+
   cl <- buildCluster( c('path', 'prefix', 'devices', 'centrs', 'centerOfProbs'), env = environment())
   ichunks <- clusterSplit(cl, 1:ndevices)
-  res <- clusterApplyLB( cl, ichunks, doLocations, path, devices, centrs )
+  res <- clusterApplyLB( cl, ichunks, doLocations, path, prefix, devices, centrs, type)
   for(i in 1:length(res)) {
     postLoc <- c(postLoc, res[[i]]$postLoc)
     centerOfProbs <- c(centerOfProbs, res[[i]]$centerOfProbs)
     dr <- c(dr, res[[i]]$dr)
   }
   rm(res)
+
 
   ichunks2 <- clusterSplit(cl, 1:T)
   clusterExport(cl, varlist = c('postLoc'), envir = environment())
@@ -75,12 +87,13 @@ computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, 
   clusterExport(cl, varlist = c('pairs', 'cpp', 'dr', 'ndevices', 'T', 'gamma', 'alpha'), envir = environment())
   res<-clusterApplyLB(cl, ichunks3, doPairs, pairs, cpp, ndevices, dr, T, alpha, gamma)
   stopCluster(cl)
+
   dup<-buildDuplicityTablePairs(res, devices)
   return (dup)
   
 }
 
-doLocations <- function(ichunks, path, prefix, devices, centrs, centerOfProbs ) {
+doLocations <- function(ichunks, path, prefix, devices, centrs, type) {
   n <- length(ichunks)
   local_postLoc<-list(length = n)
   local_centerOfProbs<-list(length = n)

@@ -4,7 +4,7 @@
 \alias{readPostLocProb}
 \title{Reads a file with the posterior location probabilities.}
 \usage{
-readPostLocProb(path, prefixName, deviceID)
+readPostLocProb(path, prefixName, deviceID, type = "MM")
 }
 \arguments{
 \item{path}{The path to the location where the posterior location probabilities are stored. The file with the
@@ -15,6 +15,8 @@ ID.}
 \code{_} and \code{deviceID}.}
 
 \item{deviceID}{The device ID for which the posterior location probabilities are read.}
+
+\item{type}{The type of the file: csv or MM (Matrix Market) format.}
 }
 \value{
 A Matrix object with the posterior location probabilities for the device with ID equals to deviceID. A row

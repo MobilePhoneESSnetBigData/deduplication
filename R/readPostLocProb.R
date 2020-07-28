@@ -10,6 +10,8 @@
 #'   \code{_} and \code{deviceID}.
 #'   
 #' @param deviceID The device ID for which the posterior location probabilities are read.
+#' 
+#' @param type The type of the file: csv or MM (Matrix Market) format.
 #'
 #' @return A Matrix object with the posterior location probabilities for the device with ID equals to deviceID. A row
 #'   corresponds to a tile and a column corresponds to a time instant.
@@ -17,13 +19,23 @@
 #' @import data.table
 #' @import Matrix
 #' @export
-readPostLocProb <-function(path, prefixName, deviceID) {
-  file <- paste0(path,"/", prefixName, "_", as.character(deviceID), ".csv")
-  if(!file.exists(file))
-    stop (paste0('file with posterior location probabilities files does not exist ', file))
+readPostLocProb <-function(path, prefixName, deviceID, type = 'MM') {
+  if(type == 'csv') {
+    file <- paste0(path,"/", prefixName, "_", as.character(deviceID), ".csv")
+    if(!file.exists(file))
+      stop (paste0('file with posterior location probabilities files does not exist ', file))
 
-  postLoc <- fread(file, sep = ',',stringsAsFactors = FALSE, header = FALSE)
-  
-  return (Matrix(as.matrix(postLoc)))
+    postLoc <- fread(file, sep = ',',stringsAsFactors = FALSE, header = FALSE)
+    postLoc <- Matrix(as.matrix(postLoc))
+  }
+  else {
+    if(type == 'MM') {
+      file <- paste0(path,"/", prefixName, "_", as.character(deviceID), ".mtx")
+      if(!file.exists(file))
+        stop (paste0('file with posterior location probabilities files does not exist ', file))
+      postLoc <- readMM(file)
+    }
+  }
+  return (postLoc)
   
 }
