@@ -4,25 +4,23 @@
 \alias{readPostLocProb}
 \title{Reads a file with the posterior location probabilities.}
 \usage{
-readPostLocProb(path, prefixName, deviceID, type = "MM")
+readPostLocProb(path, prefixName, deviceID)
 }
 \arguments{
 \item{path}{The path to the location where the posterior location probabilities are stored. The file with the
-location probabilities should have the name \code{postLocDevice_ID.csv} where \code{ID} is replaced with the device
-ID.}
+location probabilities should have the name \code{postLocDevice_ID.dt.csv} where \code{ID} is replaced with the
+device ID.}
 
 \item{prefixName}{The file name prefix. The whole file name is composed by a concatenation of \code{prefixName},
-\code{_} and \code{deviceID}.}
+\code{_},  \code{deviceID} and the extension \code{.dt.csv}.}
 
 \item{deviceID}{The device ID for which the posterior location probabilities are read.}
-
-\item{type}{The type of the file: csv or MM (Matrix Market) format.}
 }
 \value{
-A Matrix object with the posterior location probabilities for the device with ID equals to deviceID. A row
-  corresponds to a tile and a column corresponds to a time instant.
+A data.table object with the posterior location probabilities for the device with ID equals to deviceID. It
+  has the following columns: \code{time, tile, prob}. Only the nonzero probabilities are returned.
 }
 \description{
-Reads a .csv file with the posterior location probabilities. Each row of the file corresponds to a tile
-  and each column corresponds to a time instant.
+Reads a .csv file with the posterior location probabilities. There are 3 values on each row of the file:
+  \code{time, tile, prob}. Only the nonzero probabilities are given in this file.
 }

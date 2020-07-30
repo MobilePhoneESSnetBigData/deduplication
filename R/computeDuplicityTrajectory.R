@@ -21,15 +21,11 @@
 #'@param P1 The apriori probabilitity for a device to be in 1-to-1
 #'  correspondence with its owner.
 #'
-#'@param T The number of time instants in the data set.
+#'@param timeSeq A vector with the consecutive time instants in the data set.
 #'
-#'@param gamma A coefficient needed to compute the duplicity probability. See
+#'@param Gamma A coefficient needed to compute the duplicity probability. See
 #'  \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
 #'   Deliverable 3}.
-#'
-#'@param type The type of the posterior location probability files. It could be
-#'  'csv or 'MM'. The default value is 'MM' which means that the files are in
-#'  the Matrix Market format.
 #'
 #'@return  a data.table object with two columns: 'deviceID' and 'dupP'. On the
 #'  first column there are deviceIDs and on the second column the corresponding
@@ -45,7 +41,7 @@
 #'@import data.table
 #'@import parallel
 #'@export
-computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, P1 , T, gamma, type = 'MM') {
+computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, P1 , timesSeq, Gamma) {
   devices <- sort(as.numeric(devices))
   centrs <- buildCentroids(gridParams$ncol, gridParams$nrow, gridParams$tileX, gridParams$tileY)
   ndevices <- length(devices)
@@ -58,12 +54,15 @@ computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, 
   
   P2 <- 1 - P1
   alpha<-P1/P2
-
+  ntiles <- gridParams$nrow * gridParams$ncol
+  ntimes<-length(timesSeq)
+  timeincr<-timesSeq[2]-timesSeq[1]
   ### from this point the code should go parallel  
-
-  cl <- buildCluster( c('path', 'prefix', 'devices', 'centrs', 'centerOfProbs'), env = environment())
+  path<-path
+  prefix <-prefix
+  cl <- buildCluster( c('path', 'prefix', 'devices', 'centrs', 'centerOfProbs', 'ntiles', 'ntimes', 'timeincr'), env = environment())
   ichunks <- clusterSplit(cl, 1:ndevices)
-  res <- clusterApplyLB( cl, ichunks, doLocations, path, prefix, devices, centrs, type)
+  res <- clusterApplyLB( cl, ichunks, doLocations, path, prefix, devices, centrs, ntiles, ntimes, timeincr)
   for(i in 1:length(res)) {
     postLoc <- c(postLoc, res[[i]]$postLoc)
     centerOfProbs <- c(centerOfProbs, res[[i]]$centerOfProbs)
@@ -71,8 +70,8 @@ computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, 
   }
   rm(res)
 
-
-  ichunks2 <- clusterSplit(cl, 1:T)
+  
+  ichunks2 <- clusterSplit(cl, 1:ntimes)
   clusterExport(cl, varlist = c('postLoc'), envir = environment())
   res <- clusterApplyLB( cl, ichunks2, doCPP, centrs, postLoc )
   for(i in 1:length(res)) {
@@ -84,8 +83,8 @@ computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, 
   pairs<-pairs[,1:2]
   ichunks3 <- clusterSplit(cl, 1:nrow(pairs))
   
-  clusterExport(cl, varlist = c('pairs', 'cpp', 'dr', 'ndevices', 'T', 'gamma', 'alpha'), envir = environment())
-  res<-clusterApplyLB(cl, ichunks3, doPairs, pairs, cpp, ndevices, dr, T, alpha, gamma)
+  clusterExport(cl, varlist = c('pairs', 'cpp', 'dr', 'ndevices', 'ntimes', 'Gamma', 'alpha'), envir = environment())
+  res<-clusterApplyLB(cl, ichunks3, doPairs, pairs, cpp, dr, ndevices, ntimes, alpha, Gamma)
   stopCluster(cl)
 
   dup<-buildDuplicityTablePairs(res, devices)
@@ -93,14 +92,15 @@ computeDuplicityTrajectory <-function(path, prefix, devices, gridParams, pairs, 
   
 }
 
-doLocations <- function(ichunks, path, prefix, devices, centrs, type) {
+doLocations <- function(ichunks, path, prefix, devices, centrs, ntiles, ntimes, timeincr) {
   n <- length(ichunks)
   local_postLoc<-list(length = n)
   local_centerOfProbs<-list(length = n)
   local_dr <- list(length = n)
   k<-1
   for( i in ichunks) {
-    local_postLoc[[k]] <- readPostLocProb(path, prefix, devices[i])
+    tmp <- readPostLocProb(path, prefix, devices[i])
+    local_postLoc[[k]] <- sparseMatrix(i=tmp$tile, j=(tmp$time)/timeincr, x=tmp$probL, dims=c(ntiles, ntimes), index1=FALSE, giveCsparse=FALSE)
     local_centerOfProbs[[k]] <- centerOfProbabilities(centrs, local_postLoc[[k]])
     local_dr[[k]] <- dispersionRadius(centrs, local_postLoc[[k]], local_centerOfProbs[[k]])
     k <- k + 1
@@ -121,15 +121,15 @@ doCPP <- function(ichunks, centrs, postLoc) {
 }
 
 
-doPairs <- function(ichunks, pairs, cpp, ndev, dr, T, alpha, gamma) {
+doPairs <- function(ichunks, pairs, cpp, dr, ndevices, ntimes, alpha, Gamma) {
   n <- length(ichunks)  
   localdup <- copy(pairs[ichunks, 1:2])
   for( i in ichunks ) {
     index_i <-pairs[i,1][[1]]
     index_j <-pairs[i,2][[1]]
     s1<-0
-    for(t in 1:T) {
-      mm<-gamma*max(dr[[index_i]][t], dr[[index_j]][t])
+    for(t in 1:ntimes) {
+      mm<-Gamma*max(dr[[index_i]][t], dr[[index_j]][t])
       mdelta<-buildDeltaProb(cpp[[t]][[index_i]], cpp[[t]][[index_j]])
       s1<-s1+(abs(modeDelta(mdelta[[1]]))<mm & abs(modeDelta(mdelta[[2]]))<mm)
     }

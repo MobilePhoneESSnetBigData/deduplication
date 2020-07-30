@@ -188,8 +188,8 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
         out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
       }
       else {
-        T<-nrow(unique(events[,1]))
-        out_duplicity <-computeDuplicityTrajectory(path, devices, gridParams, pairs4dup, P1 = P1a , T, gamma = gamma, prefix = prefix)
+        T<-as.numeric(unique(events[,1][[1]]))
+        out_duplicity <-computeDuplicityTrajectory(path, prefix, devices, gridParams, pairs4dup, P1 = P1a , timesSeq = T, Gamma = gamma)
       }
     }
     else if(method == "1to1"){

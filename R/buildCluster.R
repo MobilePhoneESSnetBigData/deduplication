@@ -13,6 +13,7 @@
 #'
 #' @import data.table
 #' @import destim
+#' @import Matrix
 #' @import parallel
 #' @import doParallel
 #'   
@@ -25,6 +26,7 @@ buildCluster <- function(varlist, env) {
     cl <- makeCluster(detectCores())
     clusterEvalQ(cl, library("destim"))
     clusterEvalQ(cl, library("data.table"))
+    clusterEvalQ(cl, library("Matrix"))
     clusterExport(cl, varlist, envir = env)
   }
   return (cl)
