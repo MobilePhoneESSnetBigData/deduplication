@@ -20,7 +20,8 @@ computeDuplicity(
   lambda = NULL,
   handoverType = "strength",
   emissionModel = NULL,
-  antennaFileName = NULL
+  antennaFileName = NULL,
+  prefix = NULL
 )
 }
 \arguments{
@@ -93,6 +94,8 @@ transformed values.}
 transform the signal quality into signal strength and vice versa. This is an input file of the simulation software.
 An example file is included in this package. The default value is NULL because this file is only needed to make
 unusual combinations between handoverType and the way the emission probabilities are computed.}
+
+\item{prefix}{The file name prefix for the files with posterior location probabilities.}
 
 \item{cellsFileName}{It is the name of the file where the coverage areas of antennas are to be found. It is a should
 be a .csv file with two values on each row: the antenna ID and a WKT string representing a polygon (i.e. it should

@@ -7,12 +7,13 @@
 example2()
 }
 \description{
-#This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
-#example are supposed to be produced using the simulation software. The "simulation.xml" file is an exception and it
-#is an input file for the simulation software. The files used in this example are provided with the deduplication
-#package.
+This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
+example are supposed to be produced using the simulation software. The "simulation.xml" file is an exception and it
+is an input file for the simulation software. The files used in this example are provided with the deduplication
+package.
 }
-\details{
+\examples{
+
 # set the folder where the necessary input files are stored
 
 path_root      <- 'extdata'
@@ -89,7 +90,7 @@ out2 <- computeDuplicityBayesian("1to1", devices, pairs4dupO, modelJ, ll, P1 = N
 
 #17. Compute duplicity probabilities using "trajectory method"
 
-T<-nrow(unique(events[,1]))
+T<-sort(unique(events[,1][[1]]))
 
-out3 <-computeDuplicityTrajectory(path=system.file(path_root, package = 'deduplication'), devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
+out3 <-computeDuplicityTrajectory(path=system.file(path_root, package = 'deduplication'), "postLocDevice", devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
 }

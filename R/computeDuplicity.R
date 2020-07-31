@@ -85,13 +85,14 @@
 #'  An example file is included in this package. The default value is NULL because this file is only needed to make
 #'  unusual combinations between handoverType and the way the emission probabilities are computed.
 #'
+#'@param prefix The file name prefix for the files with posterior location probabilities.
 #'
 #'@return a data.table object with two columns: 'deviceID' and 'dupP'. On the first column there are deviceIDs and on
 #'  the second column the corresponding duplicity probability, i.e. the probability that a device is in a 2-to-1
 #'  correspondence with its holder.
 #'
 #'@export
-computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName, antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, aprioriProbJointModel = NULL, lambda = NULL, handoverType = 'strength', emissionModel = NULL, antennaFileName = NULL) {
+computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileName,  antennaCellsFileName = NULL, simulatedData = TRUE,  simulationFileName, netParams = NULL, path = NULL, gamma = 0.5, aprioriProbModel = NULL, aprioriProbJointModel = NULL, lambda = NULL, handoverType = 'strength', emissionModel = NULL, antennaFileName = NULL, prefix = NULL) {
   
   out_duplicity <- NULL
   tryCatch ({
@@ -153,8 +154,8 @@ computeDuplicity <- function(method, gridFileName, eventsFileName, signalFileNam
         out_duplicity <- computeDuplicityBayesian(method, devices, pairs4dup, modelJ, ll, P1 = P1a)
       }
       else {
-        T<-nrow(unique(events[,1]))
-        out_duplicity <-computeDuplicityTrajectory(path, devices, gridParams, pairs4dup, P1 = P1a , T, gamma = gamma)
+        T<-sort(unique(events[,1][[1]]))
+        out_duplicity <-computeDuplicityTrajectory(path, prefix, devices, gridParams, pairs4dup, P1 = P1a , T, gamma = gamma)
       }
     }
     else if(method == "1to1"){

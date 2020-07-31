@@ -7,10 +7,10 @@
 example1()
 }
 \description{
-#This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
-#example are supposed to be produced using the simulation software. The "simulation.xml" file is an exeception and it
-#is an input file for the simulation software. The files used in this example are provided with the deduplication
-#package.
+This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
+example are supposed to be produced using the simulation software. The "simulation.xml" file is an exeception and it
+is an input file for the simulation software. The files used in this example are provided with the deduplication
+package.
 }
 \examples{
 
@@ -43,6 +43,7 @@ out2<-computeDuplicity("1to1", gridFileName = gridfile, eventsFileName = eventsf
 out2p<-computeDuplicity("1to1", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, simulatedData = TRUE, simulationFileName = simulationfile, lambda = 0.67)
 
 # compute the duplicity probabilities using the "trajectory" method
-out3<-computeDuplicity("trajectory", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile, path= path_root)
+prefix <- 'postLocDevice'
+out3<-computeDuplicity("trajectory", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile, path= system.file(path_root, package='deduplication'), prefix = prefix)
 
 }

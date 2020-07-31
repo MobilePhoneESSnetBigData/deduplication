@@ -4,7 +4,16 @@
 \alias{computeDuplicityTrajectory}
 \title{Computes the duplicity probabilities for each device using the trajectory approach.}
 \usage{
-computeDuplicityTrajectory(path, devices, gridParams, pairs, P1, T, gamma)
+computeDuplicityTrajectory(
+  path,
+  prefix,
+  devices,
+  gridParams,
+  pairs,
+  P1,
+  T,
+  gamma
+)
 }
 \arguments{
 \item{path}{The path where the files with the posterior location probabilities for each device are to be found.}
@@ -19,7 +28,7 @@ The items of the list are named 'nrow', 'ncol', 'tileX' and 'tileY'.}
 
 \item{P1}{The apriori probabilitity for a device to be in 1-to-1 correspondence with its owner.}
 
-\item{T}{The number of time instants in the data set.}
+\item{T}{The sequence of time instants in the data set.}
 
 \item{gamma}{A coefficient needed to compute the duplicity probability. See
 \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI

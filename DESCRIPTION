@@ -17,7 +17,7 @@ Imports: data.table,
          Rsolnp
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     rmarkdown
@@ -47,6 +47,7 @@ Collate:
     'deduplication.R'
     'example1.R'
     'example2.R'
+    'example3.R'
     'fitModels.R'
     'getDeviceIDs.R'
     'getConnections.R'
