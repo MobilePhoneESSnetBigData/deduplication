@@ -43,7 +43,6 @@ Collate:
     'dispersionRadius.R'
     'readPostLocProb.R'
     'computeDuplicityTrajectory.R'
-    'computeDuplicityTrajectory_new.R'
     'computePairs.R'
     'deduplication.R'
     'example1.R'

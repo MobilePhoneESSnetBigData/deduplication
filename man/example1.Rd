@@ -43,7 +43,7 @@ out2<-computeDuplicity("1to1", gridFileName = gridfile, eventsFileName = eventsf
 out2p<-computeDuplicity("1to1", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, simulatedData = TRUE, simulationFileName = simulationfile, lambda = 0.67)
 
 # compute the duplicity probabilities using the "trajectory" method
-prefix <- "postLocDevice"
-out3<-computeDuplicity("trajectory", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile, path = system.file(path_root, package = 'deduplication'), prefix = prefix)
+prefix <- 'postLocDevice'
+out3<-computeDuplicity("trajectory", gridFileName = gridfile, eventsFileName = eventsfile, signalFileName = signalfile, antennaCellsFileName = antennacellsfile, simulationFileName = simulationfile, path= system.file(path_root, package='deduplication'), prefix = prefix)
 
 }

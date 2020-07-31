@@ -83,7 +83,7 @@
 #' 
 #' #17. Compute duplicity probabilities using "trajectory method"
 #' 
-#' T<-as.numeric(unique(events[,1][[1]]))
+#' T<-sort(unique(events[,1][[1]]))
 #' 
 #' out3 <-computeDuplicityTrajectory(path=system.file(path_root, package = 'deduplication'), "postLocDevice", devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
 example2 <- function() {}

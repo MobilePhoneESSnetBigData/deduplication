@@ -13,7 +13,6 @@
 #'
 #' @import data.table
 #' @import destim
-#' @import Matrix
 #' @import parallel
 #' @import doParallel
 #'   

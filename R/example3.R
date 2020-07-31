@@ -44,8 +44,8 @@
 #'
 #'  # 5. Initial state distribution (prior)
 #'
-#' nTiles <- gridParams$ncol * gridParams$nrow 
-#' initialDistr_RSS_uniform.vec <- initialDistr_SDM_uniform.vec <- rep(1 / nTiles, nTiles)
+#' nTiles <- gridParams$ncol * gridParams$nrow initialDistr_RSS_uniform.vec <- initialDistr_SDM_uniform.vec <- rep(1 /
+#' nTiles, nTiles)
 #'
 #'  # 6. Get a list of detected devices
 #'
