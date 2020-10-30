@@ -1,4 +1,5 @@
-#' @title Make the first step of the checks between the connections and the emission model.
+#' @title Make the first step of the checks between the connections and the 
+#' emission model.
 #'
 #' @description This function obtains the results of the first step of checks
 #' for the compatibility between the connections observed and the emission model. 
@@ -6,15 +7,15 @@
 #' in the emission matrix. In those cases when that connection is not compatible, 
 #' the connection is imputed with a missing value.
 #'
-#' @param connections a matrix with the connections, a row per device and
+#' @param connections A matrix with the connections, a row per device and
 #' a column per time.
 #' 
-#' @param emissionProbs a matrix of emission probabilities resulting from 
-#' the function getEmissionProbs in deduplication package.
+#' @param emissionProbs A matrix of emission probabilities resulting from 
+#' the function \code{getEmissionProbs} in \pkg{deduplication} package.
 #' 
-#' @return A \code{list} with two elements, one is the information about the checks
+#' @return A \code{list} with two elements: one is the information about the checks
 #' and the second is the matrix of connections with imputation in the observations
-#' not compatible with the model in emissionProbs.
+#' not compatible with the model in \code{emissionProbs}.
 #'
 #' @examples
 #' \dontrun{

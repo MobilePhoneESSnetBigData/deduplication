@@ -17,19 +17,24 @@ getJointModel(
 
 \item{ncols}{Number of columns in the grid.}
 
-\item{jointEmissionProbs}{A (sparse) matrix with the joint event location probabilities. The number of rows equals
-the number of tiles in the grid and the number of columns equals the number of antennas. This matrix is obtained by
+\item{jointEmissionProbs}{A (sparse) matrix with the joint event location 
+probabilities. The number of rows equals the number of tiles in the grid and 
+the number of columns equals the number of antennas. This matrix is obtained by
 calling \code{getEmissionProbsJointModel}.}
 
-\item{initSteady}{If TRUE the initial apriori distribution is set to the steady state of the transition matrix, if
-FALSE the apriori distribution should be given as a parameter.}
+\item{initSteady}{If TRUE the initial apriori distribution is set to the 
+steady state of the transition matrix, if FALSE the apriori distribution 
+should be given as a parameter.}
 
-\item{aprioriJointProb}{The apriori distribution for the HMM model. It is needed only if initSteady is FALSE.}
+\item{aprioriJointProb}{The apriori distribution for the HMM model. It is 
+needed only if initSteady is FALSE.}
 }
 \value{
-Returns an HMM model with the initial apriori distribution set to the steady state of the transition matrix
-  or to the value given by \code{aprioriJointProb} parameter.
+Returns an HMM model with the initial apriori distribution set to the 
+steady state of the transition matrix or to the value given by 
+\code{aprioriJointProb} parameter.
 }
 \description{
-Builds the joint HMM model using the emmission probabilities given by \code{getEmissionProbsJointModel()}.
+Builds the joint HMM model using the emmission probabilities 
+given by \code{getEmissionProbsJointModel()}.
 }

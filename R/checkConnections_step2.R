@@ -1,4 +1,5 @@
-#' @title Make the second step of the checks between the connections and the emission model.
+#' @title Make the second step of the checks between the connections and the 
+#' emission model.
 #'
 #' @description This function obtains the results of the second step of checks
 #' for the compatibility between the connections observed and the emission model. 
@@ -7,14 +8,15 @@
 #' the transition is not compatible, a solution to fit the model is given 
 #' with the needed time padding coefficient.
 #'
-#' @param emissionProbs the matrix of emission probabilities.
+#' @param emissionProbs The matrix of emission probabilities.
 #' 
-#' @param connections a matrix with the connections, a row per device and
+#' @param connections A matrix with the connections, a row per device and
 #' a column per time.
 #' 
-#' @param gridParams a list with the parameters of the grid: nrow, ncol, tileX, tileY.
+#' @param gridParams A list with the parameters of the grid: \cr
+#' \code{nrow, ncol, tileX, tileY}.
 #' 
-#' @return A \code{list} with two elements, one is the information about the checks
+#' @return A \code{list} with two elements" one is the information about the checks
 #' with a vector containing all the time padding coefficients and the second 
 #' is the matrix of connections with the time padding done by using the maximum
 #' coefficient.
@@ -25,7 +27,8 @@
 #'
 #' @import data.table 
 #' 
-#' @include distance_coverArea.R tileEquivalence.R
+#' @include distance_coverArea.R 
+#' @include tileEquivalence.R
 #' 
 #' @export
 checkConnections_step2 <- function(emissionProbs, connections, gridParams){

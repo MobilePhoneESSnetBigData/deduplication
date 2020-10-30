@@ -1,16 +1,20 @@
-#' @title Builds a matrix object containing the IDs of the antennas to which devices are connected.
+#' @title Builds a matrix object containing the IDs of the antennas to which 
+#' devices are connected.
 #'
-#' @description Builds a matrix object containing the IDs of the antennas to which devices are connected.
-#' The number of rows equals the number of devices and the number of columns equals the number of time instants
-#' when the network events were recorded. An element \code{[i,j]} in the returned matrix equals the ID of the antenna
-#' where the mobile device with index \code{i} in the ordered list of device IDs (returned by \code{getDeviceIDs()}) is
-#' connected at the time instant with index \code{j} in the sequence of time instants when the network events
-#' were recorded.
+#' @description Builds a matrix object containing the IDs of the antennas to 
+#' which devices are connected. The number of rows equals the number of devices 
+#' and the number of columns equals the number of time instants when the network 
+#' events were recorded. An element \code{[i,j]} in the returned matrix equals 
+#' the ID of the antenna where the mobile device with index \code{i} in the 
+#' ordered list of device IDs (returned by \code{getDeviceIDs()}) is connected 
+#' at the time instant with index \code{j} in the sequence of time instants 
+#' when the network events were recorded.
 #'
 #' @param events A data.table object returned by \code{readEvents()} function.
 #'
-#' @return A matrix object with the antenna IDs where devices are connected for every time instants in the events file.
-#' If a device is not connected to any antenna at a time instant, the corresponding element in the matrix will have the
+#' @return A matrix object with the antenna IDs where devices are connected for 
+#' every time instants in the events file. If a device is not connected to any 
+#' antenna at a time instant, the corresponding element in the matrix will have the
 #' value NA.
 #' 
 #'
@@ -38,5 +42,5 @@ getConnections <- function(events) {
     connections[i, ] <- t(evv[, 2])
   }
 
-    return (connections)
+    return(connections)
 }

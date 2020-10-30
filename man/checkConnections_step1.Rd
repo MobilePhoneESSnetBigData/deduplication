@@ -2,21 +2,22 @@
 % Please edit documentation in R/checkConnections_step1.R
 \name{checkConnections_step1}
 \alias{checkConnections_step1}
-\title{Make the first step of the checks between the connections and the emission model.}
+\title{Make the first step of the checks between the connections and the 
+emission model.}
 \usage{
 checkConnections_step1(connections, emissionProbs)
 }
 \arguments{
-\item{connections}{a matrix with the connections, a row per device and
+\item{connections}{A matrix with the connections, a row per device and
 a column per time.}
 
-\item{emissionProbs}{a matrix of emission probabilities resulting from 
-the function getEmissionProbs in deduplication package.}
+\item{emissionProbs}{A matrix of emission probabilities resulting from 
+the function \code{getEmissionProbs} in \pkg{deduplication} package.}
 }
 \value{
-A \code{list} with two elements, one is the information about the checks
+A \code{list} with two elements: one is the information about the checks
 and the second is the matrix of connections with imputation in the observations
-not compatible with the model in emissionProbs.
+not compatible with the model in \code{emissionProbs}.
 }
 \description{
 This function obtains the results of the first step of checks

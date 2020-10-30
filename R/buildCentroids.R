@@ -1,14 +1,17 @@
 #' @title Builds the centroid of the rectangular tiles.
 #'
-#' @description Builds the centroid of each (rectangular) tile in the grid. The centroid is simple the center of the
-#'   tile, i.e. the intersection poit of the diagonals of the tile.
+#' @description Builds the centroid of each (rectangular) tile in the grid. 
+#' The centroid is the center of the tile, i.e. the intersection point 
+#' of the diagonals of the tile.
 #'
 #' @param ntiles_x The number of tiles on OX.
 #'
 #' @param ntiles_y The number of tiles on OY.
 #'
-#' @return A data.table object with three columns: tile ID, centroidCoord_x and centroidCoord_y.
+#' @return A data.table object with three columns: \code{tile ID, centroidCoord_x \cr 
+#' centroidCoord_y}.
 #'
+#' @keywords internal
 #' @import data.table
 #' @export
 buildCentroids <-

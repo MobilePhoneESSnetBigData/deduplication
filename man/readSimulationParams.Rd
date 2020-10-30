@@ -7,16 +7,19 @@
 readSimulationParams(simFileName)
 }
 \arguments{
-\item{simFileName}{the namr of the file used to define a simulation scenario. It is the file that was provided as an
-input for the simulation software.}
+\item{simFileName}{The name of the file used to define a simulation scenario. 
+It is the file that was provided as an input for the simulation software.}
 }
 \value{
-A list with all the parameters read from the file: start_time, end_time, time_increment, time_stay,
-  interval_between_stays, prob_sec_mobile_phone, conn_threshold.
+A list with all the parameters read from the file: \code{start_time}, 
+\code{end_time}, \code{time_increment}, \code{time_stay},
+\code{interval_between_stays}, \code{prob_sec_mobile_phone}, 
+\code{conn_threshold}.
 }
 \description{
-Reads the parameters of the simulation used to generate a data set from an .xml file used by the
-  simulation software. The following parameters are needed by this package: the connection threshold which is the
-  minimum signal strength/quality that can be used by a mobile device to connect to an antenna and the probability of
-  having a two mobile devices
+Reads the parameters of the simulation used to generate a data 
+set from an .xml file used by the simulation software. The following 
+parameters are needed by this package: the connection threshold which is the
+minimum signal strength/quality that can be used by a mobile device to connect 
+to an antenna and the probability of having a two mobile devices.
 }

@@ -9,18 +9,23 @@ fitModels(ndevices, model, connections)
 \arguments{
 \item{ndevices}{The number of devices.}
 
-\item{model}{The HMM model returned by \code{getGenericModel()} function. This model is fittted for each device.}
+\item{model}{The HMM model returned by \code{getGenericModel()} function. 
+This model is fitted for each device.}
 
-\item{connections}{A matrix whose elements are the antenna ID where a device is connected at every time instant. This
-matrix is returned by \code{getConnections()} function.}
+\item{connections}{A matrix whose elements are the antenna ID where a device 
+is connected at every time instant. This matrix is returned by 
+\code{getConnections()} function.}
 }
 \value{
-A vector of log likelihoods computed using the fitted model for each device.
+A vector of log likelihoods computed using the fitted model for each 
+device.
 }
 \description{
-Fits the HMM model for each device using the \code{fit()} function from \pkg{destim} package. The
-  computations are done in parallel to reduce the running time using all the available cores. This function creates a
-  cluster of working nodes, splits the devices equally among the working nodes and assigns a partition of devices to
-  each node in the cluster. For Unix-like operating systems, this functions uses a "FORK" cluster while for Windows
-  it uses a "SOCK" cluster.
+Fits the HMM model for each device using the \code{fit()} 
+function from \pkg{destim} package. The computations are done in parallel to 
+reduce the running time using all the available cores. This function creates a
+cluster of working nodes, splits the devices equally among the working nodes 
+and assigns a partition of devices to each node in the cluster. For Unix-like 
+operating systems, this functions uses a "FORK" cluster while for Windows
+it uses a "SOCK" cluster.
 }

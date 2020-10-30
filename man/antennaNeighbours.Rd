@@ -7,12 +7,12 @@
 antennaNeighbours(coverarea)
 }
 \arguments{
-\item{coverarea}{a data.table object with two columns: 'antennaID' and 'cell'. The first column contains the ID of
-each antenna while the second one contains an \code{sp} object that represents the coverage area of the corresponding
-antenna. It is obtained by calling \code{readCells()} function.}
+\item{coverarea}{a data.table object with two columns: \code{antennaID} and \code{cell}. The first column contains the ID of
+each antenna while the second one contains a \code{sp} object that represents the coverage area of the corresponding
+antenna. The coverage area is obtained by calling \code{readCells()} function.}
 }
 \value{
-A data.table object with a single column called 'nei'. Each element of this column is a pair of the form
+A data.table object with a single column called \code{nei}. Each element of this column is a pair of the form
   antennaID1-antennaID2 where the two antennas are considered neighbours.
 }
 \description{

@@ -1,20 +1,24 @@
-#'@title Computes the duplicity probabilities for each device using the trajectory approach.
+#'@title Computes the duplicity probabilities for each device using the 
+#'trajectory approach.
 #'
-#'@description  Computes the duplicity probabilities for each device using the trajectory approach described in
-#'  \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
+#'@description  Computes the duplicity probabilities for each device using the 
+#'trajectory approach described in \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
 #'   Deliverable 3}.
 #'
-#'@param path The path where the files with the posterior location probabilities for each device are to be found.
+#'@param path The path where the files with the posterior location probabilities 
+#'for each device are to be found.
 #'
 #'@param devices A vector with device IDs.
 #'
-#'@param gridParams A list with the number of rows and columns of the grid and the tile dimensions on OX and OY axes.
-#'  The items of the list are named 'nrow', 'ncol', 'tileX' and 'tileY'.
+#'@param gridParams A list with the number of rows and columns of the grid and 
+#'the tile dimensions on OX and OY axes. The items of the list are named \code{nrow},
+#'\code{ncol}, \code{tileX} and \code{tileY}.
 #'
-#'@param pairs A data.table object containing pairs with the IDs of compatible devices. It is obtained calling
-#'  \code{buildPairs()} function.
+#'@param pairs A data.table object containing pairs with the IDs of compatible 
+#'devices. It is obtained calling \code{buildPairs()} function.
 #'
-#'@param P1 The apriori probabilitity for a device to be in 1-to-1 correspondence with its owner.
+#'@param P1 The apriori probability for a device to be in 1-to-1 correspondence 
+#'with its owner.
 #'
 #'@param T The sequence of time instants in the data set.
 #'
@@ -22,9 +26,10 @@
 #'  \href{https://webgate.ec.europa.eu/fpfis/mwikis/essnetbigdata/images/f/fb/WPI_Deliverable_I3_A_proposed_production_framework_with_mobile_network_data_2020_05_31_draft.pdf}{WPI
 #'   Deliverable 3}.
 #'
-#'@return  a data.table object with two columns: 'deviceID' and 'dupP'. On the first column there are deviceIDs and on
-#'  the second column the corresponding duplicity probability, i.e. the probability that a device is in a 2-to-1
-#'  correspondence with the holder.
+#'@return  a data.table object with two columns: \code{deviceID} and \code{dupP}. 
+#'On the first column there are deviceIDs and on the second column the 
+#'corresponding duplicity probability, i.e. the probability that a device is in 
+#'a 2-to-1 correspondence with the holder.
 #'
 #'@include centerOfProbabilities.R
 #'@include readPostLocProb.R
