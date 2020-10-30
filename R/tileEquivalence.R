@@ -1,28 +1,31 @@
-#' @title Transforms the tiles indices from the notation used by the simulation software to the one used by the raster
-#'   package.
+#' @title Transforms the tiles indices from the notation used by the simulation 
+#' software to the one used by the \pkg{raster} package.
 #'
-#' @description In order to perform the population estimations, the area of interest is overlapped with a rectangular
-#'   grid of tiles. Each tile is a rectangle with predefined dimensions. This function is a utility function which
-#'   transform the tiles indices from the numbering system used by the simulation software to the one used by the
-#'   \pkg{raster} package. The simulation software uses a notation where the tile with index 0 is the bottom left tile while
-#'   the raster package uses another way to number the tiles, tiles being numbered starting with 1 for the upper left
-#'   tile.
+#' @description In order to perform the population estimations, the area of 
+#' interest is overlapped with a rectangular grid of tiles. Each tile is a 
+#' rectangle with predefined dimensions. This function is a utility function 
+#' which transform the tiles indexes from the numbering system used by the 
+#' simulation software to the one used by the \pkg{raster} package. 
+#' The simulation software uses a notation where the tile with index 0 is the 
+#' bottom left tile while the \pkg{raster} package uses another way to number 
+#' the tiles, tiles being numbered starting with 1 for the upper left tile.
 #'
-#' @param nrow Number of rows in the grid overpalling the area of interest.
+#' @param nrow Number of rows in the grid overlapping the area of interest.
 #'
-#' @param ncol Number of columns in the grid overpalling the area of interest.
+#' @param ncol Number of columns in the grid overlapping the area of interest.
 #'
-#' @return Returns a data.frame object with two columns: on the first column are the tile indices according to the
-#'   raster package numbering and on the second column are the equivalent tile indices according to the simulation
-#'   software numbering.
+#' @return Returns a data.frame object with two columns: on the first column are 
+#' the tile indexes according to the \pkg{raster} package numbering and on the 
+#' second column are the equivalent tile indexes according to the simulation
+#' software numbering.
 #'
 #'
 #' @export
 tileEquivalence <- function(nrows, ncols){
   
-  if(nrows <=0 )
+  if (nrows <= 0 )
     stop("nrows should be a positive number")
-  if(ncols <=0 )
+  if (ncols <= 0 )
     stop("ncols should be a positive number")
   
   nCells <- nrows * ncols

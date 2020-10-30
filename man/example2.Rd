@@ -2,15 +2,26 @@
 % Please edit documentation in R/example2.R
 \name{example2}
 \alias{example2}
-\title{Example of using deduplication package - the long way}
+\title{Example of using \pkg{deduplication} package - the long way}
 \usage{
 example2()
 }
 \description{
-This is just an example on how to compute duplicity probabilities using simulated data. All the files used in this
-example are supposed to be produced using the simulation software. The "simulation.xml" file is an exception and it
-is an input file for the simulation software. The files used in this example are provided with the deduplication
-package.
+This is just an example on how to compute duplicity probabilities 
+using simulated data. All the files used in this example are supposed to be 
+produced  using the simulation software. The "simulation.xml" file is an 
+exception and it is an input file for the simulation software. 
+The files used in this example are provided with the \pkg{deduplication} package.
+}
+\details{
+This is detailed example on how to compute duplicity probabilities 
+using simulated data. All the files used in this example are supposed to be 
+produced  using the simulation software. The "simulation.xml" file is an 
+exception and it is an input file for the simulation software. 
+The files used in this example are provided with the \pkg{deduplication} package.
+This example shows step by step all intermediate computations performed before
+calling one the functions that computes the duplicity probabilities. All three
+methods are used in this example: "1-to-1", "pairs" and "trajectory".
 }
 \examples{
 
@@ -20,15 +31,18 @@ path_root      <- 'extdata'
 
 # 0. Read simulation params
 
-simParams <-readSimulationParams(system.file(path_root, 'simulation.xml', package = 'deduplication'))
+simParams <-readSimulationParams(system.file(path_root, 'simulation.xml', 
+package = 'deduplication'))
 
  # 1. Read grid parameters
  
-gridParams <-readGridParams(system.file(path_root, 'grid.csv', package = 'deduplication'))
+gridParams <-readGridParams(system.file(path_root, 'grid.csv', 
+package = 'deduplication'))
 
  # 2.Read network events
  
-events <- readEvents(system.file(path_root, 'AntennaInfo_MNO_MNO1.csv', package = 'deduplication'))
+events <- readEvents(system.file(path_root, 'AntennaInfo_MNO_MNO1.csv', 
+package = 'deduplication'))
 
  # 3. Get a list of detected devices
  
@@ -40,7 +54,9 @@ connections <- getConnections(events)
 
 #5. Emission probabilities are computed from the signal strength/quality file
 
-emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, system.file(path_root, 'SignalMeasure_MNO1.csv', package = 'deduplication'), simParams$conn_threshold)
+emissionProbs <- getEmissionProbs(gridParams$nrow, gridParams$ncol, 
+system.file(path_root, 'SignalMeasure_MNO1.csv', package = 'deduplication'), 
+simParams$conn_threshold)
 
 #6. Build joint emission probabilities
 
@@ -60,7 +76,8 @@ modelJ <- getJointModel(gridParams$nrow, gridParams$ncol, jointEmissionProbs)
 
 #10. Read antenna cells and build a matrix of neighboring antennas
 
-coverarea <- readCells(system.file(path_root, 'AntennaCells_MNO1.csv', package = 'deduplication'))
+coverarea <- readCells(system.file(path_root, 'AntennaCells_MNO1.csv', 
+package = 'deduplication'))
 
 antennaNeigh <- antennaNeighbours(coverarea)
 
@@ -70,7 +87,8 @@ P1 <- aprioriDuplicityProb(simParams$prob_sec_mobile_phone, length(devices))
 
 #12. Build a matrix of pairs of devices to compute duplicity probability
 
-pairs4dupP<-computePairs(connections, length(devices), oneToOne = FALSE, P1=P1, limit = 0.05, antennaNeighbors = antennaNeigh)
+pairs4dupP<-computePairs(connections, length(devices), oneToOne = FALSE, P1=P1, 
+limit = 0.05, antennaNeighbors = antennaNeigh)
 
 #13. Compute duplicity probabilities using the "pairs" method (faster)
 
@@ -86,11 +104,16 @@ pairs4dupO<-computePairs(connections, length(devices), oneToOne = TRUE)
 
 #16. Compute duplicity probabilities using "1to1" method
 
-out2 <- computeDuplicityBayesian("1to1", devices, pairs4dupO, modelJ, ll, P1 = NULL, Pii=Pii)
+out2 <- computeDuplicityBayesian("1to1", devices, pairs4dupO, modelJ, ll, 
+P1 = NULL, Pii=Pii)
 
 #17. Compute duplicity probabilities using "trajectory method"
 
 T<-sort(unique(events[,1][[1]]))
 
-out3 <-computeDuplicityTrajectory(path=system.file(path_root, package = 'deduplication'), "postLocDevice", devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
+out3 <-computeDuplicityTrajectory(path=system.file(path_root, package = 'deduplication'), 
+"postLocDevice", devices, gridParams, pairs4dupP, P1 = P1, T, gamma = 0.5)
+}
+\references{
+\url{https://github.com/MobilePhoneESSnetBigData}
 }

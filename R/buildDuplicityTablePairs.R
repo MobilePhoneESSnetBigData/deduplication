@@ -1,18 +1,26 @@
-#' @title  Builds a data.table object with device IDs and the duplicity probability for each device.
+#' @title  Builds a data.table object with device IDs and the duplicity 
+#' probability for each device.
 #'
-#' @description Builds a data.table object with two columns: device IDs and the duplicity probability for each device.
-#'   This function is called in case of using the "pairs" method of computing the duplicity probabilities, receiving a
-#'   list of data.tables objects returned by each worker node with the device IDs on the first two columns and the
-#'   corresponding duplicity probability on the third column. It is a utility function and it is not accesible from
-#'   outside the package.
+#' @description Builds a data.table object with two columns: device ID and the 
+#' duplicity probability for each device. This function is called in case of 
+#' using the "pairs" method of computing the duplicity probabilities, receiving a
+#' list of data.table objects returned by each worker node with the device IDs 
+#' on the first two columns and the corresponding duplicity probability on the 
+#' third column. It is a utility function and it should not be called from
+#' outside the package.
 #'
-#' @param res A list of data.table objects returned by each worker node with the device IDs on the first two columns and
-#'   the corresponding duplicity probability on the third column for (the pair of devices in the first two columns).
+#' @param res A list of data.table objects returned by each worker node with 
+#' the device IDs on the first two columns and the corresponding duplicity 
+#' probability on the third column for (the pair of devices in the first two 
+#' columns).
 #'
 #' @param devices A vector with device IDs.
 #'
-#' @return A data.table object with two columns: the device IDs and the corresponding duplicity probability for each
-#'   device.
+#' @return A data.table object with two columns: the device ID and the 
+#' corresponding duplicity probability for each  device.
+#'
+#' @keywords internal      
+#' @export   
 buildDuplicityTablePairs <- function(res, devices) {
   dup <- NULL
   for (i in 1:length(res))

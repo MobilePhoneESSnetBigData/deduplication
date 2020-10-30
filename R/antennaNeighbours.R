@@ -3,11 +3,11 @@
 #' @description Computes a list of pairs antennaID1-antennaID2 with neighbouring antennas. Two antennas are considered
 #'   neighbours if their coverage areas overlap (i.e. their intersection is not void).
 #'
-#' @param coverarea a data.table object with two columns: 'antennaID' and 'cell'. The first column contains the ID of
-#'   each antenna while the second one contains an \code{sp} object that represents the coverage area of the corresponding
-#'   antenna. It is obtained by calling \code{readCells()} function.
+#' @param coverarea a data.table object with two columns: \code{antennaID} and \code{cell}. The first column contains the ID of
+#'   each antenna while the second one contains a \code{sp} object that represents the coverage area of the corresponding
+#'   antenna. The coverage area is obtained by calling \code{readCells()} function.
 #'
-#' @return A data.table object with a single column called 'nei'. Each element of this column is a pair of the form
+#' @return A data.table object with a single column called \code{nei}. Each element of this column is a pair of the form
 #'   antennaID1-antennaID2 where the two antennas are considered neighbours.
 #'
 #' @import data.table

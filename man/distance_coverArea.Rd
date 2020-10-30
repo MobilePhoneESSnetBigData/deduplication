@@ -7,19 +7,19 @@
 distance_coverArea(from, to, emissionProbs, centroidCoord.dt, tile_size)
 }
 \arguments{
-\item{from}{the antenna from which the device is going. It has to correspond to 
+\item{from}{The antenna from which the device is going. It has to correspond to 
+the name of a column in \code{emissionProbs}.}
+
+\item{to}{The antenna to which the device is going. It has to correspond to 
 the name of a column in emissionProbs.}
 
-\item{to}{the antenna to which the device is going. It has to correspond to 
-the name of a column in emissionProbs.}
+\item{emissionProbs}{The matrix of emission probabilities.}
 
-\item{emissionProbs}{the matrix of emission probabilities.}
+\item{centroidCoord.dt}{A data.table with the information about the coordinates
+of the center of the tiles (rastercells). The required columns are: \code{rasterCell},
+\code{centroidCoord_x} and \code{centroidCoord_y}.}
 
-\item{centroidCoord.dt}{a data.table with the information about the coordinates
-of the center of the tiles (rastercells). The required columns are: rasterCell,
-centroidCoord_x and centroidCoord_y.}
-
-\item{tile_size}{the size of each tile in meters.}
+\item{tile_size}{The size of each tile in meters.}
 }
 \value{
 A numeric value with the number of tiles between the two cover areas.
@@ -34,3 +34,4 @@ in the center of the tile has signal.
 }
 
 }
+\keyword{internal}

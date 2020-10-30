@@ -1,10 +1,10 @@
 Package: deduplication
 Type: Package
-Title: R package for deduplication (to be more explicit)
+Title: R package for computing the duplicity probility for each mobile device.
 Version: 0.1.0
 Author: Bogdan Oancea <bogdan.oancea@gmail.com>, David Salgado <david.salgado.fernandez@ine.es> Sandra Barragan <sandra.barragan.andres@ine.es>
 Maintainer: Bogdan Oancea <bogdan.oancea@gmail.com>
-Description: R package for deduplication (to be described)
+Description: R package for computing the duplicity probility for each mobile device, i.e. the probability of a device to be in a 2-to-1 correspondence with its owner.
 License: GPL3, EUPL
 Imports: data.table,
          destim,

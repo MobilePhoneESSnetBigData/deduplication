@@ -2,20 +2,22 @@
 % Please edit documentation in R/checkConnections_step2.R
 \name{checkConnections_step2}
 \alias{checkConnections_step2}
-\title{Make the second step of the checks between the connections and the emission model.}
+\title{Make the second step of the checks between the connections and the 
+emission model.}
 \usage{
 checkConnections_step2(emissionProbs, connections, gridParams)
 }
 \arguments{
-\item{emissionProbs}{the matrix of emission probabilities.}
+\item{emissionProbs}{The matrix of emission probabilities.}
 
-\item{connections}{a matrix with the connections, a row per device and
+\item{connections}{A matrix with the connections, a row per device and
 a column per time.}
 
-\item{gridParams}{a list with the parameters of the grid: nrow, ncol, tileX, tileY.}
+\item{gridParams}{A list with the parameters of the grid: \cr
+\code{nrow, ncol, tileX, tileY}.}
 }
 \value{
-A \code{list} with two elements, one is the information about the checks
+A \code{list} with two elements" one is the information about the checks
 with a vector containing all the time padding coefficients and the second 
 is the matrix of connections with the time padding done by using the maximum
 coefficient.

@@ -4,19 +4,19 @@
 #' cover areas by taking into account that a tile has signal from an antenna
 #' in the center of the tile has signal.
 #' 
-#' @param from the antenna from which the device is going. It has to correspond to 
-#' the name of a column in emissionProbs.
+#' @param from The antenna from which the device is going. It has to correspond to 
+#' the name of a column in \code{emissionProbs}.
 #'
-#' @param to the antenna to which the device is going. It has to correspond to 
+#' @param to The antenna to which the device is going. It has to correspond to 
 #' the name of a column in emissionProbs.
 #' 
-#' @param emissionProbs the matrix of emission probabilities.
+#' @param emissionProbs The matrix of emission probabilities.
 #' 
-#' @param centroidCoord.dt a data.table with the information about the coordinates
-#' of the center of the tiles (rastercells). The required columns are: rasterCell,
-#' centroidCoord_x and centroidCoord_y.
+#' @param centroidCoord.dt A data.table with the information about the coordinates
+#' of the center of the tiles (rastercells). The required columns are: \code{rasterCell},
+#' \code{centroidCoord_x} and \code{centroidCoord_y}.
 #' 
-#' @param tile_size the size of each tile in meters.
+#' @param tile_size The size of each tile in meters.
 #'
 #' @return A numeric value with the number of tiles between the two cover areas.
 #'
@@ -26,7 +26,7 @@
 #'
 #' @import data.table 
 #'
-#'
+#' @keywords internal
 #' @export
 distance_coverArea <- function(from, to, emissionProbs, centroidCoord.dt, tile_size){
 
